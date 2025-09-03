@@ -1,3 +1,19 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://kingtuo123.com/"
+title = "King's Blog"
+theme = "hugo-notes"
+disableKinds = ["taxonomy", "term", "section"]
+
+[params]
+	defaultTheme = "light"
+	headerTitle = "夜不能寐"
+
+[markup]
+	[markup.goldmark]
+		[markup.goldmark.renderer]
+			unsafe = true
+	[markup.tableOfContents]
+		endLevel = 4
+		ordered = false
+		startLevel = 2
+	[markup.highlight]
+		noClasses = false

@@ -1,0 +1,3 @@
+[submodule "themes/hugo-notes"]
+	path = themes/hugo-notes
+	url = git@github.com:kingtuo123/hugo-notes.git

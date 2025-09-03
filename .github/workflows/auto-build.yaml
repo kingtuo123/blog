@@ -1,0 +1,56 @@
+name: auto build
+
+# 触发条件：推送到 main 分支
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  # 定义一个名为 autoBuild 的 job
+  autoBuild:
+    runs-on: ubuntu-latest
+
+    # steps 定义了 build 这个 job 要执行的所有步骤
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          extended: true
+          hugo-version: 'latest'
+
+      - name: Build blog
+        run: hugo --minify
+
+      - name: Compress the public folder
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: ./public
+          dest: Blog.zip
+
+      - name: Setup ossutil
+        uses: manyuanrong/setup-ossutil@v2.0
+        with:
+          endpoint: "oss-accelerate.aliyuncs.com"
+          access-key-id: ${{ secrets.ID }}
+          access-key-secret: ${{ secrets.SECRET }}
+
+      - name: Empty old files on OSS server
+        run: ossutil rm -rf oss://kingtuo123 --include "*"
+
+      - name: Upload Blog.zip to OSS server
+        run: ossutil cp -f Blog.zip oss://kingtuo123/
+
+      - name: Wait for unzip
+        uses: juliangruber/sleep-action@v2.0.0
+        with:
+          time: 60s
+
+      - name: Remove Blog.zip from OSS server
+        run: ossutil rm -f oss://kingtuo123/Blog.zip
