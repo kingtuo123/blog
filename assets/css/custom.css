@@ -1,0 +1,80 @@
+.no-thead thead {
+	display: none;
+}
+
+.w-20 table td:first-child, 
+.w-20 table th:first-child {
+  width: 20px;
+}
+.w-30 table td:first-child, 
+.w-30 table th:first-child {
+  width: 30px;
+}
+.w-40 table td:first-child, 
+.w-40 table th:first-child {
+  width: 40px;
+}
+.w-50 table td:first-child, 
+.w-50 table th:first-child {
+  width: 50px;
+}
+.w-60 table td:first-child, 
+.w-60 table th:first-child {
+  width: 60px;
+}
+.w-70 table td:first-child, 
+.w-70 table th:first-child {
+  width: 70px;
+}
+.w-80 table td:first-child, 
+.w-80 table th:first-child {
+  width: 80px;
+}
+.w-90 table td:first-child, 
+.w-90 table th:first-child {
+  width: 90px;
+}
+.w-100 table td:first-child, 
+.w-100 table th:first-child {
+  width: 100px;
+}
+.w-110 table td:first-child, 
+.w-110 table th:first-child {
+  width: 110px;
+}
+.w-120 table td:first-child, 
+.w-120 table th:first-child {
+  width: 120px;
+}
+.w-130 table td:first-child, 
+.w-130 table th:first-child {
+  width: 130px;
+}
+.w-140 table td:first-child, 
+.w-140 table th:first-child {
+  width: 140px;
+}
+.w-150 table td:first-child, 
+.w-150 table th:first-child {
+  width: 150px;
+}
+.w-160 table td:first-child, 
+.w-160 table th:first-child {
+  width: 160px;
+}
+.w-170 table td:first-child, 
+.w-170 table th:first-child {
+  width: 170px;
+}
+.w-180 table td:first-child, 
+.w-180 table th:first-child {
+  width: 180px;
+}
+.w-190 table td:first-child, 
+.w-190 table th:first-child {
+  width: 190px;
+}
+.w-200 table td:first-child, 
+.w-200 table th:first-child {
+  width: 200px;
+}
