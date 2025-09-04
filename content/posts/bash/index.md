@@ -228,7 +228,7 @@ hello world
 每个进程都有自己独立的文件描述符表（File Descriptor Table）
 
 <div align="left">
-    <img src="fdt.svg" style="max-height:500px"></img>
+    <img src="fdt.svg" style="max-width:250px"></img>
 </div>
 
 <div class="table-container no-thead w-50">
