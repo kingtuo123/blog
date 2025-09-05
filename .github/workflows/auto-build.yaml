@@ -37,15 +37,15 @@ jobs:
       - name: Setup ossutil
         uses: manyuanrong/setup-ossutil@v2.0
         with:
-          endpoint: "oss-accelerate.aliyuncs.com"
+          endpoint: "{{ secrets.ENDPOINT }}"
           access-key-id: ${{ secrets.ID }}
           access-key-secret: ${{ secrets.SECRET }}
 
       - name: Empty old files on OSS server
-        run: ossutil rm -rf oss://kingtuo123 --include "*"
+        run: ossutil rm -rf oss://{{ secrets.BUCKET }} --include "*"
 
       - name: Upload Blog.zip to OSS server
-        run: ossutil cp -f Blog.zip oss://kingtuo123/
+        run: ossutil cp -f Blog.zip oss://{{ secrets.BUCKET }}
 
       - name: Wait for unzip
         uses: juliangruber/sleep-action@v2.0.0
@@ -53,4 +53,4 @@ jobs:
           time: 60s
 
       - name: Remove Blog.zip from OSS server
-        run: ossutil rm -f oss://kingtuo123/Blog.zip
+        run: ossutil rm -f oss://{{ secrets.BUCKET }}/Blog.zip

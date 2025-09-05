@@ -814,7 +814,7 @@ $ echo ${files[@]}
 
 解决办法，启用 Bash 的 `nullglob` 选项，可以让通配符在没有匹配时扩展为空：
 
-```bash
+```bash-session
 $ shopt -s nullglob
 $ files=(*.jpg)
 $ echo ${files[@]}   # 输出为空
