@@ -250,16 +250,16 @@ toc: true
 
 ```markdown
 - 无序列表
-+ 无序列表
-* 无序列表
+- 无序列表
+- 无序列表
 ```
 
 </div>
 <div class="sp-item" style="flex:1;">
 
 - 无序列表
-+ 无序列表
-* 无序列表
+- 无序列表
+- 无序列表
 
 </div>
 </div>
