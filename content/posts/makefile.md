@@ -520,7 +520,6 @@ clean:
 </div>
 
 
-
 ### 双冒号规则
 
 双冒号允许为同一个目标定义多个规则，如果是单冒号则会打印一条警告，并且只会运行第二组规则
@@ -534,6 +533,18 @@ blah::
 blah::
 	echo "hello again"
 ```
+
+
+### 替换引用（后缀替换）
+
+```makefile
+SRCS = main.c utils.c helper.c
+OBJS = $(SRCS:.c=.o)
+all:
+	@echo $(OBJS)    # 输出 main.o utils.o helper.o
+```
+
+
 
 
 
@@ -1214,7 +1225,7 @@ all:
 	@echo '文件内覆盖          $(origin d)'
 	@echo '默认变量            $(origin CC)'
 	@echo '环境变量            $(origin PATH)'
-	@echo '覆盖的环境变量      $(origin MY_VAR)'
+	@echo '环境变量覆盖        $(origin MY_VAR)'
 	@echo '自动化变量          $(origin @)'
 ```
 
@@ -1226,7 +1237,7 @@ $ MY_VAR=123 make -e c=123 d=123
 文件内覆盖          override
 默认变量            default
 环境变量            environment
-覆盖的环境变量      environment override
+环境变量覆盖        environment override
 自动化变量          automatic
 ```
 
