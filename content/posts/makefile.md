@@ -535,17 +535,6 @@ blah::
 ```
 
 
-### 替换引用（后缀替换）
-
-```makefile
-SRCS = main.c utils.c helper.c
-OBJS = $(SRCS:.c=.o)
-all:
-	@echo $(OBJS)    # 输出 main.o utils.o helper.o
-```
-
-
-
 
 
 ## 命令
@@ -714,6 +703,18 @@ blah.c:
 other:
 	@echo one is nothing: $(one) # 不会打印 cool
 ```
+
+### 替换引用（后缀替换）
+
+```makefile
+SRCS = main.c utils.c helper.c
+OBJS = $(SRCS:.c=.o)
+all:
+	@echo $(OBJS)    # 输出 main.o utils.o helper.o
+```
+
+
+
 
 
 
