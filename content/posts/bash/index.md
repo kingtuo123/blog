@@ -29,12 +29,20 @@ toc: true
 
 ### 命令替换
 
-将命令的输出赋值给变量
+将命令的标准输出赋值给变量
 
 ```bash
 name=$(whoami)
 name=`whoami`
 ```
+
+特殊用法，读取文件内容
+
+```bash
+content=$(<fileName)
+content=`<fileName`
+```
+
 
 ### 间接变量引用
 

@@ -120,6 +120,7 @@
 }
 
 
+
 /* 引用样式 */
 .dark blockquote.red {
 	background-color: #514045;
@@ -144,4 +145,35 @@ blockquote.yellow {
 blockquote.blue {
 	background-color: #e9f0e9;
 	border-color: #3a94c5;
+}
+
+
+
+/* code bar */
+.code-bar {
+	font-family: 'Maple Mono CN', 'JetBrainsMono NF', 'Source Code Pro', 'Monaco', 'Consolas', 'monospace';
+	font-size: 15px;
+	color: #D699B6;
+	background-color: #2D353B;
+	border-radius: 10px 10px 0 0;
+	padding: 10px 10px 5px 10px;
+	margin-top: 10px;
+	margin-bottom: -20px;
+    overflow-x: auto;
+    word-break: break-all;
+	white-space: nowrap;
+	position: relative;
+	z-index: 99;
+	transition: background-color 0.5s ease;
+}
+.dark .code-bar {
+	background-color: #232A2E;
+}
+.code-bar span:first-child {
+	color: #2D353B;
+	background-color: #D699B6;
+	padding: 1px 5px;
+	border-radius: 7px;
+	margin-right: 10px;
+	user-select: none;
 }
