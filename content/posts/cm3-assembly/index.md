@@ -13,18 +13,16 @@ toc: true
 
 ## Thumb 指令集
 
-ARM 架构的指令集有 ARM、Thumb、Thumb-2、ARM64 等，分别针对不同应用场景。
+ARM 架构的指令集有 ARM、Thumb、Thumb-2、ARM64 等等，分别针对不同应用场景：
 
-`thumb`：16 位指令集，是 thumb-2 的子集，用于 Cortex-M0/M0+/M1（ARMv6-M 架构）
+- `thumb`：16 位指令集，是 thumb-2 的子集，用于 Cortex-M0/M0+/M1（ARMv6-M 架构）
+- `thumb-2`：混合指令集，支持 16 位和 32 位指令，用于 Cortex-M3/M4（ARMv7-M / ARMv7E-M 架构）
 
-`thumb-2`：混合指令集，支持 16 位和 32 位指令，用于 Cortex-M3/M4（ARMv7-M / ARMv7E-M 架构）
 
+简单对比：
 
-**简单对比：**
-
-16 位指令由于空间有限，许多 16 位指令只能访问 `R0-R7`（低寄存器）
-
-32 位指令能使用更大寄存器范围、更大的立即数、更宽的地址区域、更多的寻址模式
+- 16 位指令由于空间有限，许多 16 位指令只能访问 `R0-R7`（低寄存器）
+- 32 位指令能使用更大寄存器范围、更大的立即数、更宽的地址区域、更多的寻址模式
 
 
 例如 16 位的 `MOV` 指令只能承载 8 位立即数：
@@ -276,7 +274,7 @@ ENDIF
 
 ## GNU 汇编器伪指令
 
-**更多参考：[The gnu Assembler](https://www.eecs.umich.edu/courses/eecs373/readings/Assembler.pdf) 第 7 章**
+> 更多参考 [The GNU Assembler](https://www.eecs.umich.edu/courses/eecs373/readings/Assembler.pdf) 第 7 章
 
 -----
 

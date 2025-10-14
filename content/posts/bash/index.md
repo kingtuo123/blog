@@ -240,9 +240,7 @@ hello world
 
 每个进程都有自己独立的文件描述符表（File Descriptor Table）
 
-<div align="left">
-    <img src="fdt.svg" style="max-width:250px"></img>
-</div>
+<img src="fdt.svg" class="svg"></img>
 
 <div class="table-container no-thead w-50">
 
@@ -268,9 +266,7 @@ lrwx------ 1 king king 64 Apr 10 18:46 1 -> /dev/pts/1
 lrwx------ 1 king king 64 Apr 10 18:46 2 -> /dev/pts/1
 ```
 
-<div align="left">
-    <img src="link.svg" style="max-height:1000px"></img>
-</div>
+<img src="link.svg" class="svg"></img>
 
 
 `/proc/self` 是一个动态变化的符号链接，由内核动态生成，
@@ -282,9 +278,7 @@ lrwx------ 1 king king 64 Apr 10 18:46 2 -> /dev/pts/1
 
 重定向的本质是修改进程的文件描述符表，`command >file` （等同于 `command 1>file`）如下：
 
-<div align="left">
-    <img src="c1.svg" style="max-height:1000px"></img>
-</div>
+<img src="c1.svg" class="svg"></img>
 
 
 
