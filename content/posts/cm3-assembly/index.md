@@ -8,7 +8,7 @@ toc: true
 
 ## 寄存器
 
-<img src="regs.svg" class="svg"></img>
+{{< svg src="regs.svg" >}}
 
 
 ## Thumb 指令集
@@ -51,7 +51,7 @@ MOVW R0, #0x1234
 
 Cortex-M3/M4 采用三级流水线：取指（Fetch）、解码（Decode）、执行（Execute）
 
-<img src="arch.svg" class="svg"></img>
+{{< svg src="arch.svg" >}}
 
 当第 N 条指令执行时，第 N+2 条指令正在取值，而 PC 总是指向正在取指的指令，即指向第三条指令
 
@@ -545,7 +545,7 @@ my_function:
 ## 地址对齐
 
 
-<img src="align.svg" class="svg"></img>
+{{< svg src="align.svg" >}}
 
 > 在汇编中 `.align n` 是 `2^n` 字节对齐，在链接脚本中 `ALIGN(n)` 是 `n` 字节对齐。
 > 大多数情况下，4 字节传输的地址要 4 字节对齐，2 字节传输的地址要 2 字节对齐
@@ -869,7 +869,7 @@ BIC R0, R1, #0xFF    /* 清除 R1 的低 8 位，结果存入 R0 */
 
 ## 移位和循环移位指令
 
-<img src="shift.svg" class="svg"></img>
+{{< svg src="shift.svg" >}}
 
 <div class="table-container no-thead">
 
@@ -976,7 +976,7 @@ MOV  R0, #0x8000     /* R0 = 0x00008000 */
 SXTB R1, R0, ROR #8  /* R1 = 0xFFFFFF80 */
 ```
 
-<img src="rev.svg" class="svg"></img>
+{{< svg src="rev.svg" >}}
 
 
 <div class="table-container no-thead">
@@ -1096,7 +1096,7 @@ UBFX R1, R0, #4, #8  /* R1 = 0x00000088 */
 
 **IT（IF-THEN）指令**
 
-<img src="it.svg" class="svg"></img>
+{{< svg src="it.svg" >}}
 
 `IT` 指令为后续的 1-4 条指令创建了一个条件执行块：
 
@@ -1120,7 +1120,7 @@ MOVNE R4, #4         /* R0 != 5 时执行                       */
 
 **TBB 表格跳转字节（Table Branch Byte）**
 
-<img src="tbb.svg" class="svg"></img>
+{{< svg src="tbb.svg" >}}
 
 ```asm
 TBB [PC, 3]

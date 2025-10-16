@@ -1,0 +1,18 @@
+{{- $src := .Get "src" -}}
+{{- $class := .Get "class" | default "" -}}
+
+{{- if not $src -}}
+    {{- errorf "缺少'src'参数" -}}
+{{- end -}}
+
+{{- /* 构建相对于当前页面的路径 */ -}}
+{{- $currentDir := .Page.File.Dir -}}
+{{- $svgPath := path.Join "content" $currentDir $src -}}
+
+{{- if fileExists $svgPath -}}
+    <div class="svg-container {{ $class }}">
+        {{ readFile $svgPath | safeHTML }}
+    </div>
+{{- else -}}
+    {{- errorf "SVG文件未找到: %s" $svgPath -}}
+{{- end -}}

@@ -4,7 +4,7 @@ date: "2024-07-14"
 toc: false
 ---
 
-<img src="autotools.svg" class="svg"></img>
+{{< svg src="autotools.svg" >}}
 
 ## 概述
 
@@ -26,7 +26,7 @@ $ make install
 
 ### Configure 流程
 
-<img src="configure.svg" class="svg"></img>
+{{< svg src="configure.svg" >}}
 
 `./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件
 
@@ -41,7 +41,6 @@ config.cache    : 由 ./configure -C 参数生成的缓存文件，提升重复 
 以 `Makefile.in` 为例，其形式大致如下：
 
 ```makefile
-# 手动编写 Makefile.in
 CC = @CC@
 CFLAGS = @CFLAGS@
 prefix = @prefix@
@@ -171,7 +170,7 @@ $ ac_cv_path_SED=/path/to/sed ./configure
 
 ## Autoconf
 
-<img src="autoconf.svg" class="svg"></img>
+{{< svg src="autoconf.svg" >}}
 
 - `configure.ac` 是一个包含宏的 shell 脚本
 - `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure`
@@ -205,7 +204,7 @@ autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
 
 ## Aclocal
 
-<img src="aclocal.svg" class="svg"></img>
+{{< svg src="aclocal.svg" >}}
 
 - `aclocal` 是为 `autoconf` 准备 “宏库” 的预处理工具
 
@@ -244,7 +243,7 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 ## Autoheader
 
-<img src="autoheader.svg" class="svg"></img>
+{{< svg src="autoheader.svg" >}}
 
 使用 `AC_DEFINE` 创建 C 语言宏定义
 
@@ -407,7 +406,7 @@ PRIMARY  :  PROGRAMS    ->  可执行文件
 
 接下来开始构建：
 
-<img src="automake.svg" class="svg"></img>
+{{< svg src="automake.svg" >}}
 
 
 ```bash-session
@@ -504,16 +503,26 @@ Autotools 涉及的的东西太多，以后再研究：
 
 更多索引在官方文档总目录最下方
 
+<div>
+
 - [automake](https://www.gnu.org/software/automake/manual/html_node/)
   - [Macro Index](https://www.gnu.org/software/automake/manual/html_node/Macro-Index.html)
   - [Variable Index](https://www.gnu.org/software/automake/manual/html_node/Variable-Index.html)
   - [General Index](https://www.gnu.org/software/automake/manual/html_node/General-Index.html)
 
+</div>
+<div>
+
 - [Autoconf](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/index.html)
   - [Autoconf Macro Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Autoconf-Macro-Index.html)
   - [Concept Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Concept-Index.html)
+
+</div>
+<div>
 
 - [GNU Coding Standards](https://www.gnu.org/prep/standards/html_node/)
   - [Variables for Installation Directories](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html)
   - [Standard Targets for Users](https://www.gnu.org/prep/standards/html_node/Standard-Targets.html)
   - [DESTDIR: Support for Staged Installs](https://www.gnu.org/prep/standards/html_node/DESTDIR.html)
+
+</div>
