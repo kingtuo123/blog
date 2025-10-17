@@ -1,0 +1,6 @@
+{{- $title := .Get "title" | default "文件" -}}
+{{- $str   := .Get "str"   | default ""     -}}
+
+<div class="code-bar">
+	<span>{{ $title }}</span><span>{{ $str }}</span>
+</div>

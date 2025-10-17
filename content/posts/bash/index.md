@@ -528,43 +528,49 @@ Your selected: Banana
 
 #### for 循环
 
+{{< bar title="遍历简单列表" >}}
+
 ```bash
-# 遍历简单列表
 for i in 1 2 3 4 5; do
     echo "Number $i"
 done
 ```
 
+{{< bar title="遍历字符串列表" >}}
+
 ```bash
-# 遍历字符串列表
 for color in red green blue; do
     echo "Color is $color"
 done
 ```
 
+{{< bar title="使用大括号展开" >}}
+
 ```bash
-# 使用大括号展开
 for i in {1..5}; do
     echo "Counting $i"
 done
 ```
 
+{{< bar title="指定步长" >}}
+
 ```bash
-# 指定步长
 for i in {1..10..2}; do
     echo "Step $i"
 done
 ```
 
+{{< bar title="遍历命令输出" >}}
+
 ```bash
-# 遍历命令输出
 for file in "$(ls)"; do
     echo "File: $file"
 done
 ```
 
+{{< bar title="C 语言风格的 for 循环" >}}
+
 ```bash
-# C 语言风格的 for 循环
 for ((i=0; i<5; i++)); do
     echo "C-style loop: $i"
 done
@@ -572,8 +578,9 @@ done
 
 #### while 循环
 
+{{< bar title="基本计数器" >}}
+
 ```bash
-# 基本计数器
 count=1
 while [ $count -le 5 ]; do
     echo "Count: $count"
@@ -581,23 +588,26 @@ while [ $count -le 5 ]; do
 done
 ```
 
+{{< bar title="读取文件内容" >}}
+
 ```bash
-# 读取文件内容
 while read line; do
     echo "Line: $line"
 done < filename.txt
 ```
 
+{{< bar title="无限循环" >}}
+
 ```bash
-# 无限循环
 while true; do
     echo "Press Ctrl+C to stop"
     sleep 1
 done
 ```
 
+{{< bar title="使用算术表达式" >}}
+
 ```bash
-# 使用算术表达式
 count=0
 while ((count < 5)); do
     echo "Count: $count"
@@ -607,8 +617,9 @@ done
 
 #### until 循环
 
+{{< bar title="基本计数器" >}}
+
 ```bash
-# 基本计数器
 count=1
 until [ $count -gt 5 ]; do
     echo "Count: $count"
@@ -616,8 +627,9 @@ until [ $count -gt 5 ]; do
 done
 ```
 
+{{< bar title="等待某个条件满足" >}}
+
 ```bash
-# 等待某个条件满足
 until ping -c1 example.com &>/dev/null; do
     echo "Waiting for example.com to be reachable..."
     sleep 5
@@ -641,23 +653,26 @@ echo "example.com is now reachable!"
 
 ### 函数
 
+{{< bar title="语法" str="不加 function 也可以" >}}
+
 ```bash
-# 语法：不加 function 也可以
 function func_name() {
     commands
 }
 ```
 
+{{< bar title="函数参数" str="使用位置参数变量 $1 $2 ..." >}}
+
 ```bash
-# 函数参数：使用 位置参数变量 访问，$1 $2 ...
 greet() {
     echo "Hello, $1!"
 }
 greet "Alice"
 ```
 
+{{< bar title="返回值" str="使用 echo 返回一个数组" >}}
+
 ```bash
-# 返回值：使用 echo 返回一个数组
 create_array() {
     local arr=(1 2 3 4 5)
     echo "${arr[@]}"
@@ -666,24 +681,27 @@ my_array=($(create_array))
 echo "Array elements: ${my_array[@]}"
 ```
 
+{{< bar title="返回状态" str="使用 return（0-255），0 表示成功，大于 1 表示失败" >}}
+
 ```bash
-# 返回函数执行状态：使用 return（0-255），0 表示成功，大于 1 表示失败
 is_number() {
     [[ "$1" =~ ^[0-9]+$ ]] && return 0 || return 1
 }
 is_number "123" && echo "Valid number"
 ```
 
+{{< bar title="作用域" str="使用 local 创建局部变量，默认是全局变量" >}}
+
 ```bash
-# 作用域：使用 local 创建局部变量，默认是全局变量
 demo() {
     local var1="local"  # 局部变量
     var2="global"       # 全局变量
 }
 ```
 
+{{< bar title="递归" >}}
+
 ```bash
-# 递归
 factorial() {
     if (( $1 <= 1 )); then
         echo 1
@@ -695,18 +713,18 @@ factorial() {
 echo "计算阶乘： 5! = $(factorial 5)"
 ```
 
+{{< bar title="调用外部函数" >}}
+
 ```bash
-# 调用外部函数：使用 source 引入函数库
 source functions.sh
 ```
 
+{{< bar title="重定向" str="调用 log_to_file 函数，输出会写入 output.log" >}}
+
 ```bash
-# 重定向
 log_to_file() {
     echo "This is a log message"
 } > output.log
-# 调用函数，输出会写入output.log
-log_to_file
 ```
 
 
@@ -807,7 +825,9 @@ log_to_file
 </div>
 
 
-**文件名匹配问题一**：例如 `files=(*.jpg)`，当目录下没有 `jpg` 文件时，`*.jpg` 就会做为字面量赋值给 `files`：
+### 文件名匹配问题一
+
+例如 `files=(*.jpg)`，当目录下没有 `jpg` 文件时，`*.jpg` 就会做为字面量赋值给 `files`：
 
 ```bash-session
 $ touch {a,b,c}.txt
@@ -829,7 +849,9 @@ $ echo ${files[@]}   # 输出为空
 
 > 其它 Bash 选项：`failglob` 没有匹配的文件则报错；`nocaseglob` 匹配时忽略大小写
 
-**文件名匹配问题二**：`IFS` 在文件名（含空格）匹配中的应用：
+### 文件名匹配问题二
+
+`IFS` 在文件名（含空格）匹配中的应用：
 
 ```bash
 IFS=$'\n' files=($(ls -1 *.txt)) # 每个文件名占一行
@@ -875,8 +897,9 @@ l-wx------ 1 king king 64 Apr 12 22:02 /dev/fd/63 -> 'pipe:[525267]'
 
 把 `<(cmd)` 和 `>(cmd)` 看作文件，主命令可以从 `<(cmd)` 文件读取数据，向 `>(cmd)` 文件写入数据
 
+{{< bar title="示例一" str="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
+
 ```bash-session
-示例一：tee 命令能将标准输入的数据同时向多个文件及标准输出传送
 $ cat 0<<eof 1>file
 foo123
 bar123
@@ -888,21 +911,27 @@ $ cat bar.txt
 bar123
 ```
 
+{{< bar title="示例二" str="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
+
 ```bash-session
-示例二：使用重定向发送数据到进程替换，可以看作 echo "foobar" > 文件
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)
 $ cat foobar.txt
 FOOBAR
+```
 
-错误示例：后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）
+
+{{< bar title="错误示例" str="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
+
+```bash-session
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt) 1> >(sed s/$/BAD/ >bad.txt)
 $ cat foobar.txt
 $ cat bad.txt
 foobarBAD
 ```
 
+{{< bar title="示例三" str="可以看作 sed 参数 文件1 文件2" >}}
+
 ```bash-session
-示例三：可以看作 sed 参数 文件1 文件2
 $ sed -e 's/foo/FOO/' -e 's/bar/BAR/' <(echo foo) <(echo bar)
 FOO
 BAR
