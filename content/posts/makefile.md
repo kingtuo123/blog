@@ -121,8 +121,8 @@ some_file:
 clean:
 	rm -f some_file
 ```
-- clean 不是规则中的第一个目标，所以需要显式调用 `make clean`
 
+- clean 不是规则中的第一个目标，所以需要显式调用 `make clean`
 - 如果碰巧有一个名为 clean 的文件，这个目标将不会被执行，后文 `.PHONY` 一节会有说明
 
 

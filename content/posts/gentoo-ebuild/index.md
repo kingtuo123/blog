@@ -105,7 +105,7 @@ src_install() {
 |`IUSE`            | 可用的 use 标志，+use 表示默认启用|
 |`REQUIRED_USE`    | USE 标志的配置必须满足的断言列表，才能对此 ebuild 有效|
 |`PROPERTIES`      | 以空格分隔的属性列表，支持条件语法|
-|`RESTRICT`        | 要限制的 Portage 功能的空格分隔列表，参考[man Ebuild](https://devmanual.gentoo.org/eclass-reference/ebuild/) 中 RESTRICT 一节|
+|`RESTRICT`        | 用于禁用 Portage 的默认行为，参考[man Ebuild](https://devmanual.gentoo.org/eclass-reference/ebuild/) 中 RESTRICT 一节|
 |`DEPEND`          | 构建时依赖的库或头文件|
 |`BDEPEND`         | 构建时依赖的构建工具  |
 |`RDEPEND`         | 运行时依赖的库或头文件|
@@ -136,19 +136,19 @@ src_install() {
 |`ROOT`           | 要将 `${D}` 下的文件合并到的根目录的绝对路径，通常是系统的根路径 `/`，仅允许在 `pkg_*` 阶段进行|
 |`DISTDIR`        | 下载的文件所在路径 `${PORTAGE_BUILDDIR}/distdir`|
 |`EPREFIX`        | 偏移安装路径，例如 `--prefix=${EPREFIX}/usr`|
-|`ED`             | 偏移临时安装路径 `${D}${EPREFIX}` |
-|`EROOT`          | 偏移根路径 `${ROOT}${EPREFIX}`|
+|`ED`             | 偏移临时安装路径 `${D}/${EPREFIX}` |
+|`EROOT`          | 偏移根路径 `${ROOT}/${EPREFIX}`|
 
 </div>
 
 
 <blockquote class="red">
 
-路径变量不以尾部斜杠结尾
+路径变量尾部不以斜杠结尾
 
 </blockquote>
 
-> `PORTAGE_BUILDDIR` 应当等于 `${PORTAGE_TMPDIR}/portage/${CATEGORY}/${PF}`，官方文档并未提及。
+> `PORTAGE_BUILDDIR` 等于 `${PORTAGE_TMPDIR}/portage/${CATEGORY}/${PF}`
 
 
 
@@ -292,12 +292,6 @@ KEYWORDS="-* amd64"    # 只在 amd64 架构上可用，其他架构都被屏蔽
 
 
 
-
-
-
-### RESTRICT
-
-RESTRICT 用于**禁用** Portage 的默认行为
 
 
 
