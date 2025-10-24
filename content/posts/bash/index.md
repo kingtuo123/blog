@@ -417,44 +417,44 @@ result=$(( 2**4 ))
 |`[[ cond1 && cond2 ]]`    |与                                                                                   |
 |`[[ cond1 \|\| cond2 ]]`  |或                                                                                   |
 |**文件测试操作符**        |                                                                                     |    
-|`-b file`                 |文件是块设备文件                                                                     |
-|`-c file`                 |文件是字符设备文件                                                                   |
-|`-d file`                 |文件是目录                                                                           |
-|`-e file`                 |文件存在                                                                             |
-|`-f file`                 |文件是普通文件（不是目录或设备文件）                                                 |
-|`-h file`                 |文件是符号链接                                                                       |
-|`-s file`                 |文件大小不为零                                                                       |
-|`-r file`                 |文件可读                                                                             |
-|`-w file`                 |文件可写                                                                             |
-|`-x file`                 |文件可执行                                                                           |
-|`file1 -ef file2`         |两个文件是同一个文件（硬链接或符号链接指向同一文件）                                 |
-|`file1 -nt file2`         |file1 比 file2 新                                                                    |
-|`file1 -ot file2`         |file1 比 file2 旧                                                                    |
+|`-b $file`                |文件是块设备文件                                                                     |
+|`-c $file`                |文件是字符设备文件                                                                   |
+|`-d $file`                |文件是目录                                                                           |
+|`-e $file`                |文件存在                                                                             |
+|`-f $file`                |文件是普通文件（不是目录或设备文件）                                                 |
+|`-h $file`                |文件是符号链接                                                                       |
+|`-s $file`                |文件大小不为零                                                                       |
+|`-r $file`                |文件可读                                                                             |
+|`-w $file`                |文件可写                                                                             |
+|`-x $file`                |文件可执行                                                                           |
+|`$file1 -ef $file2`       |两个文件是同一个文件（硬链接或符号链接指向同一文件）                                 |
+|`$file1 -nt $file2`       |file1 比 file2 新                                                                    |
+|`$file1 -ot $file2`       |file1 比 file2 旧                                                                    |
 |**字符串比较**            |                                                                                     |
-|`-z string`               |字符串长度为 0                                                                       |
-|`-n string`               |字符串长度不为 0                                                                     |
-|`string1 = string2`       |字符串相等                                                                           |
-|`string1 == string2`      |字符串相等                                                                           |
-|`string1 != string2`      |字符串不相等                                                                         |
-|`string1 < string2`       |string1 按字典顺序小于 string2                                                       |
-|`string1 > string2`       |string1 按字典顺序大于 string2                                                       |
+|`-z $string`              |字符串长度为 0                                                                       |
+|`-n $string`              |字符串长度不为 0                                                                     |
+|`$string1 =  $string2`    |字符串相等                                                                           |
+|`$string1 == $string2`    |字符串相等                                                                           |
+|`$string1 != $string2`    |字符串不相等                                                                         |
+|`$string1 <  $string2`    |string1 按字典顺序小于 string2                                                       |
+|`$string1 >  $string2`    |string1 按字典顺序大于 string2                                                       |
 |**数值比较**              |                                                                                     |
-|`num1 -eq num2`           |等于                                                                                 |
-|`num1 -ne num2`           |不等于                                                                               |
-|`num1 -lt num2`           |小于                                                                                 |
-|`num1 -le num2`           |小于等于                                                                             |
-|`num1 -gt num2`           |大于                                                                                 |
-|`num1 -ge num2`           |大于等于                                                                             |
+|`$num1 -eq $num2`         |等于                                                                                 |
+|`$num1 -ne $num2`         |不等于                                                                               |
+|`$num1 -lt $num2`         |小于                                                                                 |
+|`$num1 -le $num2`         |小于等于                                                                             |
+|`$num1 -gt $num2`         |大于                                                                                 |
+|`$num1 -ge $num2`         |大于等于                                                                             |
 |**正则表达式匹配**        |                                                                                     |
-`string =~ pattern`        |当 pattern 成功匹配到 string 中的字符则返回真，pattern 包含特殊字符时不加双引号      |
+`$string =~ pattern`       |当 pattern 成功匹配到 string 中的字符则返回真，pattern 包含特殊字符时不加双引号      |
 |**其他**                  |                                                                                     |
-|`-o optname`              |shell 选项 optname 已启用                                                            |
-|`-v varname`              |shell 变量 varname 已设置（已被赋值）                                                |
-|`-R varname`              |shell 变量 varname 已设置（已被赋值或为空）                                          |
+|`-o $optname`             |shell 选项 optname 已启用                                                            |
+|`-v $varname`             |shell 变量 varname 已设置（已被赋值）                                                |
+|`-R $varname`             |shell 变量 varname 已设置（已被赋值或为空）                                          |
 
 </div>
 
-> 更选项多见：[Bash Conditional Expressions](https://www.gnu.org/software/bash/manual/bash.html#Bash-Conditional-Expressions)
+> 更多选项见 [Bash Conditional Expressions](https://www.gnu.org/software/bash/manual/bash.html#Bash-Conditional-Expressions)
 
 
 ### 条件结构
@@ -806,21 +806,21 @@ log_to_file() {
 
 <div class="table-container no-thead">
 
-|                   |                                                                     |
-|:------------------|:--------------------------------------------------------------------|
-|**通配符**         |                                                                     |
-|`*`                |匹配 `>=0` 个任意字符                                                |
-|`?`                |匹配 `1` 个任意字符                                                  |
-|`[abc]`            |匹配 `abc` 中的 `1` 个字符                                           |
-|`[^0-9]`           |匹配除 `0-9` 以外的 `1` 个任意字符                                   |
-|**扩展通配符**     |**需启用** `shopt -s extglob`                                        |
-|`file?(.txt)`      |匹配 `file` 和 `file.txt`（匹配括号中的内容 `0` 或 `1` 次）          |
-|`file*(.txt)`      |匹配 `file` `file.txt` `file.txt.txt` 等（匹配括号中的内容 `>=0` 次）|
-|`file+(.txt)`      |匹配 `file.txt` `file.txt.txt` 等（匹配括号中的内容 `>=1` 次）       |
-|`file@(.txt\|.log)`|匹配 `file.txt` 或 `file.log`（匹配括号内的其中一项）                |
-|`!(*.txt)`         |匹配所有不以 `.txt` 结尾的文件（匹配不符合任何给定模式的）           |
-|**递归匹配**       |**需启用** `shopt -s globstar`                                       |
-|`**/*.txt`         |匹配当前目录及所有子目录中的 `.txt` 文件                             |
+|                   |                                                                                 |
+|:------------------|:----------------------------------------|:--------------------------------------|
+|**通配符**         |                                         |                                       |
+|`*`                |匹配 `>=0` 个任意字符                    |                                       |
+|`?`                |匹配 `1` 个任意字符                      |                                       |
+|`[abc]`            |匹配 `abc` 中的 `1` 个字符               |                                       |
+|`[^0-9]`           |匹配除 `0-9` 以外的 `1` 个任意字符       |                                       |
+|**扩展通配符**     |**需启用** `shopt -s extglob`            |                                       |
+|`file?(.txt)`      |匹配括号中的内容 `0` 或 `1` 次，         |`file` 、`file.txt`                    |
+|`file*(.txt)`      |匹配括号中的内容 `>=0` 次                |`file`、`file.txt`、`file.txt.txt`     |
+|`file+(.txt)`      |匹配括号中的内容 `>=1` 次                |`file.txt`、`file.txt.txt`             |
+|`file@(.txt\|.log)`|匹配括号内的其中一项                     |`file.txt`、`file.log`                 |
+|`!(*.txt)`         |匹配不符合任何给定模式的                 |匹配所有不以 `.txt` 结尾的文件         |
+|**递归匹配**       |**需启用** `shopt -s globstar`           |                                       |
+|`**/*.txt`         |匹配当前目录及所有子目录中的 `.txt` 文件 |                                       |
 
 </div>
 

@@ -2,6 +2,9 @@
 .no-thead thead {
 	display: none;
 }
+.no-border td {
+	border: 0px;
+}
 .w-20 table td:first-child, 
 .w-20 table th:first-child {
   min-width: 20px;
