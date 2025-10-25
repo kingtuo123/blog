@@ -747,13 +747,9 @@ ${PORTAGE_TMPDIR}/
 ```
 
 - ebuild 下载的文件存放在 `/var/cache/distfiles` 目录，然后链接到 `distdir` 目录下。
-
 - `src_unpack` 函数解压源文件到 `${WORKDIR}` 目录，即 `work` 目录。
-
 - `src_configure`、`src_compile` 函数工作在 `${S}` = `${WORKDIR}/${P}` 目录，即在 `work/zsh-5.9` 中配置、编译程序。
-
 - `src_install` 函数将文件临时安装到 `${D}`，即 `image` 目录。
-
 - 最后 ebuild 将 `image` 下的文件合并到系统的 `${ROOT}` 路径上，完成安装。
 
 
