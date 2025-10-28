@@ -13,6 +13,11 @@ header .title {
 	font-weight: normal;
 }
 
+.post-content table th {
+	font-family: "LXGW WenKai Medium";
+	font-weight:normal;
+}
+
 .post-list .title {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
@@ -214,30 +219,47 @@ blockquote.blue {
 .code-bar {
 	font-family: 'Maple Mono NF CN Light';
 	font-size: 15px;
-	color: #D699B6;
-	background-color: #2D353B;
+	color: light-dark(#5C6A72, #9DA9A0);
+	background-color: light-dark(#F3EAD3, #333C43);
 	border-radius: 10px 10px 0 0;
-	padding: 10px 10px 5px 10px;
+	padding: 5px;
 	margin-top: 10px;
-	margin-bottom: -20px;
+	margin-bottom: -12px;
     overflow-x: auto;
     word-break: break-all;
 	white-space: nowrap;
 	position: relative;
 	z-index: 99;
-	transition: background-color 0.5s ease;
+	border: 1px solid var(--post-pre-border-fg);
+	transition: all var(--transition-time) ease;
 }
-.dark .code-bar {
-	background-color: #232A2E;
-}
+
 .code-bar span:first-child {
-	color: #2D353B;
-	background-color: #D699B6;
+	color: light-dark(#F3EAD3, #333C43);
+	background-color: light-dark(#5C6A72, #859289);
 	padding: 1px 5px;
-	border-radius: 7px;
+	border-radius: 6px;
 	margin-right: 10px;
 	user-select: none;
+	transition: all var(--transition-time) ease;
 }
+
+.code-bar.term {
+	border: 1px solid var(--post-pre-term-border-fg);
+	border-bottom: 1px solid light-dark(#4D5960, #434F55);
+	color: light-dark(#9DA9A0, #9DA9A0);
+	background-color: light-dark(#333C43, #272E33);
+}
+
+.code-bar.term span:first-child {
+	color: light-dark(#333C43, #272E33);
+	background-color: light-dark(#9DA9A0, #859289);
+}
+.code-bar + .highlight > pre {
+	border-radius: 0px 0px 10px 10px;
+}
+
+
 
 
 

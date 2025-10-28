@@ -897,7 +897,7 @@ l-wx------ 1 king king 64 Apr 12 22:02 /dev/fd/63 -> 'pipe:[525267]'
 
 把 `<(cmd)` 和 `>(cmd)` 看作文件，主命令可以从 `<(cmd)` 文件读取数据，向 `>(cmd)` 文件写入数据
 
-{{< bar title="示例一" str="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
+{{< bar title="示例一" class="term" str="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
 
 ```bash-session
 $ cat 0<<eof 1>file
@@ -911,7 +911,7 @@ $ cat bar.txt
 bar123
 ```
 
-{{< bar title="示例二" str="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
+{{< bar title="示例二" class="term" str="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
 
 ```bash-session
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)
@@ -920,7 +920,7 @@ FOOBAR
 ```
 
 
-{{< bar title="错误示例" str="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
+{{< bar title="错误示例" class="term" str="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
 
 ```bash-session
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt) 1> >(sed s/$/BAD/ >bad.txt)
@@ -929,7 +929,7 @@ $ cat bad.txt
 foobarBAD
 ```
 
-{{< bar title="示例三" str="可以看作 sed 参数 文件1 文件2" >}}
+{{< bar title="示例三" class="term" str="可以看作 sed 参数 文件1 文件2" >}}
 
 ```bash-session
 $ sed -e 's/foo/FOO/' -e 's/bar/BAR/' <(echo foo) <(echo bar)

@@ -5,10 +5,10 @@ toc: false
 ---
 
 
-## USE 标记
+## USE 标志
 
 ```bash
-net-misc/chrony	-* caps rtc cmdmon readline seccomp
+net-misc/chrony    -* caps rtc cmdmon readline seccomp
 ```
 
 

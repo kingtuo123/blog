@@ -6,7 +6,7 @@ theme = "hugo-notes"
 disableKinds = ["taxonomy", "term", "section"]
 
 [params]
-	defaultTheme = "light"       # 默认主题 light 或 dark
+	defaultTheme = "auto"       # 默认主题 light 或 dark 或 auto
 	headerTitle = "夜不能寐"     # header 左上角标题
 
 [markup]
