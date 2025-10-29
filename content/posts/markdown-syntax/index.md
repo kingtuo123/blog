@@ -125,7 +125,10 @@ toc: true
 </blockquote>
 
 <blockquote class="yellow">
+</blockquote>
+
 <blockquote class="red">
+</blockquote>
 
 {{< /highlight >}}
 
@@ -477,11 +480,55 @@ CSS 文件：
 
 ## 文件名
 
-<div class="code-bar"><span>文件</span><span>FileName</span></div>
+<div class="code-bar">
+<span>文件</span><span>FileName</span>
+</div>
 
 ```html
-<div class="code-bar"><span>文件</span><span>FileName</span></div>
+<div class="code-bar term">
+<span>文件</span><span>FileName</span>
+</div>
 ```
+
+
+
+## 合并
+
+<div class="code-bar">
+	<span>合并</span><span>Markdown</span>
+</div>
+
+{{< highlight html >}}
+
+<div class="merge">
+
+```bash
+echo hello world
+```
+
+```bash-session
+$ ./test.sh
+hello world
+```
+
+</div>
+
+{{< /highlight >}}
+
+<div class="merge">
+
+```bash
+echo hello world
+```
+
+```bash-session
+$ ./test.sh
+hello world
+```
+
+</div>
+
+
 
 
 
