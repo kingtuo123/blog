@@ -19,20 +19,21 @@ toc: false
         display: block;
         user-select: none;
         margin-bottom: 5px;
-        font-weight: bold;
+        font-weight: normal;
+        transition: all 0.5s ease;
     }
     input[type="text"] {
         color: var(--text);
-        border: 2px solid var(--home-search-border-fg);
+        border: 1px solid var(--home-search-border-fg);
         width: 100%;
         padding: 8px;
         box-sizing: border-box;
         border-radius: 10px;
-        transition: all 0.5s ease;
+        transition: all var(--transition-time) ease;
     }
 
     input[type="text"]:focus {
-        border: 2px solid var(--home-search-border-focus-fg);
+        border: 1px solid var(--home-search-border-focus-fg);
         outline: none;
     }
 
@@ -49,11 +50,11 @@ toc: false
     .result {
         margin-top: 0px;
         padding: 10px;
-        color: var(--text);
-        background-color: var(--header-bg);
-        border: 2px solid var(--home-search-border-fg);
+        color: var(--fg);
+        background-color: light-dark(#F3EAD3, #333C43);
+        border: 1px solid var(--home-search-border-fg);
         border-radius: 10px;
-        transition: all 0.5s ease;
+        transition: all var(--transition-time) ease;
     }
     .highlight-0 {
         padding: 2px;
