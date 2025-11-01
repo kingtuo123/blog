@@ -1,0 +1,73 @@
+{
+	"customColorSchemes": [
+		[
+			{
+				"fill"       : "none",
+				"stroke"     : "light-dark(#5C6A72,#D3C6AA)", 
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#E67E80,#E67E80)",
+				"stroke"     : "light-dark(#E67E80,#E67E80)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#E69875,#E69875)",
+				"stroke"     : "light-dark(#E69875,#E69875)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#DBBC7F,#DBBC7F)",
+				"stroke"     : "light-dark(#DBBC7F,#DBBC7F)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#A7C080,#A7C080)",
+				"stroke"     : "light-dark(#A7C080,#A7C080)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#7FBBB3,#7FBBB3)",
+				"stroke"     : "light-dark(#7FBBB3,#7FBBB3)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#83C092,#83C092)",
+				"stroke"     : "light-dark(#83C092,#83C092)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			},
+			{
+				"fill"       : "light-dark(#D699B6,#D699B6)",
+				"stroke"     : "light-dark(#D699B6,#D699B6)",
+				"font"       : "light-dark(#5C6A72,#D3C6AA)"
+			}
+		]
+	],
+	"presetColors":
+	[
+		"light-dark(#5C6A72,#D3C6AA)",
+		"light-dark(#F85552,#E67E80)",
+		"light-dark(#F57D26,#E69875)",
+		"light-dark(#DFA000,#DBBC7F)",
+		"light-dark(#8DA101,#A7C080)",
+		"light-dark(#3A94C5,#7FBBB3)",
+		"light-dark(#35A77C,#83C092)",
+		"light-dark(#DF69BA,#D699B6)",
+		"light-dark(#5C6A72,#5C6A72)", 
+		"light-dark(#D3C6AA,#D3C6AA)",
+		"light-dark(#F85552,#F85552)",
+		"light-dark(#E67E80,#E67E80)",
+		"light-dark(#F57D26,#F57D26)",
+		"light-dark(#E69875,#E69875)",
+		"light-dark(#DFA000,#DFA000)",
+		"light-dark(#DBBC7F,#DBBC7F)",
+		"light-dark(#8DA101,#8DA101)",
+		"light-dark(#A7C080,#A7C080)",
+		"light-dark(#3A94C5,#3A94C5)",
+		"light-dark(#7FBBB3,#7FBBB3)",
+		"light-dark(#35A77C,#35A77C)",
+		"light-dark(#83C092,#83C092)",
+		"light-dark(#DF69BA,#DF69BA)",
+		"light-dark(#D699B6,#D699B6)"
+	]
+}

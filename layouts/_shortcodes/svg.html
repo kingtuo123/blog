@@ -1,5 +1,11 @@
 {{- $src := .Get "src" -}}
+{{- $fontFamily := .Get "font-family" | default "LXGW WenKai Mono" -}}
+{{- $fontSize := .Get "font-size" | default "16px" -}}
 {{- $class := .Get "class" | default "" -}}
+
+{{ $fontSizeReplace := printf `font-size: %s` $fontSize }}
+{{ $fontFamilyReplace := printf `font-family:'%s';` $fontFamily }}
+{{ $fontFaceReplace := printf `face="%s"` $fontFamily }}
 
 {{- if not $src -}}
     {{- errorf "缺少'src'参数" -}}
@@ -11,7 +17,7 @@
 
 {{- if fileExists $svgPath -}}
     <div class="svg-container {{ $class }}">
-        {{ readFile $svgPath | safeHTML }}
+		{{ readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s*[0-9]+px` $fontSizeReplace | safeHTML }}
     </div>
 {{- else -}}
     {{- errorf "SVG文件未找到: %s" $svgPath -}}

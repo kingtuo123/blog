@@ -48,11 +48,6 @@ header .title {
 	font-size: 15px;
 }
 
-.svg-container svg {
-	font-family: "LXGW WenKai Mono";
-	font-weight: normal;
-}
-
 strong {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
@@ -266,11 +261,22 @@ blockquote.blue {
 	height: auto;
 	transform: translateZ(0); /* 开启硬件加速 */
 	-webkit-transform: translateZ(0); /* Safari 前缀 */
-	transition: all 0.5s ease;
 }
+.svg-container svg {
+	font-family: "LXGW WenKai Mono";
+	font-size: 30px;
+	font-weight: normal;
+}
+.svg-container svg font,
+.svg-container svg path,
+.svg-container svg rect {
+	transition: all var(--transition-time) ease;
+}
+/*
 .dark .svg-container svg {
 	filter: invert(1) brightness(1.2) hue-rotate(20deg) sepia(0.3);
 }
+*/
 
 
 
