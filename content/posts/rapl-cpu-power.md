@@ -7,9 +7,9 @@ toc: false
 
 ## 简介
 
-PARL（Running Average Power Limit），Intel 的 CPU 硬件级功耗监控和管理接口。AMD 亦可用，但支持和稳定性会比 Intel 差
+PARL（Running Average Power Limit），Intel 的 CPU 硬件级功耗监控和管理接口。AMD 亦可用，但支持会比 Intel 差。
 
-RAPL 支持用户空间通过 sysfs / perf / msr 三种方式读取数据
+RAPL 支持通过 sysfs 和 msr 两种方式读取数据。
 
 
 ## 内核配置
@@ -32,7 +32,7 @@ CONFIG_INTEL_RAPL=y
 ├──energy_uj                                   # 累计能耗计数器，单位是微焦耳
 ├──max_energy_range_uj                         # 能耗计数器的最大值，溢出后会归零
 ├──enabled                                     # 功耗限制是否启用，默认 0 不启用
-├──power_uw                                    # 瞬时功率，单位是微瓦
+├──power_uw                                    # 瞬时功率，单位是微瓦（不一定支持）
 └──intel-rapl:0:0/                             # 子域，例如 core，核心功耗
 ```
 
@@ -82,12 +82,13 @@ energy_old=$(<$file_energy_uj)
 while true; do
 	sleep 1
 	energy_now=$(<$file_energy_uj)
-	if [[ energy_now -ge energy_old ]]; then
-		watt=$(( (energy_now - energy_old) / 1000000 ))
+	if [[ $energy_now -ge $energy_old ]]; then
+		watt=$(( (energy_now - energy_old) / 100000 ))
 	else
-		watt=$(( (energy_max - energy_old + energy_now) / 1000000 ))
+		watt=$(( (energy_max - energy_old + energy_now) / 100000 ))
 	fi
 	energy_old=$energy_now
-	printf "功耗 %2d W\n" $watt
+	watt="$((watt/10)).$((watt%10))"
+	printf "   功耗 %5sw   \n" $watt
 done
 ```
