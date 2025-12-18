@@ -7,7 +7,7 @@ toc: false
 
 ## 简介
 
-PARL（Running Average Power Limit），Intel 的 CPU 硬件级功耗监控和管理接口。AMD 亦可用，但支持会比 Intel 差。
+PARL（Running Average Power Limit），Intel 的 CPU 硬件级功耗监控和管理接口，AMD 亦支持。
 
 RAPL 支持通过 sysfs 和 msr 两种方式读取数据。
 
