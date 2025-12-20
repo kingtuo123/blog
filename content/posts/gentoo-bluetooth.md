@@ -17,7 +17,7 @@ CONFIG_BT_HCIBTUSB  : USB 蓝牙适配器驱动，无线网卡的蓝牙模块大
 CONFIG_RFKILL       : 用于管理无线射频设备（Wi-Fi、蓝牙、移动网络等）的开关状态
 ```
 
-设备 `Intel AX210 无线网卡` + `蓝牙耳机` ，启用：
+设备 `Intel AX210 无线网卡` + `蓝牙耳机` ，仅启用以下：
 
 ```text
 CONFIG_BT
@@ -34,7 +34,6 @@ CONFIG_RFKILL
 # emerge -av net-wireless/bluez
 ```
 
-另外需启用 `media-video/pipewire` 的 USE 标志 `bluetooth` 和 `sound-server` 。
 
 
 ## OpenRC 启动
@@ -71,6 +70,8 @@ Device 01:10:C4:71:BC:23 SIMGOT EH500
 
 ## PipeWire 切换设备
 
+`media-video/pipewire` 需启用 USE 标志 `bluetooth` 和 `sound-server` 。
+
 ```bash-session
 $ pactl list sinks short 
 53   alsa_output.pci-0000_c6_00.6.analog-stereo    PipeWire	s32le 2ch 48000Hz	SUSPENDED
@@ -79,6 +80,53 @@ $ pactl set-default-sink bluez_output.01_10_C4_71_BC_23.1
 ```
 
 
+## Rfkill
+
+```bash-session
+$ rfkill 
+ID  TYPE       DEVICE       SOFT       HARD
+ 0  wlan       phy0    unblocked  unblocked
+ 1  bluetooth  hci0    unblocked  unblocked
+```
+
+```bash-session
+$ rfkill block 1       # 关闭蓝牙，可用 bluetooth 代替 1
+$ rfkill unblock 1     # 开启蓝牙
+```
+
+`HARD` 是物理开关不用理会，`unblock` 后需要手动连接蓝牙。
+
+
+## Udev 规则
+
+```bash-session
+$ ls /sys/class/bluetooth
+hci0  hci0:256
+$ udevadm info --attribute-walk --path=/sys/class/bluetooth/hci0:256
+looking at device '/devices/pci0000:00/0000:00:08.1/0000:c6:00.3/usb1/1-5/1-5:1.0/bluetooth/hci0/hci0:256':
+  KERNEL=="hci0:256"
+  SUBSYSTEM=="bluetooth"
+  DRIVER==""
+  ATTR{power/control}=="auto"
+  ATTR{power/runtime_active_time}=="0"
+  ATTR{power/runtime_status}=="unsupported"
+  ATTR{power/runtime_suspended_time}=="0"
+```
+
+由于没有能标识设备唯一性的 `ATTR` 属性，所以只能对所有蓝牙设备应用以下规则：
+
+{{< bar str="/etc/udev/rules.d/88-bluetooth.rules" >}}
+
+```bash
+# 当蓝牙设备连接时触发
+ACTION=="add", SUBSYSTEM=="bluetooth", RUN+="/usr/bin/su king /home/king/.config/sway/scripts/bluetooth-connected.sh"
+# 当蓝牙设备断开时触发
+ACTION=="remove", SUBSYSTEM=="bluetooth", RUN+="/usr/bin/su king /home/king/.config/sway/scripts/bluetooth-disconnected.sh"
+```
+
+```bash-session
+# udevadm control --reload
+```
 
 
 ## 参考链接
