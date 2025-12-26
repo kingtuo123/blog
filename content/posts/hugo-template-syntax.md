@@ -291,7 +291,7 @@ This is line two.`
 ```
 
 
-## 访问与站点配置与前置元数据
+## 访问站点配置与前置元数据
 
 {{< bar block="站点配置" title="hugo.toml" >}}
 
