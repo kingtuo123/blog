@@ -14,7 +14,7 @@ net-misc/chrony    -* caps rtc cmdmon readline seccomp
 
 ## 配置
 
-<div class="code-bar"><span>文件</span><span>/etc/chrony/chrony.conf</span></div>
+{{< bar title="/etc/chrony/chrony.conf" >}}
 
 ```bash
 # NTP 源，chrony 会自动选择最优服务器，无须排序

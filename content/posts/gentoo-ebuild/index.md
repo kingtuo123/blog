@@ -604,7 +604,7 @@ ebuild 通过调用 [acct-user.eclass](https://devmanual.gentoo.org/eclass-refer
 和 [acct-group.eclass](https://devmanual.gentoo.org/eclass-reference/acct-group.eclass/index.html)
 创建用户和组，以下是创建 docker 用户组的 ebuild ：
 
-{{< bar str="/var/db/repos/gentoo/acct-group/docker/docker-0-r3.ebuild" >}}
+{{< bar title="/var/db/repos/gentoo/acct-group/docker/docker-0-r3.ebuild" >}}
 
 ```bash
 # Copyright 1999-2024 Gentoo Authors
@@ -617,7 +617,7 @@ inherit acct-group
 ACCT_GROUP_ID=48
 ```
 
-{{< bar str="/var/db/repos/gentoo/acct-user/docker_auth/docker_auth-0-r3.ebuild" >}}
+{{< bar title="/var/db/repos/gentoo/acct-user/docker_auth/docker_auth-0-r3.ebuild" >}}
 
 ```bash
 # Copyright 2020-2024 Gentoo Authors

@@ -1,5 +1,5 @@
 ---
-title: "Bash 脚本"
+title: "Bash 脚本入门"
 date: "2025-04-15"
 toc: true
 ---
@@ -528,7 +528,7 @@ Your selected: Banana
 
 #### for 循环
 
-{{< bar title="遍历简单列表" >}}
+{{< bar block="遍历简单列表" >}}
 
 ```bash
 for i in 1 2 3 4 5; do
@@ -536,7 +536,7 @@ for i in 1 2 3 4 5; do
 done
 ```
 
-{{< bar title="遍历字符串列表" >}}
+{{< bar block="遍历字符串列表" >}}
 
 ```bash
 for color in red green blue; do
@@ -544,7 +544,7 @@ for color in red green blue; do
 done
 ```
 
-{{< bar title="使用大括号展开" >}}
+{{< bar block="使用大括号展开" >}}
 
 ```bash
 for i in {1..5}; do
@@ -552,7 +552,7 @@ for i in {1..5}; do
 done
 ```
 
-{{< bar title="指定步长" >}}
+{{< bar block="指定步长" >}}
 
 ```bash
 for i in {1..10..2}; do
@@ -560,7 +560,7 @@ for i in {1..10..2}; do
 done
 ```
 
-{{< bar title="遍历命令输出" >}}
+{{< bar block="遍历命令输出" >}}
 
 ```bash
 for file in "$(ls)"; do
@@ -568,7 +568,7 @@ for file in "$(ls)"; do
 done
 ```
 
-{{< bar title="C 语言风格的 for 循环" >}}
+{{< bar block="C 语言风格的 for 循环" >}}
 
 ```bash
 for ((i=0; i<5; i++)); do
@@ -578,7 +578,7 @@ done
 
 #### while 循环
 
-{{< bar title="基本计数器" >}}
+{{< bar block="基本计数器" >}}
 
 ```bash
 count=1
@@ -588,7 +588,7 @@ while [ $count -le 5 ]; do
 done
 ```
 
-{{< bar title="读取文件内容" >}}
+{{< bar block="读取文件内容" >}}
 
 ```bash
 while read line; do
@@ -596,7 +596,7 @@ while read line; do
 done < filename.txt
 ```
 
-{{< bar title="无限循环" >}}
+{{< bar block="无限循环" >}}
 
 ```bash
 while true; do
@@ -605,7 +605,7 @@ while true; do
 done
 ```
 
-{{< bar title="使用算术表达式" >}}
+{{< bar block="使用算术表达式" >}}
 
 ```bash
 count=0
@@ -617,7 +617,7 @@ done
 
 #### until 循环
 
-{{< bar title="基本计数器" >}}
+{{< bar block="基本计数器" >}}
 
 ```bash
 count=1
@@ -627,7 +627,7 @@ until [ $count -gt 5 ]; do
 done
 ```
 
-{{< bar title="等待某个条件满足" >}}
+{{< bar block="等待某个条件满足" >}}
 
 ```bash
 until ping -c1 example.com &>/dev/null; do
@@ -653,7 +653,7 @@ echo "example.com is now reachable!"
 
 ### 函数
 
-{{< bar title="语法" str="不加 function 也可以" >}}
+{{< bar block="语法" title="不加 function 也可以" >}}
 
 ```bash
 function func_name() {
@@ -661,7 +661,7 @@ function func_name() {
 }
 ```
 
-{{< bar title="函数参数" str="使用位置参数变量 $1 $2 ..." >}}
+{{< bar block="函数参数" title="使用位置参数变量 $1 $2 ..." >}}
 
 ```bash
 greet() {
@@ -670,7 +670,7 @@ greet() {
 greet "Alice"
 ```
 
-{{< bar title="返回值" str="使用 echo 返回一个数组" >}}
+{{< bar block="返回值" title="使用 echo 返回一个数组" >}}
 
 ```bash
 create_array() {
@@ -681,7 +681,7 @@ my_array=($(create_array))
 echo "Array elements: ${my_array[@]}"
 ```
 
-{{< bar title="返回状态" str="使用 return（0-255），0 表示成功，大于 1 表示失败" >}}
+{{< bar block="返回状态" title="使用 return（0-255），0 表示成功，大于 1 表示失败" >}}
 
 ```bash
 is_number() {
@@ -690,7 +690,7 @@ is_number() {
 is_number "123" && echo "Valid number"
 ```
 
-{{< bar title="作用域" str="使用 local 创建局部变量，默认是全局变量" >}}
+{{< bar block="作用域" title="使用 local 创建局部变量，默认是全局变量" >}}
 
 ```bash
 demo() {
@@ -699,7 +699,7 @@ demo() {
 }
 ```
 
-{{< bar title="递归" >}}
+{{< bar block="递归" >}}
 
 ```bash
 factorial() {
@@ -713,13 +713,13 @@ factorial() {
 echo "计算阶乘： 5! = $(factorial 5)"
 ```
 
-{{< bar title="调用外部函数" >}}
+{{< bar block="调用外部函数" >}}
 
 ```bash
 source functions.sh
 ```
 
-{{< bar title="重定向" str="调用 log_to_file 函数，输出会写入 output.log" >}}
+{{< bar block="重定向" title="调用 log_to_file 函数，输出会写入 output.log" >}}
 
 ```bash
 log_to_file() {
@@ -897,7 +897,7 @@ l-wx------ 1 king king 64 Apr 12 22:02 /dev/fd/63 -> 'pipe:[525267]'
 
 把 `<(cmd)` 和 `>(cmd)` 看作文件，主命令可以从 `<(cmd)` 文件读取数据，向 `>(cmd)` 文件写入数据
 
-{{< bar title="示例一" class="term" str="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
+{{< bar block="示例一" class="term" title="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
 
 ```bash-session
 $ cat 0<<eof 1>file
@@ -911,7 +911,7 @@ $ cat bar.txt
 bar123
 ```
 
-{{< bar title="示例二" class="term" str="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
+{{< bar block="示例二" class="term" title="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
 
 ```bash-session
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)
@@ -920,7 +920,7 @@ FOOBAR
 ```
 
 
-{{< bar title="错误示例" class="term" str="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
+{{< bar block="错误示例" class="term" title="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
 
 ```bash-session
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt) 1> >(sed s/$/BAD/ >bad.txt)
@@ -929,7 +929,7 @@ $ cat bad.txt
 foobarBAD
 ```
 
-{{< bar title="示例三" class="term" str="可以看作 sed 参数 文件1 文件2" >}}
+{{< bar block="示例三" class="term" title="可以看作 sed 参数 文件1 文件2" >}}
 
 ```bash-session
 $ sed -e 's/foo/FOO/' -e 's/bar/BAR/' <(echo foo) <(echo bar)

@@ -176,7 +176,7 @@ $ ac_cv_path_SED=/path/to/sed ./configure
 - `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure`
 - `autoconf` 的宏以 `AC_` 开头，详见 [Autoconf Macro Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Autoconf-Macro-Index.html)
 
-<div class="code-bar"><span>文件</span><span>最小化配置的 configure.ac</span></div>
+{{< bar title="最小化配置的 configure.ac" >}}
 
 ```bash
 # 初始化 autoconf，指定软件包名称、版本号和错误报告地址
@@ -210,7 +210,7 @@ autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
 
 当 `configure.ac` 包含 `autoconf` 以外的第三方宏，如 `automake` 自带的宏和用户自定义的宏，`aclocal` 作用是将所有第三方宏整合到一个单一的文件 `aclocal.m4` 中，以供 `autoconf` 使用
 
-<div class="code-bar"><span>文件</span><span>configure.ac</span></div>
+{{< bar title="configure.ac" >}}
 
 ```bash
 AC_INIT([hello], [1.0], [bug-report@address])
@@ -247,7 +247,7 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 使用 `AC_DEFINE` 创建 C 语言宏定义
 
-<div class="code-bar"><span>文件</span><span>configure.ac</span></div>
+{{< bar title="configure.ac" >}}
 
 ```bash
 AC_INIT([hello], [1.0], [bug-report@address])
@@ -276,7 +276,7 @@ config.h        config.log   configure
 
 最终生成的头文件：
 
-<div class="code-bar"><span>文件</span><span>config.h</span></div>
+{{< bar title="config.h" >}}
 
 ```c
 /* This is the foobar value */
@@ -317,7 +317,7 @@ config.h        config.log   configure
     └── Makefile.am
 ```
 
-<div class="code-bar"><span>文件</span><span>src/main.c</span></div>
+{{< bar title="src/main.c" >}}
 
 ```c
 #include "../config.h"
@@ -334,7 +334,7 @@ int main(void){
 ```
 
 
-<div class="code-bar"><span>文件</span><span>configure.ac</span></div>
+{{< bar title="configure.ac" >}}
 
 ```bash
 AC_INIT([hello], [1.0], [bug-report@address])
@@ -360,7 +360,7 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
 ```
 
-<div class="code-bar"><span>文件</span><span>Makefile.am</span></div>
+{{< bar title="Makefile.am" >}}
 
 ```makefile
 # SUBDIRS 表示需递归构建的子目录
@@ -369,7 +369,7 @@ SUBDIRS = src
 
 
 
-<div class="code-bar"><span>文件</span><span>src/Makefile.am</span></div>
+{{< bar title="src/Makefile.am" >}}
 
 ```makefile
 # 构建 hello 这个可执行文件

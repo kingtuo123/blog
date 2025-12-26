@@ -7,7 +7,7 @@ toc: false
 
 ## 文件
 
-<div class="code-bar"><span>文件</span><span>hello.c</span></div>
+{{< bar title="hello.c" >}}
 
 ```c
 #include <stdio.h>
@@ -19,7 +19,7 @@ int main(void){
 }
 ```
 
-<div class="code-bar"><span>文件</span><span>hello.h</span></div>
+{{< bar title="hello.h" >}}
 
 ```c
 #define MESSAGE "hello world"

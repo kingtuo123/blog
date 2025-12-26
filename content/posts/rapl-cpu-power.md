@@ -55,7 +55,7 @@ ATTR{name}=="package-0"
 普通用户对 `energy_uj` 无可读权限，通过 udev 规则设置权限
 
 
-<div class="code-bar"><span>文件</span><span>/etc/udev/rules.d/99-powercap.rules</span></div>
+{{< bar title="/etc/udev/rules.d/99-powercap.rules" >}}
 
 ```bash
 SUBSYSTEM=="powercap", KERNEL=="intel-rapl:0", RUN+="/usr/bin/chmod a+r /sys/class/powercap/%k/energy_uj"
