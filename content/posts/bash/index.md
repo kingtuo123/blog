@@ -10,7 +10,7 @@ toc: true
 ## 变量
 
 
-<div class="table-container no-thead w-100">
+{{< table thead="false" min-width="100" >}}
 
 |        |                                                |
 |:-------|:-----------------------------------------------|
@@ -22,7 +22,7 @@ toc: true
 |局部变量|`local name`                                    |
 |删除变量|`unset name`                                    |
 
-</div>
+{{< /table >}}
 
 >  `local` 仅在函数内使用
 
@@ -92,7 +92,7 @@ $ var=456 echo $var
 
 ### 特殊变量
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="50" >}}
 
 |    |                                     |
 |:---|:------------------------------------|
@@ -106,7 +106,7 @@ $ var=456 echo $var
 |`!` |最近被放入后台的进程 ID              |
 |`-` |set 命令或 shell 自身设置的选项      |
 
-</div>
+{{< /table >}}
 
 
 ```bash
@@ -156,7 +156,7 @@ Using "$*":
 
 
 
-<div class="table-container no-thead w-120">
+{{< table thead="false" min-width="140" >}}
 
 |              |                                                |
 |:-------------|:-----------------------------------------------|
@@ -177,7 +177,7 @@ Using "$*":
 |`${!name[*]}` |匹配所有索引/键作为一个字符串                   |
 |`b=(${a[@]})` |复制数组                                        |
 
-</div>
+{{< /table >}}
 
 
 
@@ -195,14 +195,14 @@ $ ls /temp |& grep -o "file"
 file
 ```
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="60" >}}
 
 |      |                                                                  |
 |:-----|:-----------------------------------------------------------------|
 |`\|`  |将前一个命令的 **标准输出** 传递给下一个命令                      |
 |`\|&` |将前一个命令的 **标准输出** 和 **标准错误** 一起传递给下一个命令  |
 
-</div>
+{{< /table >}}
 
 
 ### 命名管道
@@ -224,7 +224,7 @@ hello world
 
 ### 命令列表操作符
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="60" >}}
 
 |       |                                 |
 |:------|:--------------------------------|
@@ -233,7 +233,7 @@ hello world
 |`\|\|` |逻辑或，前命令失败才执行后续命令 |
 |`&`    |后台执行                         |
 
-</div>
+{{< /table >}}
 
 
 ### 文件描述符
@@ -242,7 +242,7 @@ hello world
 
 {{< svg src="fdt.svg" >}}
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="60" >}}
 
 |      |                         |
 |:-----|:------------------------|
@@ -251,7 +251,7 @@ hello world
 |`2`   |标准错误 `stderr`        |
 |`3-8` |自定义文件描述符，共 6 个|
 
-</div>
+{{< /table >}}
 
 ```bash-session
 $ ls -l /dev/std*
@@ -282,7 +282,7 @@ lrwx------ 1 king king 64 Apr 10 18:46 2 -> /dev/pts/1
 
 
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                     |                                                                                       |
 |:--------------------|:--------------------------------------------------------------------------------------|
@@ -305,7 +305,7 @@ lrwx------ 1 king king 64 Apr 10 18:46 2 -> /dev/pts/1
 |**自定义文件描述符** |**读写**                                                                               |
 |`n<>file`            |关联 `n` → `file`                                                                      |
 
-</div>
+{{< /table >}}
 
 > 之前习惯在 `>` 右侧加空格，但像 `command 1> file1 2> file2` 和 `command 1>file1 2>file2` 明显后者更易阅读和理解，`file` 应是 `>` 的参数而不是 `command` 的参数，所以 . . .
 
@@ -368,7 +368,7 @@ result=$(( 2**4 ))
 - `(( ))` 只支持整数运算，浮点运算需要使用 `bc` 或 `awk` 等其他工具
 - `(( ))` 不返回计算结果，只返回退出状态。要获取计算结果，应使用 `$(( ))`
 
-<div class="table-container no-thead w-100">
+{{< table thead="false" >}}
 
 |            |                                                                                                     |
 |:-----------|:----------------------------------------------------------------------------------------------------|
@@ -378,7 +378,7 @@ result=$(( 2**4 ))
 |**位运算**  |`&`&ensp;`\|`&ensp;`^`&ensp;`~`&ensp;`>>`&ensp;`<<`                                                  |
 |**数值进制**| 十六进制 `0x` `FF`，八进制 `0` `77`，二进制 `2#` `1010`                                             |
 
-</div>
+{{< /table >}}
 
 ### [[ 表达式 ]]
 
@@ -389,7 +389,7 @@ result=$(( 2**4 ))
 [[ "$a" =~ ^[0-9]+$ ]]  # 正则表达式匹配	
 ```
 
-<div class="table-container w-150 ">
+{{< table min-width="150" >}}
 
 |区别              |`[ ]`                           |`[[ ]]`               |
 |:-----------------|:-------------------------------|:---------------------|
@@ -399,13 +399,13 @@ result=$(( 2**4 ))
 |**模式匹配**      |不支持                          |支持 `==`、`=~`       |
 |**通配符展开**    |不展开                          |展开                  |
 
-</div>
+{{< /table >}}
 
 -  `[ ]` 等同 `test` 命令，如果编写可移植的 POSIX shell 脚本（如 sh），使用 `[ ]`
 - 如果使用 Bash，优先用 `[[ ]]`，因为它更安全、功能更强
 - 变量引用最好用双引号括起来，防止空变量或包含空格的变量
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                          |                                                                                     |
 |:-------------------------|:------------------------------------------------------------------------------------|
@@ -452,7 +452,7 @@ result=$(( 2**4 ))
 |`-v $varname`             |shell 变量 varname 已设置（已被赋值）                                                |
 |`-R $varname`             |shell 变量 varname 已设置（已被赋值或为空）                                          |
 
-</div>
+{{< /table >}}
 
 > 更多选项见 [Bash Conditional Expressions](https://www.gnu.org/software/bash/manual/bash.html#Bash-Conditional-Expressions)
 
@@ -639,7 +639,7 @@ echo "example.com is now reachable!"
 
 #### 循环控制
 
-<div class="table-container no-thead w-90">
+{{< table thead="false" min-width="100" >}}
 
 |           |                              |
 |:----------|:-----------------------------|
@@ -647,8 +647,7 @@ echo "example.com is now reachable!"
 |`continue` |跳过当前迭代，进入下一次循环  |
 |`exit`     |退出整个脚本                  |
 
-</div>
-
+{{< /table >}}
 
 
 ### 函数
@@ -732,7 +731,7 @@ log_to_file() {
 ## Shell 扩展
 
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                       |                                                                                  |
 |:----------------------|:---------------------------------------------------------------------------------|
@@ -766,11 +765,11 @@ log_to_file() {
 |                       |`E`：将 `str` 中的转义字符（`\n` `\t` 等）展开，类似 `echo -e`                    |
 |                       |`A`：显示变量是如何声明的，如 `str='hello'` 则 `echo ${str@A}` 输出 `str='hello'` |
 
-</div>
+{{< /table >}}
 
 
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                              |                          |                |                     |
 |:-----------------------------|:-------------------------|:---------------|:--------------------|
@@ -788,9 +787,9 @@ log_to_file() {
 |`${var,单个通配符}`              |匹配行首字符并转换为小写  |`${var,}`       |`h` OLAHOLA          |
 |`${var,,单个通配符}`             |匹配的所有字符转换为小写  |`${var,,}`      |`holahola`           |
 
-</div>
+{{< /table >}}
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                              |                                            |
 |:-----------------------------|:-------------------------------------------|
@@ -798,13 +797,13 @@ log_to_file() {
 |`${!prefix@}`                 |匹配所有以 `prefix` 开头的变量名作为独立单词，类似 `$@` |
 |`${!prefix*}`                 |匹配所有以 `prefix` 开头的变量名作为一个字符串，类似 `$*` |
 
-</div>
+{{< /table >}}
 
 
 
 ## 文件名匹配
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                   |                                                                                 |
 |:------------------|:----------------------------------------|:--------------------------------------|
@@ -822,7 +821,7 @@ log_to_file() {
 |**递归匹配**       |**需启用** `shopt -s globstar`           |                                       |
 |`**/*.txt`         |匹配当前目录及所有子目录中的 `.txt` 文件 |                                       |
 
-</div>
+{{< /table >}}
 
 
 ### 文件名匹配问题一
@@ -1054,7 +1053,7 @@ coproc NAME { command; }
 
 如果不指定 `NAME`，Bash 会使用默认名称 `COPROC`，协进程启动后，Bash 会创建两个文件描述符及 PID 变量：
 
-<div class="table-container no-thead w-90">
+{{< table thead="false" min-width="100" >}}
 
 |           |                                     |
 |:----------|:------------------------------------|
@@ -1062,7 +1061,7 @@ coproc NAME { command; }
 |`NAME[1]`  | 用于向协进程写入（协进程的标准输入）|
 |`NAME_PID` | 协进程的 PID                        |
 
-</div>
+{{< /table >}}
 
 ```bash
 #!/bin/bash
@@ -1182,7 +1181,7 @@ $ ./test.sh
 ^C捕获到Ctrl+C
 ```
 
-<div class="table-container w-100">
+{{< table min-width="120,120" >}}
 
 |信号编号|信号名	|说明                               |
 |:-------|:---------|:----------------------------------|
@@ -1193,7 +1192,7 @@ $ ./test.sh
 |15	     |SIGTERM	|终止信号 `kill`                    |
 |0	     |EXIT	    |Shell 脚本运行完成后退出时默认触发 |
 
-</div>
+{{< /table >}}
 
 
 
@@ -1201,7 +1200,7 @@ $ ./test.sh
 
 > 下表由 DeepSeek 生成，仅供参考，详见官方文档 [Shell Builtin Commands](https://www.gnu.org/software/bash/manual/bash.html#Shell-Builtin-Commands)
 
-<div class="table-container w-100">
+{{< table min-width="120" >}}
 
 | 命令 | 说明 |
 |:------|:------|
@@ -1276,13 +1275,13 @@ $ ./test.sh
 | `{ }` | 命令分组(在当前 shell 中执行) |
 | `[[ ]]` | 条件表达式测试 |
 
-</div>
+{{< /table >}}
 
 ## Shell 变量
 
 > 下表由 DeepSeek 生成，仅供参考，详见官方文档 [Shell Variables](https://www.gnu.org/software/bash/manual/bash.html#Shell-Variables)
 
-<div class="table-container w-150">
+{{< table min-width="150" >}}
 
 | 变量名 | 说明 |
 |:-------|:-----|
@@ -1381,4 +1380,4 @@ $ ./test.sh
 | `UID` | 当前用户的真实用户 ID |
 | `_` | 上一个命令的最后一个参数 |
 
-</div>
+{{< /table >}}

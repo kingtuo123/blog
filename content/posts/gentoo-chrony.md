@@ -65,7 +65,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 ^? ntp.tuna.tsinghua.edu.cn      0   8     0     -     +0ns[   +0ns] +/-    0ns
 ```
 
-<div class="table-container no-thead"> 
+{{< table thead="false" >}}
 
 |             |                                                                                               |
 |:------------|:----------------------------------------------------------------------------------------------|
@@ -81,4 +81,4 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 |`LastRx`     |最后一次收到响应是在多久之前，单位是秒，`-` 表示从未收到过响应                                 |
 |`Last sample`|最后一次测量的时间偏移 `调整的偏移量 [测量的偏移量] 估计误差`                                  |
 
-</div>
+{{< /table >}}

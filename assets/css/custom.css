@@ -1,53 +1,40 @@
+/*****     字体     *****/
 html, body {
 	font-family: "LXGW WenKai";
 	font-weight: normal;
 }
-
 header .title {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
-
 #toc-toggle {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
-
 .post-content table th {
 	font-family: "LXGW WenKai Medium";
 	font-weight:normal;
 }
-
 .post-list .title {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
-
 .post-content h1,h2,h3,h4,h5,h6 {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
-
 .post-content code:not(.highlight code):not(blockquote code) {
 	font-family: "LXGW WenKai Mono";
 	font-weight: normal;
 }
-
 .post-content blockquote code{
 	font-family: "LXGW WenKai Mono";
 	font-weight: normal;
 }
-
-.post-content pre {
-	line-height: 1.4;
-}
-
 .post-content pre code {
 	font-family: "Maple Mono NF CN Light";
 	font-weight: normal;
-	font-size: 15px;
 }
-
 strong {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
@@ -57,107 +44,41 @@ strong {
 
 
 
-/*****     表格样式     *****/
+/*****     短代码: table     *****/
+.table-container {
+	width: 100%;
+	white-space: nowrap;
+	overflow-x: auto;
+}
 .no-thead thead {
 	display: none;
 }
 .no-border td {
 	border-color: transparent;
 }
-.w-20 table td:first-child, 
-.w-20 table th:first-child {
-  min-width: 20px;
-  width: 20px;
+
+
+
+
+
+/*****     短代码: svg     *****/
+.svg-container svg {
+	margin: 0;
+	zoom: 1;
+	max-width: 100%;
+	height: auto;
+	transform: translateZ(0);          /* 开启硬件加速 */
+	-webkit-transform: translateZ(0);  /* Safari 前缀 */
 }
-.w-30 table td:first-child, 
-.w-30 table th:first-child {
-  min-width: 30px;
-  width: 30px;
+.svg-container svg {
+	font-family: "LXGW WenKai Mono";
+	font-size: 30px;
+	font-weight: normal;
 }
-.w-40 table td:first-child, 
-.w-40 table th:first-child {
-  min-width: 40px;
-  width: 40px;
-}
-.w-50 table td:first-child, 
-.w-50 table th:first-child {
-  min-width: 50px;
-  width: 50px;
-}
-.w-60 table td:first-child, 
-.w-60 table th:first-child {
-  min-width: 60px;
-  width: 60px;
-}
-.w-70 table td:first-child, 
-.w-70 table th:first-child {
-  min-width: 70px;
-  width: 70px;
-}
-.w-80 table td:first-child, 
-.w-80 table th:first-child {
-  min-width: 80px;
-  width: 80px;
-}
-.w-90 table td:first-child, 
-.w-90 table th:first-child {
-  min-width: 90px;
-  width: 90px;
-}
-.w-100 table td:first-child, 
-.w-100 table th:first-child {
-  min-width: 100px;
-  width: 100px;
-}
-.w-110 table td:first-child, 
-.w-110 table th:first-child {
-  min-width: 110px;
-  width: 110px;
-}
-.w-120 table td:first-child, 
-.w-120 table th:first-child {
-  min-width: 120px;
-  width: 120px;
-}
-.w-130 table td:first-child, 
-.w-130 table th:first-child {
-  min-width: 130px;
-  width: 130px;
-}
-.w-140 table td:first-child, 
-.w-140 table th:first-child {
-  min-width: 140px;
-  width: 140px;
-}
-.w-150 table td:first-child, 
-.w-150 table th:first-child {
-  min-width: 150px;
-  width: 150px;
-}
-.w-160 table td:first-child, 
-.w-160 table th:first-child {
-  min-width: 160px;
-  width: 160px;
-}
-.w-170 table td:first-child, 
-.w-170 table th:first-child {
-  min-width: 170px;
-  width: 170px;
-}
-.w-180 table td:first-child, 
-.w-180 table th:first-child {
-  min-width: 180px;
-  width: 180px;
-}
-.w-190 table td:first-child, 
-.w-190 table th:first-child {
-  min-width: 190px;
-  width: 190px;
-}
-.w-200 table td:first-child, 
-.w-200 table th:first-child {
-  min-width: 200px;
-  width: 200px;
+.svg-container svg font,
+.svg-container svg path,
+.svg-container svg rect {
+	transition: all var(--transition-time) ease;
 }
 
 
@@ -252,31 +173,6 @@ blockquote.blue {
 
 
 
-
-/*****     svg     *****/
-.svg-container svg {
-	margin: 0;
-	zoom: 1;
-	max-width: 100%;
-	height: auto;
-	transform: translateZ(0); /* 开启硬件加速 */
-	-webkit-transform: translateZ(0); /* Safari 前缀 */
-}
-.svg-container svg {
-	font-family: "LXGW WenKai Mono";
-	font-size: 30px;
-	font-weight: normal;
-}
-.svg-container svg font,
-.svg-container svg path,
-.svg-container svg rect {
-	transition: all var(--transition-time) ease;
-}
-/*
-.dark .svg-container svg {
-	filter: invert(1) brightness(1.2) hue-rotate(20deg) sepia(0.3);
-}
-*/
 
 
 

@@ -333,7 +333,7 @@ toc: true
 
 ## 函数
 
-<div class="table-container no-thead"> 
+{{< table thead="false" >}}
 
 |||
 |:--|:--|:--|:--|:--|
@@ -413,7 +413,7 @@ toc: true
 |[urls.PathEscape](https://gohugo.io/functions/urls/pathescape/ "返回给定字符串，将所有百分比编码序列替换为对应的未转义字符。") |[urls.PathUnescape](https://gohugo.io/functions/urls/pathunescape/ "返回给定字符串，对特殊字符和保留分隔符进行百分比编码，以便安全地用作 URL 路径中的一段。") |[ref](https://gohugo.io/functions/urls/ref/ "返回指定路径、语言和输出格式的页面的绝对 URL。") |[relLangURL](https://gohugo.io/functions/urls/rellangurl/ "返回一个带有语言前缀的相对 URL（如果存在的话）。") |[relref](https://gohugo.io/functions/urls/relref/ "返回指定路径、语言和输出格式的页面的相对 URL。")|
 |[relURL](https://gohugo.io/functions/urls/relurl/ "返回一个相对 URL。") |[urlize](https://gohugo.io/functions/urls/urlize/ "返回给定字符串，已针对在 URL 中使用进行净化处理。")|
 
-</div>
+{{< /table >}}
 
 
 
@@ -422,7 +422,7 @@ toc: true
 
 ## 方法
 
-<div class="table-container no-thead"> 
+{{< table thead="false" >}}
 
 |||
 |:--|:--|:--|:--|:--|
@@ -489,7 +489,7 @@ toc: true
 |[UnixMilli](https://gohugo.io/methods/time/unixmilli/ "返回给定的 time.Time 值，表示为自 1970 年 1 月 1 日 UTC 起经过的毫秒数。") |[UnixNano](https://gohugo.io/methods/time/unixnano/ "返回给定时间点自 1970 年 1 月 1 日 UTC 起经过的纳秒数。") |[UTC](https://gohugo.io/methods/time/utc/ "返回给定的 time.Time 值，并将其时区设置为 UTC。") |[Weekday](https://gohugo.io/methods/time/weekday/ "返回给定时间值对应的星期几。") |[Year](https://gohugo.io/methods/time/year/ "返回给定 time.Time 值的年份。")|
 |[YearDay](https://gohugo.io/methods/time/yearday/ "返回给定时间值在一年中的天数，非闰年范围为[1, 365]，闰年范围为[1, 366]。")|
 
-</div>
+{{< /table >}}
 
 
 

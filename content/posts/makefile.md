@@ -18,7 +18,7 @@ targets: prerequisites
 	command
 ```
 
-<div class="table-container no-thead"> 
+{{< table thead="false" min-width="150" >}}
 
 |                |                                                              |
 |:---------------|:-------------------------------------------------------------|
@@ -26,7 +26,7 @@ targets: prerequisites
 |`command`       |通常是用于生成 targets 的一系列步骤，以 Tab 开头              |
 |`prerequisites` |依赖文件（先决条件），以空格分隔，需要在执行 command 之前存在 |
 
-</div>
+{{< /table >}}
 
 
 
@@ -147,7 +147,7 @@ test: $(obj)
 
 ### 赋值
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="50" >}}
 
 |符号 |作用                        |
 |:----|:---------------------------|
@@ -156,7 +156,7 @@ test: $(obj)
 |`+=` | 变量追加赋值               |
 |`?=` | 变量为空则给它赋值         |
 
-</div>
+{{< /table >}}
 
 ### = 与 := 的区别
 
@@ -259,7 +259,7 @@ f2.o:
 
 ## 通配符
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |符号|作用                |                                                                       |
 |:---|:-------------------|:----------------------------------------------------------------------|
@@ -267,7 +267,7 @@ f2.o:
 |`%` | 匹配一个或多个字符 |一般在规则中作为词干，用于匹配规则中的字符串，不能用于搜索文件系统 |
 |`?` | 匹配单个字符       |                                                                       |
 
-</div>
+{{< /table >}}
 
 > 注意：在变量定义中直接使用的通配符会被视为字符串
 
@@ -322,7 +322,7 @@ done
 
 > 更多自动化变量参考：[Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
 
-<div class="table-container no-thead w-50">
+{{< table thead="false" min-width="50" >}}
 
 |符号|描述              |
 |:---|:-----------------|
@@ -333,7 +333,7 @@ done
 |`$?`|比目标新的依赖名  |
 |`$*`|目标中%匹配的部分 |
 
-</div>
+{{< /table >}}
 
 ```makefile
 hey: one two
@@ -380,7 +380,7 @@ one two
 - 链接单个目标文件： `n` 是通过运行命令 `$(CC) $(LDFLAGS) n.o $(LOADLIBES) $(LDLIBS)` 从 `n.o` 自动生成的
 
 
-<div class="table-container w-120"> 
+{{< table min-width="120" >}}
 
 |隐式规则变量 |                                           |
 |:------------|:------------------------------------------|
@@ -391,7 +391,7 @@ one two
 |`CPPFLAGS`   |提供给 C 预处理器的参数                    |
 |`LDFLAGS`    |当编译器调用链接器时提供给编译器的额外参数 |
 
-</div>
+{{< /table >}}
 
 
 下面这个例子无需明确告诉 Make 如何进行编译，就可以构建一个 C 程序：
@@ -510,14 +510,14 @@ clean:
 	touch $@
 ```
 
-<div class="table-container"> 
+{{< table >}}
 
 |模式规则                  |静态模式规则                      |
 |:-------------------------|:---------------------------------|
 |`%.o : %.c`               |`$(OBJS) : %.o : %.c`             |
 |全局：对所有匹配的文件生效|局部：只对显式列出的目标列表生效  |
 
-</div>
+{{< /table >}}
 
 
 ### 双冒号规则
@@ -722,7 +722,7 @@ all:
 
 ## 条件语句
 
-<div class="table-container no-thead w-100"> 
+{{< table thead="false" min-width="100" >}}
 
 |关键字  |说明        |
 |:-------|:-----------|
@@ -731,7 +731,7 @@ all:
 |`ifdef` |是否定义    |
 |`ifndef`|是否未定义  |
 
-</div>
+{{< /table >}}
 
 都以 `endif` 结尾
 
@@ -1248,7 +1248,7 @@ $ MY_VAR=123 make -e c=123 d=123
 
 - 语法：`$(error text ...)`
 
-<div class="table-container no-thead w-100"> 
+{{< table thead="false" min-width="100" >}}
 
 |||
 |:--|:--|
@@ -1256,7 +1256,7 @@ $ MY_VAR=123 make -e c=123 d=123
 |`warning` |生成一个警告并打印 text，**不退出** make    |
 |`info`    |仅打印 text 信息                          |
 
-</div>
+{{< /table >}}
 
 ### shell 函数
 

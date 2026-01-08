@@ -1,0 +1,42 @@
+{{/*
+@ wrap       : 表格内是否换行     : wrap="false"
+@ min-width  : 表格单元格最小宽度 : min-width="100,200,300"
+@ thead      : 是否显示表头       : thead="false"
+*/}}
+
+
+{{ $wrap     := .Get "wrap"       | default "true" }}
+{{ $minWidth := .Get "min-width"  | default ""     }}
+{{ $thead    := .Get "thead"      | default "true" }}
+
+
+{{ if .Params }}
+
+	{{ $randomId := print "id" (now.UnixNano | md5 ) }}
+	<div id="{{ $randomId }}"   
+	class="{{ if eq $wrap "true" }} table-container {{ end }}
+	{{ if eq $thead "false" }} no-thead {{ end }}">
+	{{- .Inner | markdownify -}}
+	</div>
+	<style>
+	{{ if $minWidth }}
+		{{ $array := split $minWidth "," }}
+		{{ range $index, $element := $array }}
+			{{ if $element }}
+				#{{ $randomId }} table td:nth-child({{ add 1 $index }}), 
+				#{{ $randomId }} table th:nth-child({{ add 1 $index }}) {
+					min-width: {{ $element }}px;
+					width: {{ $element }}px;
+				}
+			{{ end }}
+		{{ end }}
+	{{ end }}
+	</style>
+
+{{ else }}
+
+	<div class="table-container">
+	{{- .Inner | markdownify -}}
+	</div>
+
+{{ end }}

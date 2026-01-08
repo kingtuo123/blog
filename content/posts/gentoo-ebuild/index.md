@@ -22,7 +22,7 @@ _pre5      : 后缀
 -r2        : 修订号，-r2 表示第二个修订版
 ```
 
-<div class="table-container w-110">
+{{< table min-width="100" >}}
 
 |后缀    |说明                |
 |:-------|:-------------------|
@@ -33,7 +33,7 @@ _pre5      : 后缀
 |`_p`    |补丁发布            |
 |无后缀  |正常发布            |
 
-</div>
+{{< /table >}}
 
 
 ### ebuild 示例
@@ -91,7 +91,7 @@ src_install() {
 
 ### 用户定义的变量
 
-<div class="table-container no-thead w-150">
+{{< table thead="false" min-width="150" >}}
 
 |用户定义的变量    |说明                                                                          |
 |:-----------------|:-----------------------------------------------------------------------------|
@@ -112,12 +112,12 @@ src_install() {
 |`S`               | 解压后源码所在路径，默认 `${WORKDIR}/${P}`|
 |`DOCS`            | 使用 `dodoc` 安装的默认 `src_install` 函数的文档文件的数组或以空格分隔的列表|
 
-</div>
+{{< /table >}}
 
 
 ### 预定义的只读变量
 
-<div class="table-container no-thead w-150">
+{{< table thead="false" min-width="150" >}}
 
 |预定义的只读变量|说明|
 |:--|:--|
@@ -139,7 +139,7 @@ src_install() {
 |`ED`             | 偏移临时安装路径 `${D}/${EPREFIX}` |
 |`EROOT`          | 偏移根路径 `${ROOT}/${EPREFIX}`|
 
-</div>
+{{< /table >}}
 
 
 <blockquote class="red">
@@ -443,7 +443,7 @@ ebuild 构建时会按下图顺序调用函数
 
 {{< svg src="func.svg" >}}
 
-<div class="table-container">
+{{< table >}}
 
 |||
 |:--|:--|
@@ -463,7 +463,7 @@ ebuild 构建时会按下图顺序调用函数
 |[pkg_config](https://devmanual.gentoo.org/ebuild-writing/functions/pkg_config/index.html)|软件包安装后的配置，需要手动调用，例如 mysql 安装后初始化配置 `emerge --config dev-db/mysql`|
 |[pkg_info](https://devmanual.gentoo.org/ebuild-writing/functions/pkg_info/index.html)|显示软件包的信息时调用，例如 `emerge --info www-client/firefox`|
 
-</div>
+{{< /table >}}
 
 > 个人理解：如果是基于 Autotools 的 tar 包，
 > ebuild 按顺序调用这些函数能自动完成解压、编译、安装，无须其它操作。
@@ -656,7 +656,7 @@ pkg_postinst() {
 
 ```
 
-<div class="table-container no-thead w-100"> 
+{{< table thead="false" min-width="100" >}}
 
 |         |                                                             |
 |:--------|:------------------------------------------------------------|
@@ -666,8 +666,7 @@ pkg_postinst() {
 |`eerror` |错误消息，以红色星号为前缀，该函数后面通常跟一个 `die` 函数      |
 |`eqawarn`|供 eclass 作者用于通知 ebuild 编写者有关已弃用的功能         |
 
-</div>
-
+{{< /table >}}
 
 
 

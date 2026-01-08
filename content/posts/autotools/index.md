@@ -377,7 +377,7 @@ bin_PROGRAMS = hello
 # 构建 hello 这个目标所需的源文件
 hello_SOURCES = main.c
 ```
-<div class="table-container no-thead w-200"> 
+{{< table thead="false" min-width="200" >}}
 
 |||
 |:--|:--|
@@ -386,7 +386,7 @@ hello_SOURCES = main.c
 |`AC_SUBST`         |[Setting Output Variables](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Setting-Output-Variables.html)
 |`SUBDIRS`          |[Recursing subdirectories](https://www.gnu.org/software/automake/manual/html_node/Subdirectories.html)
 
-</div>
+{{< /table >}}
 
 `bin_PROGRAMS` 命名规则如下，详见 [The Uniform Naming Scheme](https://www.gnu.org/software/automake/manual/html_node/Uniform.html)：
 

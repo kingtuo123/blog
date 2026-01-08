@@ -3,3 +3,4 @@ public/
 .hugo_build.lock
 *.drawio.bkp
 *.drawio.dtmp
+test.md

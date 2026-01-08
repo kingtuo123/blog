@@ -519,7 +519,7 @@ my_function:
 
 ## 寻址方式
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |               |                          |                                                                    |
 |:--------------|:-------------------------|:-------------------------------------------------------------------|
@@ -536,7 +536,7 @@ my_function:
 |堆栈寻址       |`PUSH {R0, R1}`           |`SP` ← `SP - 4` ， `*SP` ← `R0` ， `SP` ← `SP - 4` ， `*SP` ← `R1`  |
 |               |`POP {R0, R1}`            |`R0` ← `*SP` ， `SP` ← `SP + 4` ， `R1` ← `*SP` ， `SP` ← `SP + 4`  |
 
-</div>
+{{< /table >}}
 
 
 > `!` 表示在数据传输完成后，将更新后的内存地址写回基址寄存器，这个特性称为 “写回”
@@ -553,7 +553,7 @@ my_function:
 
 ## 应用程序状态寄存器 ASPR
 
-<div class="table-container">
+{{< table >}}
 
 |标志|位置|置位条件（等于1）                                                                  |
 |:---|:---|:----------------------------------------------------------------------------------|
@@ -563,7 +563,7 @@ my_function:
 |`V` |28  |有符号运算结果溢出                                                                 |
 |`Q` |27  |饱和运算                                                                           |
 
-</div>
+{{< /table >}}
 
 
 ## 指令后缀
@@ -576,7 +576,7 @@ beq equal       /* 如果 r0 == r1，跳转到标签 equal */
 ```
 
 
-<div class="table-container colfirst-100">
+{{< table >}}
 
 |后缀   |含义                       |标志状态         |英文                    |
 |:------|:--------------------------|:----------------|:-----------------------|
@@ -596,10 +596,10 @@ beq equal       /* 如果 r0 == r1，跳转到标签 equal */
 |`LE`   |有符号 `<=`                |`Z == 1` `N != V`|Less or Equal           |
 |`AL`   |无条件，始终执行           |                 |Always                  |
 
-</div>
+{{< /table >}}
 
 
-<div class="table-container colfirst-100">
+{{< table >}}
 
 |后缀         |含义                                            |
 |:------------|:-----------------------------------------------|
@@ -608,13 +608,13 @@ beq equal       /* 如果 r0 == r1，跳转到标签 equal */
 |`.32` `.F32` |指定 32 位单精度运算                            |
 |`.64` `.F64` |指定 64 位双精度运算                            |
 
-</div>
+{{< /table >}}
 
 
 
 ## 处理器内传送数据的指令
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                               |                     |                                  |
 |:------------------------------|:--------------------|:---------------------------------|
@@ -626,7 +626,7 @@ beq equal       /* 如果 r0 == r1，跳转到标签 equal */
 |**特殊寄存器 → 通用寄存器**    |`MRS` `R7, PRIMASK`  |`R7` ← `PRIMASK`                  |
 |**通用寄存器 → 特殊寄存器**    |`MSR` `CONTROL, R2`  |`CONTROL` ← `R2`                  |
 
-</div>
+{{< /table >}}
 
 
 ## 加载标签地址
@@ -671,7 +671,7 @@ my_function:
 
 ## 存储器访问指令
 
-<div class="table-container">
+{{< table >}}
 
 |                                    |加载（读存储器）|存储（写存储器）|
 |:-----------------------------------|:---------------|:---------------|
@@ -684,7 +684,7 @@ my_function:
 |**双字 64 位  （Double）**          |`LDRD`          |`STRD`          |
 |**栈操作 32 位**                    |`POP`           |`PUSH`          |
 
-</div>
+{{< /table >}}
 
 ```asm
 LDR R0, [R1, #0x8]    /*  R0 ← *(R1 + 8)                     */
@@ -695,7 +695,7 @@ STR R0, [R1, #0x8]    /*  *(R1 + 8) ← R0                     */
 ## 多加载和多存储 LDM / STM
 
 
-<div class="table-container">
+{{< table >}}
 
 |地址模式                                |后缀                        |   |   |
 |:---------------------------------------|:---------------------------|:--|:--|
@@ -704,7 +704,7 @@ STR R0, [R1, #0x8]    /*  *(R1 + 8) ← R0                     */
 |**存储后地址递减（Decrement After）**   |`DA`                        |   |   |
 |**存储前地址递减（Decrement Before）**  |`DB`                        |   |   |
 
-</div>
+{{< /table >}}
 
 
 `STMDB SP!, {R0-R3, LR}` 等同于 `PUSH {R0-R3, LR}` ：
@@ -777,7 +777,7 @@ add:
 
 ## 排他访问
 
-<div class="table-container">
+{{< table >}}
 
 |排他访问（Exclusive）|后缀，字节（B），半字（H）  |                                                     |
 |:--------------------|:---------------------------|:----------------------------------------------------|
@@ -785,7 +785,7 @@ add:
 |**存储字**           |`STREX` `Rt, Rd, [Rn]`      |`*Rn` ← `Rd` ， `Rt` ← `返回值` （0：成功，1：失败） |
 |**清除独占状态**     |`CLREX`                     |                                                     |  
 
-</div>
+{{< /table >}}
 
 `LDREX` 必须与 `STREX` (Exclusive) 指令配合使用，用于实现原子读-修改-写操作
 
@@ -803,7 +803,7 @@ try_atomic_update:
 
 ## 算术运算
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                |                         |                        |
 |:---------------|:------------------------|:-----------------------|
@@ -822,7 +822,7 @@ try_atomic_update:
 |**无符号除法**  |`UDIV` `Rd, Rn, Rm`      |Rd = Rn / Rm            |
 |**有符号除法**  |`SDIV` `Rd, Rn, Rm`      |Rd = Rn / Rm            |
 
-</div>
+{{< /table >}}
 
 `ADC` 指令通常与 `ADDS` 指令配合使用，先用 `ADDS` 设置进位标志，再用 `ADC` 处理高位：
 
@@ -843,7 +843,7 @@ ADC  R5, R1, R3    ; 高 32 位带进位相加
 
 ## 逻辑运算
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |            |                       |                  |
 |:-----------|:----------------------|:-----------------|
@@ -855,7 +855,7 @@ ADC  R5, R1, R3    ; 高 32 位带进位相加
 |**按位或非（OR Not）**|`ORN` `Rd, Rn, Rm`     |Rd = Rn \| (~Rm)  |
 |**位清除（Bit Clear）**  |`BIC` `Rd, Rn, Rm`     |Rd = Rn & (~Rm)   |
 
-</div>
+{{< /table >}}
 
 `BIC` 指令用于清除特定位：
 
@@ -869,7 +869,7 @@ BIC R0, R1, #0xFF    /* 清除 R1 的低 8 位，结果存入 R0 */
 
 {{< svg src="shift.svg" >}}
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |            |                       |                  |
 |:-----------|:----------------------|:-----------------|
@@ -881,7 +881,7 @@ BIC R0, R1, #0xFF    /* 清除 R1 的低 8 位，结果存入 R0 */
 |**循环右移（Rotate Right）**            |`ROR` `Rd, Rn, #immed` |从右侧移出的位会循环填充到左侧空出的位置  |
 |**循环右移并展开（Rotate Right with Extend）** |`RRX` `Rd, Rn`|C 标志位参与右移 1 位|
 
-</div>
+{{< /table >}}
 
 算术右移左侧用符号位填充，逻辑右移左侧用 0 填充：
 
@@ -940,7 +940,7 @@ shift_loop:
 
 ## 数据转换运算
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |            |                       |                  |
 |:-----------|:----------------------|:-----------------|
@@ -949,7 +949,7 @@ shift_loop:
 |**无符号展开字节为字（Unsigned eXtend Byte）**  |`UXTB` `Rd, Rn` | Rn = 无符号展开 Rn[7:0]，高位补 0 |
 |**无符号展开半字为字（Unsigned eXtend Half）**  |`UXTH` `Rd, Rn` | Rn = 无符号展开 Rn[15:0]|
 
-</div>
+{{< /table >}}
 
 
 ```asm
@@ -960,14 +960,14 @@ UXTB R1, R0          /* R1 = 0x00000065 */
 UXTH R1, R0          /* R1 = 0x00008765 */
 ```
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                           |   |                       |               |
 |:--------------------------|:--|:----------------------|:--------------|
 |**循环移位有符号展开字节** |   |`SXTB` `Rd, Rn, ROR #n`|（n = 8/16/24）|
 
+{{< /table >}}
 
-</div>
 
 ```asm
 MOV  R0, #0x8000     /* R0 = 0x00008000 */
@@ -977,7 +977,7 @@ SXTB R1, R0, ROR #8  /* R1 = 0xFFFFFF80 */
 {{< svg src="rev.svg" >}}
 
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                                                |                 |   |   |   |
 |:-----------------------------------------------|:----------------|:--|:--|:--|
@@ -985,7 +985,7 @@ SXTB R1, R0, ROR #8  /* R1 = 0xFFFFFF80 */
 |**反转半字中的字节**                            |`REV16` `Rd, Rn` |   |   |   |
 |**反转低半字中的字节，并将结果有符号展开**    |`REVSH` `Rd, Rn` |   |   |   |
 
-</div>
+{{< /table >}}
 
 ```asm
 LDR   R0, =0x12345678
@@ -998,7 +998,7 @@ REVSH R3, R0  /* R3 = 0xFFFF9988 */
 
 ## 位域处理指令
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                                                |                               |                                                            |
 |:-----------------------------------------------|:------------------------------|:-----------------------------------------------------------|
@@ -1009,8 +1009,8 @@ REVSH R3, R0  /* R3 = 0xFFFF9988 */
 |**提取位域并有符号展开（Signed Bit Field Extract）**   |`SBFX` `Rd, Rn, #lsb, #width` |提取 Rn 第 lsb 开始的 width 位并有符号展开后存入 Rd   |
 |**提取位域并无符号展开（Unsigned Bit Field Extract）** |`UBFX` `Rd, Rn, #lsb, #width` |提取 Rn 第 lsb 开始的 width 位并存入 Rd               |
 
+{{< /table >}}
 
-</div>
 
 
 ```asm
@@ -1047,7 +1047,7 @@ UBFX R1, R0, #4, #8  /* R1 = 0x00000088 */
 
 ## 比较和测试
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                               |                       |               |
 |:------------------------------|:----------------------|:--------------|
@@ -1057,7 +1057,7 @@ UBFX R1, R0, #4, #8  /* R1 = 0x00000088 */
 |**测试某些位是否被置 1（Test）**                |`TST` `Rn, #immed`  |计算 Rn&#immed，按位与| 
 |**测试两个数是否按位相等（Test Equivalence）**  |`TEQ` `Rn, #immed`  |计算 Rn^#immed，按位异或|
 
-</div>
+{{< /table >}}
 
 > 以上指令均不保存计算结果，且总是会更新 APSR，因此这些指令没有 S 后缀
 
@@ -1067,7 +1067,7 @@ UBFX R1, R0, #4, #8  /* R1 = 0x00000088 */
 ## 程序流程控制
 
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                                           |                       |               |
 |:------------------------------------------|:----------------------|:--------------|
@@ -1076,18 +1076,18 @@ UBFX R1, R0, #4, #8  /* R1 = 0x00000088 */
 |**函数调用（Branch with Link）**           |`BL` `lable`           |跳转到 lable 处，并将返回地址（下一条指令的地址）保存在 LR 寄存器中|
 |**函数调用**                               |`BLX` `Rm`             |跳转到 Rm 中的地址处，返回地址保存在 LR ，更新 EPSR 的 T 为 Rm 的 0 位|
 
-</div>
+{{< /table >}}
 
 > Cortex-M 处理器只支持 Thumb 状态，`BX`、`BLX` 指令中 Rm 第 0 位必须为 1
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                                                  |                       |                             |
 |:-------------------------------------------------|:----------------------|:----------------------------|
 |**比较和跳转（Compare and Branch if Zero）**      |`CBZ` `Rn, lable`      |若 Rn = 0 则跳转到 lable 处  |
 |**比较和跳转（Compare and Branch if None-Zero）** |`CBNZ` `Rn, lable`     |若 Rn !=  0 则跳转到 lable 处|
 
-</div>
+{{< /table >}}
 
 > `CBZ` 和 `CBNZ` 不会更新 APSR 寄存器，且只能向前（更高的地址）跳转
 
@@ -1162,7 +1162,7 @@ endswitch:
 结果会被限制在该数据类型所能表示的最大值或最小值，
 而不是像常规运算那样发生溢出
 
-<div class="table-container no-thead">
+{{< table thead="false" >}}
 
 |                                    |                              |                                                 |
 |:-----------------------------------|:-----------------------------|:------------------------------------------------|
@@ -1171,7 +1171,7 @@ endswitch:
 |                                    |`SSAT` `R1, #8, R0, ASR #2`   |将 `R0 >> 2` 的值饱和到 8 位有符号范围并存入 `R1`|
 |**无符号饱和（Unsigned Saturate）** |`USAT` `Rd, #imm, Rn{, shift}`|                                                 |
 
-</div>
+{{< /table >}}
 
 ```asm
 LDR  R0, =0x00020000
