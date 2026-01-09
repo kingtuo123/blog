@@ -1,0 +1,36 @@
+{{/*
+@ src         : 源文件
+@ font-family : 字体
+@ font-size   : 字体大小
+@ align       : 对齐方式
+@ zoom        : 缩放
+@ auto-dim    : 深色模式变暗
+*/}}
+
+
+{{ $src    := .Get "src" }}
+{{ $align  := .Get "align" | default "left" }}
+
+
+{{ $isSvg := hasSuffix $src ".svg" }}
+
+
+{{ if $isSvg }}
+	{{ $zoom := .Get "zoom" | default "1" }}
+	{{ $fontFamily := .Get "font-family" | default "LXGW WenKai Mono"  }}
+	{{ $fontSize   := .Get "font-size"   | default "16px"              }}
+	{{ $fontSizeReplace   := printf `font-size: %s` $fontSize          }}
+	{{ $fontFamilyReplace := printf `font-family:'%s';` $fontFamily    }}
+	{{ $fontFaceReplace   := printf `face="%s"` $fontFamily            }}
+	{{ $currentDir := .Page.File.Dir }}
+	{{ $svgPath := path.Join "content" $currentDir $src }}
+	<div class="svg-container" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};"{{ end }}>
+		{{- readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s*[0-9]+px` $fontSizeReplace | safeHTML -}}
+	</div>
+{{ else }}
+	{{ $zoom := .Get "zoom" | default "0.5" }}
+	{{ $autoDim := .Get "auto-dim" | default "true" }}
+	<div class="img-container {{ if eq $autoDim "true" }}auto-dim{{ end }}" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};"{{ end }}>
+		<img src="{{ $src }}" draggable="false"></img>
+	</div>
+{{ end }}

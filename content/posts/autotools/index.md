@@ -4,7 +4,7 @@ date: "2024-07-14"
 toc: false
 ---
 
-{{< svg src="autotools.svg" >}}
+{{< img src="autotools.svg" >}}
 
 ## 概述
 
@@ -26,7 +26,7 @@ $ make install
 
 ### Configure 流程
 
-{{< svg src="configure.svg" >}}
+{{< img src="configure.svg" >}}
 
 `./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件
 
@@ -170,7 +170,7 @@ $ ac_cv_path_SED=/path/to/sed ./configure
 
 ## Autoconf
 
-{{< svg src="autoconf.svg" >}}
+{{< img src="autoconf.svg" >}}
 
 - `configure.ac` 是一个包含宏的 shell 脚本
 - `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure`
@@ -204,7 +204,7 @@ autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
 
 ## Aclocal
 
-{{< svg src="aclocal.svg" >}}
+{{< img src="aclocal.svg" >}}
 
 - `aclocal` 是为 `autoconf` 准备 “宏库” 的预处理工具
 
@@ -243,7 +243,7 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 ## Autoheader
 
-{{< svg src="autoheader.svg" >}}
+{{< img src="autoheader.svg" >}}
 
 使用 `AC_DEFINE` 创建 C 语言宏定义
 
@@ -406,7 +406,7 @@ PRIMARY  :  PROGRAMS    ->  可执行文件
 
 接下来开始构建：
 
-{{< svg src="automake.svg" >}}
+{{< img src="automake.svg" >}}
 
 
 ```bash-session

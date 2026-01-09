@@ -266,7 +266,7 @@ RESTRICT="fetch"
 
 #### 大致流程
 
-{{< svg src="src_uri.svg" >}}
+{{< img src="src_uri.svg" >}}
 
 
 
@@ -441,7 +441,7 @@ inherit autotools bash-completion-r1 flag-o-matic
 
 ebuild 构建时会按下图顺序调用函数
 
-{{< svg src="func.svg" >}}
+{{< img src="func.svg" >}}
 
 {{< table >}}
 
