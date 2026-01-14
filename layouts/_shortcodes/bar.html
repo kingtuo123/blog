@@ -1,7 +1,7 @@
 {{- $block := .Get "block" | default "文件" -}}
 {{- $title := .Get "title" | default ""     -}}
-{{- $class := .Get "class" | default ""     -}}
+{{- $type  := .Get "type"  | default ""     -}}
 
-<div class="code-bar {{ $class }}">
+<div class="code-bar {{ $type }}">
 	<span>{{ $block }}</span><span>{{ $title }}</span>
 </div>

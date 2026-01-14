@@ -1,0 +1,6 @@
+{{ $type := .Get "type" | default "" }}
+
+
+<blockquote class="{{ $type }}">
+{{- .Inner | markdownify -}}
+</blockquote>

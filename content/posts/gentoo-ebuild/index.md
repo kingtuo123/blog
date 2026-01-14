@@ -142,11 +142,9 @@ src_install() {
 {{< /table >}}
 
 
-<blockquote class="red">
-
+{{< notice type="alarm" >}}
 路径变量尾部不以斜杠结尾
-
-</blockquote>
+{{< /notice >}}
 
 > `PORTAGE_BUILDDIR` 等于 `${PORTAGE_TMPDIR}/portage/${CATEGORY}/${PF}`
 
@@ -424,12 +422,9 @@ EAPI=8
 inherit autotools bash-completion-r1 flag-o-matic
 ```
 
-<blockquote class="red">
-
+{{< notice type="alarm" >}}
 编写 ebuild 应使用 portage 和 eclass 提供的函数和命令、及 bash 内置命令，不要使用外部命令。
-
-</blockquote>
-
+{{< /notice >}}
 
 
 

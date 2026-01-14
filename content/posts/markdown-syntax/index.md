@@ -1,16 +1,11 @@
 ---
-title: "Markdown 语法&测试"
+title: "Markdown 样式测试"
 date: "2021-05-01"
 toc: true
 ---
 
 
-
-
 ## 标题
-
-<div class="sp-container">
-<div class="sp-item">
 
 ```markdown
 ## 这是二级标题
@@ -20,24 +15,11 @@ toc: true
 ###### 这是六级标题
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 ## 这是二级标题
 ### 这是三级标题
 #### 这是四级标题
 ##### 这是五级标题
 ###### 这是六级标题
-
-</div>
-</div>
-
-
-
-
-
-
-
 
 
 
@@ -45,9 +27,6 @@ toc: true
 
 ## 字体样式
 
-<div class="sp-container">
-<div class="sp-item">
-
 ```markdown
 *倾斜的文字*
 **加粗的文字**
@@ -55,9 +34,6 @@ toc: true
 ~~加删除线的文字~~
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 *倾斜的文字*
 
 **加粗的文字**
@@ -65,16 +41,6 @@ toc: true
 ***斜体加粗的文字***
 
 ~~加删除线的文字~~
-
-</div>
-</div>
-
-
-
-
-
-
-
 
 
 
@@ -82,90 +48,42 @@ toc: true
 
 ## 引用
 
-<div class="sp-container">
-<div class="sp-item">
 
 ```markdown
 > 这是默认样式
-
-> 引用内换行则使用单个 >
->
-> 引用内换行则使用单个 >
 ```
-
-</div>
-<div class="sp-item" style="flex:1;">
 
 > 这是默认样式
 
-> 引用内换行则使用单个 `>`
->
-> 引用内换行则使用单个 `>`
+```markdown
+> 这是默认样式
+> 
+> 这是换行
+```
 
-</div>
-</div>
+> 这是默认样式
+> 
+> 这是换行
 
+{{< bar block="短代码" >}}
 
+```go-template
+{{</* notice type="info" */>}}
+这是 info 样式
+{{</* /notice */>}}
+```
 
+{{< notice type="info" >}}
+这是 info 样式
+{{< /notice >}}
 
+{{< notice type="warn" >}}
+这是 warn 样式
+{{< /notice >}}
 
-
-
-
-
-<div class="sp-container">
-<div class="sp-item">
-
-{{< highlight html >}}
-
-<blockquote class="blue">
-
-这是蓝色样式
-
-</blockquote>
-
-<blockquote class="yellow">
-</blockquote>
-
-<blockquote class="red">
-</blockquote>
-
-{{< /highlight >}}
-
-</div>
-<div class="sp-item" style="flex:1;">
-
-<blockquote class="blue">
-
-这是蓝色样式
-
-</blockquote>
-
-<blockquote class="yellow">
-
-这是黄色样式
-
-</blockquote>
-
-<blockquote class="red">
-
-这是红色样式
-
-</blockquote>
-
-</div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
+{{< notice type="alarm" >}}
+这是 alarm 样式
+{{< /notice >}}
 
 
 
@@ -173,32 +91,19 @@ toc: true
 
 ## 分割线
 
-
-<div class="sp-container">
-<div class="sp-item">
+三个及以上的 `-` 或者 `*` 都可以：
 
 ```markdown
----
-----
-***
+-----
+这是分割线
 *****
 ```
 
-三个或者三个以上的 `-` 或者 `*` 都可以
+-----
+这是分割线
+*****
 
-</div>
-<div class="sp-item" style="flex:1;">
 
-测试三条分割线
-
-----
-
-----
-
-----
-
-</div>
-</div>
 
 
 
@@ -208,23 +113,26 @@ toc: true
 ![ ](图片url)
 ```
 
-指定图片大小及位置：
+{{< bar block="短代码" >}}
 
-```html
-<div align="center">
-    <img src="1.png" style="max-height:180px"></img>
-</div>
+```go-template
+{{</* img src="example.png" align="left" */>}}
 ```
 
-超链接图片：
+{{< table min-width="150">}}
 
-```html
-<div align="center">
-    <a href="链接地址" target="_blank">
-        <img src="1.jpg" style="max-height:980px"></img>
-    </a>
-</div>
-```
+|参数           |说明                                               |
+|:--------------|:--------------------------------------------------|
+|`align`        |对齐 `left` `center` `right`                       |
+|`zoom`         |缩放，默认 `0.5`，svg 图片默认 `1`                 |
+|`auto-dim`     |深色模式图片是否变暗，默认 `true`，对 svg 图片无效 |
+|`font-family`  |字体，只对 svg 图片有效，默认 `LXGW WenKai Mono`   |
+|`font-size`    |字体大小，只对 svg 图片有效，默认 `16px`           |
+
+{{< /table >}}
+
+
+
 
 
 ## 超链接
@@ -240,41 +148,17 @@ toc: true
 
 
 
-
-
-
-
-
-
 ## 列表
 
-<div class="sp-container">
-<div class="sp-item">
-
 ```markdown
 - 无序列表
 - 无序列表
 - 无序列表
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 - 无序列表
 - 无序列表
 - 无序列表
-
-</div>
-</div>
-
-
-
-
-
-
-
-<div class="sp-container">
-<div class="sp-item">
 
 ```markdown
 1. 有序列表
@@ -282,22 +166,9 @@ toc: true
 3. 有序列表
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 1. 有序列表
 2. 有序列表
 3. 有序列表
-
-</div>
-</div>
-
-
-
-
-
-<div class="sp-container">
-<div class="sp-item">
 
 ```markdown
 - 多级列表
@@ -306,21 +177,10 @@ toc: true
   - 二级无序列表内容
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 - 多级列表
   - 二级无序列表内容
   - 二级无序列表内容
   - 二级无序列表内容
-
-</div>
-</div>
-
-
-
-
-
 
 
 
@@ -328,9 +188,6 @@ toc: true
 
 ## 表格
 
-<div class="sp-container">
-<div class="sp-item">
-
 ```markdown
 |左对齐    |居中      |右对齐    |
 |:---------|:--------:|---------:|
@@ -338,195 +195,82 @@ toc: true
 |内容      |内容      |内容      |
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-<div class="table-container">
-
 |左对齐    |居中      |右对齐    |
 |:---------|:--------:|---------:|
 |内容      |内容      |内容      |
 |内容      |内容      |内容      |
 
-</div>
-</div>
-</div>
+{{< bar block="短代码" >}}
+
+```go-template
+{{</* table thead="true" wrap="false" min-width="100,200,300"*/>}}
+|选项|说明|
+|:---|:---|
+|参数|123 |
+{{</* /table */>}}
+```
+
+{{< table thead="true" wrap="true" min-width="120">}}
+
+|参数        |说明                                                                          |
+|:-----------|:-----------------------------------------------------------------------------|
+|`thead`     |是否显示表头，默认 `true`                                                     |
+|`warp`      |是否换行，默认 `false`                                                        |
+|`min-width` |单元格最小宽度                                                                |
+|            |`min-width="100,200,300"` 表示第一列最小宽 100px , 第二列 200px ，第三列 300px|
+|            |`min-width="100,,300"` 表示第一列最小宽 100px ，第三列 300px                  |
+
+{{< /table >}}
 
 
-<div class="sp-container">
-<div class="sp-item">
 
-{{< highlight html >}}
 
-<div class="table-container no-thead">
 
-|无表头    |          |          |
-|:---------|:--------:|---------:|
-|内容      |内容      |内容      |
-|内容      |内容      |内容      |
+## 代码块顶部样式
 
-</div>
+代码文件样式：
+
+{{< highlight go-template >}}
+
+{{</* bar title="hello.txt" */>}}
+```text
+hello world 
+```
 
 {{< /highlight >}}
 
-
-</div>
-<div class="sp-item" style="flex:1;">
-<div class="table-container no-thead">
-
-|左对齐    |居中      |右对齐    |
-|:---------|:--------:|---------:|
-|内容      |内容      |内容      |
-|内容      |内容      |内容      |
-
-</div>
-</div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-## 左右分隔代码块
-
-<div class="sp-container">
-<div class="sp-item">
-
-Markdown 文件：
-
-{{< highlight html >}}
-
-<div class="sp-container">
-<div class="sp-item">
-
-这是代码一
-
-```bash
-echo 123
+{{< bar title="hello.txt" >}}
+```text
+hello world 
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
+终端样式：
 
-这是代码二
+{{< highlight go-template >}}
 
-```bash
-echo 123
-echo 123
-echo 123
-```
-
-</div>
-</div>
-
-{{< /highlight >}}
-
-</div>
-<div class="sp-item" style="flex:1;">
-
-CSS 文件：
-
-```css
-.sp-container {
-    display: flex;
-    flex-wrap: wrap; /* 空间不足时自动换行 */
-    gap: 10px;
-}
-
-.sp-item{
-    flex: 1;
-}
-
-@media (max-width: 900px) {
-    .sp-container {
-        flex-direction: column;
-        gap: 0px;
-    }
-    .sp-item{
-        width: 100%;
-    }
-}
-```
-
-
-</div>
-</div>
-
-
-
-> 左右的宽度比例可以通过设置 style，如 `style="flex:1.5;"` 为 `1:1.5`
-
-
-<blockquote class="yellow">
-
-代码行数不等可以用带一个空格的行使两边对齐，暂时不知道怎么用 CSS 对齐？
-
-</blockquote>
-
-
-<blockquote class="red">
-
-`<div>` 前面不能有空格，必须顶到行首！
-
-</blockquote>
-
-
-
-## 文件名
-
-<div class="code-bar">
-<span>文件</span><span>FileName</span>
-</div>
-
-```html
-<div class="code-bar term">
-<span>文件</span><span>FileName</span>
-</div>
-```
-
-
-
-## 合并
-
-<div class="code-bar">
-	<span>合并</span><span>Markdown</span>
-</div>
-
-{{< highlight html >}}
-
-<div class="merge">
-
-```bash
-echo hello world
-```
-
+{{</* bar block="终端" title="打印 hello world" type="terminal" */>}}
 ```bash-session
-$ ./test.sh
-hello world
+$ echo hello world
+hello world 
 ```
-
-</div>
 
 {{< /highlight >}}
 
-<div class="merge">
-
-```bash
-echo hello world
-```
-
+{{<bar block="终端" title="打印 hello world" type="terminal" >}}
 ```bash-session
-$ ./test.sh
-hello world
+$ echo hello world
+hello world 
 ```
 
-</div>
+{{< table min-width="80">}}
+
+|参数    |说明                      |
+|:-------|:-------------------------|
+|`block` |方块内的文字，默认 `文件` |
+|`title` |标题                      |
+|`type`  |目前只有 `terminal`       |
+
+{{< /table >}}
 
 
 
@@ -534,28 +278,15 @@ hello world
 
 ## 任务列表
 
-<div class="sp-container">
-<div class="sp-item">
-
 ```markdown
 - [x] 我是已完成的任务一
 - [ ] 我是未完成的任务二
 - [ ] 我是未完成的任务三
 ```
 
-</div>
-<div class="sp-item" style="flex:1;">
-
 - [x] 我是已完成的任务一
 - [ ] 我是未完成的任务二
 - [ ] 我是未完成的任务三
-
-</div>
-</div>
-
-
-
-
 
 
 
@@ -563,31 +294,19 @@ hello world
 
 ## 定义列表
 
-<div class="sp-container">
-<div class="sp-item">
-
 ```markdown
-我是选项一
-: 我是选项一的巴拉巴拉巴拉巴拉...
-
-我是选项二
-: 我是选项二的巴拉巴拉巴拉巴拉...
-```
-
-</div>
-<div class="sp-item" style="flex:1;">
-
 选项一
-: 我是选项一的巴拉巴拉巴拉巴拉...
+: 我是选项一的内容
 
 选项二
-: 我是选项二的巴拉巴拉巴拉巴拉...
+: 我是选项二的内容
+```
 
+选项一
+: 我是选项一的内容
 
-</div>
-</div>
-
-
+选项二
+: 我是选项二的内容
 
 
 

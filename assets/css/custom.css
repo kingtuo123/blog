@@ -88,41 +88,18 @@ strong {
 
 
 
-/*****     左右分隔样式     *****/
-.sp-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.sp-item{
-    flex: 1;
-}
-@media (max-width: 900px) {
-    .sp-container {
-        flex-direction: column;
-		gap: 0px;
-    }
-	.sp-item {
-		width: 100%;
-	}
-}
-
-
-
-
-
-/*****     引用样式     *****/
-blockquote.red {
+/*****     短代码: notice     *****/
+blockquote.alarm {
 	color: var(--Red);
 	background-color:  var(--Background-Red);
 	border-color: var(--Red);
 }
-blockquote.yellow {
+blockquote.warn {
 	color: var(--Yellow);
 	background-color: var(--Background-Yellow);
 	border-color: var(--Yellow);
 }
-blockquote.blue {
+blockquote.info {
 	color: var(--Blue);
 	background-color: var(--Background-Blue);
 	border-color: var(--Blue);
@@ -132,7 +109,7 @@ blockquote.blue {
 
 
 
-/*****     code bar     *****/
+/*****     短代码: bar     *****/
 .code-bar {
 	font-family: 'Maple Mono NF CN Light';
 	font-size: 15px;
@@ -159,39 +136,16 @@ blockquote.blue {
 	user-select: none;
 	transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
 }
-.code-bar.term {
+.code-bar.terminal {
 	border: 1px solid var(--post-pre-term-border-fg);
 	border-bottom: 1px solid light-dark(#4D5960, #434F55);
 	color: light-dark(#9DA9A0, #9DA9A0);
 	background-color: light-dark(#333C43, #272E33);
 }
-.code-bar.term span:first-child {
+.code-bar.terminal span:first-child {
 	color: light-dark(#333C43, #272E33);
 	background-color: light-dark(#9DA9A0, #859289);
 }
 .code-bar + .highlight > pre {
 	border-radius: 0px 0px var(--post-border-radius) var(--post-border-radius);
-}
-
-
-
-
-
-
-
-
-
-/*****     合并     *****/
-.merge .highlight:first-child {
-	margin-bottom: 0px;
-}
-.merge .highlight:last-child {
-	margin-top: 0px;
-}
-.merge .highlight:first-child > pre {
-	border-radius: var(--post-border-radius) var(--post-border-radius) 0px 0px;
-}
-.merge .highlight:last-child > pre {
-	border-radius: 0px 0px var(--post-border-radius) var(--post-border-radius);
-	border-top: 0px;
 }
