@@ -1,13 +1,15 @@
 baseURL = "https://kingtuo123.com/"
-title = "King's Blog"  # 网页标题
+title = "King's Blog"
 theme = "hugo-notes"
 
 # 禁用标签分类/文章列表页等
 disableKinds = ["taxonomy", "term", "section"]
+# 生成 robots.txt
+enableRobotsTXT = true
 
 [params]
 	defaultTheme = "auto"       # 默认主题 light 或 dark 或 auto
-	headerTitle = "夜不能寐"     # header 左上角标题
+	headerTitle = "夜不能寐"    # header 左上角标题
 
 [markup]
 	[markup.goldmark]
