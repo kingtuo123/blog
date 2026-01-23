@@ -1,4 +1,4 @@
-/*****     字体     *****/
+/*****     字体：全局     *****/
 html, body {
 	font-family: "LXGW WenKai";
 	font-weight: normal;
@@ -7,6 +7,12 @@ header .title {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
+/*****     字体：主页     *****/
+.post-list .title {
+	font-family: "LXGW WenKai Medium";
+	font-weight: normal;
+}
+/*****     字体：文章     *****/
 #toc-toggle {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
@@ -14,10 +20,6 @@ header .title {
 .post-content table th {
 	font-family: "LXGW WenKai Medium";
 	font-weight:normal;
-}
-.post-list .title {
-	font-family: "LXGW WenKai Medium";
-	font-weight: normal;
 }
 .post-content h1,h2,h3,h4,h5,h6 {
 	font-family: "LXGW WenKai Medium";
@@ -148,4 +150,14 @@ blockquote.info {
 }
 .code-bar + .highlight > pre {
 	border-radius: 0px 0px var(--post-border-radius) var(--post-border-radius);
+}
+
+
+
+
+
+/*****     其它     *****/
+.highlight.fixed-height > pre {
+	overflow-y: auto;
+	max-height: 65vh;
 }
