@@ -16,15 +16,17 @@
 
 
 {{ if $isSvg }}
-	{{ $zoom := .Get "zoom" | default "1" }}
+	{{ $zoom       := .Get "zoom"        | default "1"                 }}
 	{{ $fontFamily := .Get "font-family" | default "LXGW WenKai Mono"  }}
 	{{ $fontSize   := .Get "font-size"   | default "16px"              }}
+	{{ $scrollX    := .Get "scroll-x"    | default "false"             }}
+
 	{{ $fontSizeReplace   := printf `font-size: %s` $fontSize          }}
 	{{ $fontFamilyReplace := printf `font-family:'%s';` $fontFamily    }}
 	{{ $fontFaceReplace   := printf `face="%s"` $fontFamily            }}
 	{{ $currentDir := .Page.File.Dir }}
 	{{ $svgPath := path.Join "content" $currentDir $src }}
-	<div class="svg-container" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};"{{ end }}>
+	<div class="svg-container {{ if eq $scrollX "true" }}scroll-x{{ end }}" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};"{{ end }}>
 		{{- readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s*[0-9]+px` $fontSizeReplace | safeHTML -}}
 	</div>
 {{ else }}

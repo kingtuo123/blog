@@ -71,10 +71,15 @@ strong {
 	transform: translateZ(0);          /* 开启硬件加速 */
 	-webkit-transform: translateZ(0);  /* Safari 前缀 */
 }
-.svg-container svg {
-	font-family: "LXGW WenKai Mono";
-	font-size: 30px;
-	font-weight: normal;
+.svg-container.scroll-x {
+	overflow-x: auto;
+}
+.svg-container.scroll-x svg{
+	overflow-x: auto;
+	width: initial !important;
+	height: initial !important;
+	min-width: none !important;
+	max-width: none !important;
 }
 .svg-container svg font,
 .svg-container svg path,

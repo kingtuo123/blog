@@ -128,6 +128,7 @@ toc: true
 |`auto-dim`     |深色模式图片是否变暗，默认 `true`，对 svg 图片无效 |
 |`font-family`  |字体，只对 svg 图片有效，默认 `LXGW WenKai Mono`   |
 |`font-size`    |字体大小，只对 svg 图片有效，默认 `16px`           |
+|`scroll-x`     |图片溢出后左右滚动，默认 `false`，只对 svg 图片有效|
 
 {{< /table >}}
 
