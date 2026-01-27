@@ -1436,7 +1436,7 @@ Infinite_Loop:                                  // 当处理器收到未预期�
 
 
 
-.section  .isr_vector,"a",%progbits     // 将向量表放在 .isr_vector 段，"a" 表示可分配
+.section  .isr_vector,"a",%progbits     // 告诉汇编器将本行之后的代码或数据（向量表）放入 .isr_vector 段，"a" 表示可分配，直到遇到下一个 .section
 .type  g_pfnVectors, %object            // 指定 g_pfnVectors 为数据对象类型
 .size  g_pfnVectors, .-g_pfnVectors     // 设置 g_pfnVectors 的大小，为什么 .size 指令不放向量表后面？？？？存疑。
 
@@ -2667,3 +2667,186 @@ void SysTick_Handler(void)
 ## 文件关系图
 
 {{< img src="files.svg" align="center" >}}
+
+
+
+
+
+
+
+
+## GCC 链接脚本
+
+
+
+```c { class="fixed-height" lineNos=inline }
+/* 入口点 - 程序启动后执行的第一条指令地址 */
+ENTRY(Reset_Handler)
+
+/* 初始化栈顶地址 = RAM 区起始地址 + RAM 区大小 */
+_estack = ORIGIN(RAM) + LENGTH(RAM);
+
+/* 所需的最小堆大小 */
+_Min_Heap_Size = 0x1000;
+
+/* 所需的最小栈大小 */
+_Min_Stack_Size = 0x400;
+
+/* 指定存储器区域 */
+MEMORY
+{
+    RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 64K    /* RAM: 可执行(x)、可读(r)、可写(w)，起始地址0x20000000，长度64KB */
+    FLASH (rx)     : ORIGIN = 0x8000000,  LENGTH = 512K   /* FLASH: 只读(r)、可执行(x)，起始地址0x08000000，长度512KB */
+}
+
+/* 定义输出段 */
+SECTIONS
+{
+    /* 创建一个 .isr_vector 段，用于存放向量表 */
+    .isr_vector :
+    {
+        . = ALIGN(4);           /* 4 字节对齐，地址是 4 的倍数 */
+        KEEP(*(.isr_vector))    /* *(.isr_vector) 表示匹配所有 .isr_vector 段；KEEP 表示保留匹配的段（防止被优化掉），.isr_vector 符号在启动文件被中定义（即向量表） */
+        . = ALIGN(4);
+    } >FLASH                    /* 输出到 FLASH */
+
+  /* 创建一个 .text 段 */
+  .text :
+  {
+    . = ALIGN(4);
+    *(.text)                    /* 匹配所有 .text 段 */
+    *(.text*)                   /* 匹配所有以 .text 开头的段 */
+    *(.glue_7)
+    *(.glue_7t)
+    *(.eh_frame)
+
+    KEEP (*(.init)) 
+    KEEP (*(.fini))
+
+    . = ALIGN(4);
+    _etext = .;                 /* 定义 .text 段结束位置的全局符号 */
+  } >FLASH                      /* 输出到 FLASH */
+
+  /* 创建一个 .rodata 段 */
+  .rodata :
+  {
+    . = ALIGN(4);
+    *(.rodata)
+    *(.rodata*)
+    . = ALIGN(4);
+  } >FLASH                      /* 输出到 FLASH */
+
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
+  .ARM : {
+    __exidx_start = .;
+    *(.ARM.exidx*)
+    __exidx_end = .;
+  } >FLASH
+
+  .preinit_array     :
+  {
+    PROVIDE_HIDDEN (__preinit_array_start = .);
+    KEEP (*(.preinit_array*))
+    PROVIDE_HIDDEN (__preinit_array_end = .);
+  } >FLASH
+  .init_array :
+  {
+    PROVIDE_HIDDEN (__init_array_start = .);
+    KEEP (*(SORT(.init_array.*)))
+    KEEP (*(.init_array*))
+    PROVIDE_HIDDEN (__init_array_end = .);
+  } >FLASH
+  .fini_array :
+  {
+    PROVIDE_HIDDEN (__fini_array_start = .);
+    KEEP (*(SORT(.fini_array.*)))
+    KEEP (*(.fini_array*))
+    PROVIDE_HIDDEN (__fini_array_end = .);
+  } >FLASH
+
+  _sidata = LOADADDR(.data);    /* .data 段在 FLASH 中的起始地址 */
+
+  /* 创建一个 .data 段 */
+  .data : 
+  {
+    . = ALIGN(4);
+    _sdata = .;                 /* .data 段在 RAM 中的起始地址 */
+    *(.data)
+    *(.data*)
+
+    . = ALIGN(4);
+    _edata = .;                 /* .data 段在 RAM 中的结束地址 */
+  } >RAM AT> FLASH              /* VMA 在 RAM 区，LMA 在 FLASH 区 */
+
+  
+  . = ALIGN(4);
+
+  /* 创建一个 .bss 段 */
+  .bss :
+  {
+    _sbss = .;                  /* .bss 在 RAM 中的起始地址 */
+    __bss_start__ = _sbss;
+    *(.bss)
+    *(.bss*)
+    *(COMMON)
+
+    . = ALIGN(4);
+    _ebss = .;                  /* .bss 在 RAM 中的结束地址 */
+    __bss_end__ = _ebss;
+  } >RAM                        /* 输出到 RAM */
+
+
+  /* 用户堆栈段，用于检查剩余 RAM 是否足够 */
+  ._user_heap_stack :
+  {
+    . = ALIGN(8);
+    PROVIDE ( end = . );
+    PROVIDE ( _end = . );
+    . = . + _Min_Heap_Size;
+    . = . + _Min_Stack_Size;
+    . = ALIGN(8);
+  } >RAM
+
+  /* 丢弃标准库中的某些信息（避免链接不需要的库内容） */
+  /DISCARD/ :
+  {
+    libc.a ( * )                /* 丢弃 libc 库所有内容 */
+    libm.a ( * )                /* 丢弃 libm 库所有内容 */
+    libgcc.a ( * )              /* 丢弃 libgcc 库所有内容 */
+  }
+
+  /* ARM 属性段（通常为空，但保留结构） */
+  .ARM.attributes 0 : { *(.ARM.attributes) }
+}
+```
+
+{{< img src="link-map.svg" align="center" >}}
+
+
+> CM3 为满减栈，压栈时：先移动指针再压入数据。
+
+
+## STM32F1 启动流程
+
+
+- 上电后， CPU 固定从 `0x00000000` 读取初始栈顶地址到 SP ，从 `0x00000004` 读取入口程序地址到 PC 。
+- 用户可通过配置 `BOOT0` 和 `BOOT1` 引脚选择启动方式。
+
+|BOOT0 |BOOT1 |启动模式                     |
+|:-----|:-----|:----------------------------|
+|0     |X     |从 FLASH 启动                |
+|1     |0     |从系统存储器启动（ISP 编程） |
+|1     |1     |从 SRAM 启动                 |
+
+
+
+
+### 从 FLASH 启动
+
+从 FLASH 启动时，FLASH 地址空间会被重映射到地址 `0x00000000` ， CPU 就能从 `0x00000000` 访问 FLASH 中的向量表从而运行程序。
+
+假设初始栈顶地址为 `0x20010000` ，入口函数地址为 `0x08000400` ，启动流程如下：
+
+{{< img src="boot-flash.svg" align="center" >}}
+
+> 入口函数地址 `0x08000401` 最后一位是 1 表示 thumb 状态，实际地址为 `0x08000400`
