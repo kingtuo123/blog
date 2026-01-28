@@ -1563,7 +1563,7 @@ g_pfnVectors:
     .word  0
     .word  0
     .word  BootRAM    // 偏移：0x1E0；
-                      // BootRAM = 0xF1E0F85F = 0xF85F 0xF1E0 = LDR.W PC, [PC, #-0x1E0] -> 将 PC 向后移动 0x1E0
+                      // BootRAM = 0xF1E0F85F = 0xF85F 0xF1E0 = LDR.W PC, [PC, #-0x1E0] -> 即 PC = *(PC - 0x1E0)
 
 
 // .weak 表示弱定义符号，用户函数可覆盖 
@@ -2206,6 +2206,8 @@ typedef struct
 } GPIO_TypeDef;
 
 省略...
+#define FLASH_BASE            ((uint32_t)0x08000000)
+#define SRAM_BASE             ((uint32_t)0x20000000)
 
 #define APB1PERIPH_BASE       PERIPH_BASE
 #define APB2PERIPH_BASE       (PERIPH_BASE + 0x10000)
@@ -2829,8 +2831,8 @@ SECTIONS
 ## STM32F1 启动流程
 
 
-- 上电后， CPU 固定从 `0x00000000` 读取初始栈顶地址到 SP ，从 `0x00000004` 读取入口程序地址到 PC 。
-- 用户可通过配置 `BOOT0` 和 `BOOT1` 引脚选择启动方式。
+上电后， CPU **固定**从 `0x00000000` 读取初始栈顶地址到 SP ，从 `0x00000004` 读取入口程序地址到 PC 。
+STM32 可通过配置 `BOOT0` 和 `BOOT1` 引脚，将从 `0x00000000` 地址开始的一块区域（别名区）映射到不同存储器的地址空间，以实现从不同存储器启动。
 
 |BOOT0 |BOOT1 |启动模式                     |
 |:-----|:-----|:----------------------------|
@@ -2843,10 +2845,94 @@ SECTIONS
 
 ### 从 FLASH 启动
 
-从 FLASH 启动时，FLASH 地址空间会被重映射到地址 `0x00000000` ， CPU 就能从 `0x00000000` 访问 FLASH 中的向量表从而运行程序。
+从 FLASH 启动时，地址 `0x00000000` 被映射到 `0x08000000` ， CPU 就能从 `0x00000000` 访问 FLASH 中的向量表从而运行程序。
 
-假设初始栈顶地址为 `0x20010000` ，入口函数地址为 `0x08000400` ，启动流程如下：
+假设初始栈顶地址为 `0x20010000`（64K） ，入口函数地址为 `0x08000400` ，启动流程如下：
 
 {{< img src="boot-flash.svg" align="center" >}}
 
-> 入口函数地址 `0x08000401` 最后一位是 1 表示 thumb 状态，实际地址为 `0x08000400`
+> 入口函数地址 `0x08000401` 最后一位是 1 表示 thumb 状态，实际地址为 `0x08000400` 。
+
+
+
+### 从系统存储器启动
+
+从 System Memory 启动时，地址 `0x00000000` 被映射到 `0x1FFF0000` ，此区域存储的是厂商内置的 BootLoader 程序（闭源），
+主要功能是从串口下载用户程序到 Flash （ISP 编程）。
+
+
+### 从 SRAM 启动
+
+从 SRAM 启动时，理论上应该将地址 `0x00000000` 映射到 `0x20000000` ，但对于 STM32F1 系列实际情况并非如此。
+
+对于 STM32F103ZET6 ， 从 SRAM 启动时，`0x00000000` 会被映射到一块内存极小的区域，大约在 `0x1FFFF000` 附近或略低，仅 16 字节，内容如下：
+
+```text
+20005000 200001E1 20000004 20000004
+```
+
+第一个字：初始栈顶地址 `0x20005000` （20K）。
+
+第二个字：入口程序地址 `0x200001E1` ，最后一位表示 thumb ，实际是 `0x200001E0`，相对 `0x20000000` 偏移 `0x1E0` 。
+对于不同容量的产品，其偏移值也有所不同，参考 GCC 的启动文件：
+
+```asm
+startup_stm32f10x_ld.s:     .word  BootRAM    /*  0x108   */
+startup_stm32f10x_md.s:     .word  BootRAM    /*  0x108   */
+startup_stm32f10x_hd.s:     .word  BootRAM    /*  0x1E0   */
+startup_stm32f10x_xl.s:     .word  BootRAM    /*  0x1E0   */
+startup_stm32f10x_cl.s:     .word  BootRAM    /*  0x1E0   */
+startup_stm32f10x_ld_vl.s:  .word  BootRAM    /*  0x01CC  */
+startup_stm32f10x_md_vl.s:  .word  BootRAM    /*  0x01CC  */
+startup_stm32f10x_hd_vl.s:  .word  BootRAM    /*  0x1E0   */
+```
+
+第三和第四个字分别是 NMI 和 HardFault 向量。它们的最低位为 0 （CM3 不支持 ARM 状态），因此当 VTOR 仍为零时，若发生这些异常中的任何一个，处理器将触发双重异常。
+
+根据 <a href="#gcc-启动文件">GCC 启动文件</a> 与 <a href="#gcc-链接脚本">GCC 链接脚本</a> ，地址 `0x200001E0` 位置是向量表中 `BootRAM` 所在，且 `BootRAM = 0xF1E0F85F` ，
+`0xF1E0F85F` 这个值实际是汇编指令 `LDR.W PC, [PC, #-0x1E0]` 的机器码，作用是 `PC = *(PC - 0x1E0)` ，指令执行后的 PC 指向真正的入口程序地址，
+详情参考 [这篇帖子](https://stackoverflow.com/questions/50977529/arm-cortex-m3-boot-from-ram-initial-state/51005367#51005367) 。
+
+
+{{< img src="boot-sram.svg" align="center" >}}
+
+正常从 SRAM 启动，应该需要以下设置（**未验证**）：
+
+1. 配置 BOOT0 、BOOT1 引脚均为高电平。
+2. 设置链接脚本中的 RAM 区起始地址，与 RAM 区大小。
+3. 设置链接脚本中的 FLASH 区的起始地址为 `0x20000000`，与 FLASH 区大小。
+4. 从上图的流程中可以看出，用户向量表中的 `_estack` 栈初始地址没有起到作用，初始栈顶被强制设置为 `0x20005000` ，
+所以用户需要在 main 函数调用前手动设置，可以调用 <a href="#core_cm3c">core_cm3.c</a> 中的 `__set_MSP` 函数。
+5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可以手动设置或使用 <a href="#system_stm32f10xc">system_stm32f10x.c</a> 中的 `VECT_TAB_SRAM` 宏，如下：
+
+{{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" >}}
+```c
+// 如果需要将向量表重定位到内部SRAM中，请取消注释以下行
+// #define VECT_TAB_SRAM                     // 定义向量表在SRAM中
+#define VECT_TAB_OFFSET  0x0                 // 向量表基址偏移量字段，此值必须是0x200的倍数
+
+void SystemInit (void) {
+
+省略...
+
+#ifdef VECT_TAB_SRAM
+    // SRAM_BASE 在 stm32f10x.h 中定义 0x20000000
+    SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET;  // 向量表重定位到内部 SRAM 中
+#else
+    SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; // 向量表重定位到内部 FLASH 中
+#endif 
+}
+```
+
+> 对于这种奇怪的启动方式，似乎主要局限于 F103/5/7 系列，较新的芯片应该是正常的，还是参考 [这篇帖子](https://stackoverflow.com/questions/50977529/arm-cortex-m3-boot-from-ram-initial-state/51005367#51005367) 。
+
+
+另外，我在野火 STM32 文档中也找到了印证，参考 [在SRAM中调试代码](https://doc.embedfire.com/mcu/stm32/f103badao/std/zh/latest/book/SRAM.html) 一文。
+在此文中，单片机复位后 PC 和 SP 指针初始值异常（如下图），恰好印证了上述的启动流程。
+
+{{< img src="bad.jpg" zoom="1" align="center" >}}
+
+{{< img src="info.png" zoom="0.5" align="center" >}}
+
+除此之外，野火 STM32 文档中使用的 IDE 是 Keil ，默认是 ARMCC 编译器，该编译器的启动文件中并没有定义 `BootRAM` ，
+这也是他们 SRAM 调试失败的原因之一。
