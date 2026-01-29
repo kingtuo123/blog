@@ -22,12 +22,12 @@
 	{{ $scrollX    := .Get "scroll-x"    | default "false"             }}
 
 	{{ $fontSizeReplace   := printf `font-size: %s` $fontSize          }}
-	{{ $fontFamilyReplace := printf `font-family:'%s';` $fontFamily    }}
+	{{ $fontFamilyReplace := printf `font-family: '%s'` $fontFamily    }}
 	{{ $fontFaceReplace   := printf `face="%s"` $fontFamily            }}
 	{{ $currentDir := .Page.File.Dir }}
 	{{ $svgPath := path.Join "content" $currentDir $src }}
 	<div class="svg-container {{ if eq $scrollX "true" }}scroll-x{{ end }}" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};"{{ end }}>
-		{{- readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s*[0-9]+px` $fontSizeReplace | safeHTML -}}
+		{{- readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s[0-9]+?px` $fontSizeReplace | replaceRE `font-family:\s'.*?'` $fontFamilyReplace | safeHTML -}}
 	</div>
 {{ else }}
 	{{ $zoom := .Get "zoom" | default "0.5" }}

@@ -1,8 +1,7 @@
 ---
 title: "STM32F1 标准库源码阅读"
-date: "2026-01-14"
+date: "2026-01-29"
 toc: true
-draft: true
 ---
 
 
@@ -2902,8 +2901,8 @@ startup_stm32f10x_hd_vl.s:  .word  BootRAM    /*  0x1E0   */
 2. 设置链接脚本中的 RAM 区起始地址，与 RAM 区大小。
 3. 设置链接脚本中的 FLASH 区的起始地址为 `0x20000000`，与 FLASH 区大小。
 4. 从上图的流程中可以看出，用户向量表中的 `_estack` 栈初始地址没有起到作用，初始栈顶被强制设置为 `0x20005000` ，
-所以用户需要在 main 函数调用前手动设置，可以调用 <a href="#core_cm3c">core_cm3.c</a> 中的 `__set_MSP` 函数。
-5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可以手动设置或使用 <a href="#system_stm32f10xc">system_stm32f10x.c</a> 中的 `VECT_TAB_SRAM` 宏，如下：
+所以用户需要在 main 函数调用前设置 SP ，可以使用 <a href="#core_cm3c">core_cm3.c</a> 中的 `__set_MSP` 函数。
+5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可使用 <a href="#system_stm32f10xc">system_stm32f10x.c</a> 中的 `VECT_TAB_SRAM` 宏，如下：
 
 {{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" >}}
 ```c
