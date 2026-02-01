@@ -2567,7 +2567,7 @@ $ arm-none-eabi-gcc -D HSE_VALUE=8000000 -D SYSCLK_FREQ_48MHz=48000000
 #endif
 ```
 
-### 中断配置头文件
+### 中断函数头文件
 
 这会覆盖启动文件中的中断函数。
 
@@ -2600,7 +2600,7 @@ void SysTick_Handler(void);
 #endif
 ```
 
-### 中断配置源文件
+### 中断函数源文件
 
 
 {{< bar title="Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c" >}}

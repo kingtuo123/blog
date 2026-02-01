@@ -291,7 +291,7 @@ This is line two.`
 ```
 
 
-## 访问站点配置与前置元数据
+## 访问站点配置
 
 {{< bar block="站点配置" title="hugo.toml" >}}
 
@@ -299,6 +299,23 @@ This is line two.`
 [params]
 	headerTitle = "夜不能寐"
 ```
+
+方法一：调用 `Site` 对象的 `Params` 方法：
+
+```go-template
+{{ .Site.Params.headerTitle }}  →  夜不能寐
+```
+
+方法二：通过全局函数 `site` 调用 `Params` 方法：
+
+```go-template
+{{ site.Params.headerTitle }}   →  夜不能寐
+```
+
+> `site` 函数提供对 `Site` 对象的全局访问。
+
+
+## 访问前置元数据
 
 {{< bar block="前置元数据" title="content/posts/hugo-template-syntax.md" >}}
 
@@ -310,24 +327,20 @@ toc: true
 ---
 ```
 
-
-方法一：调用 `Site` 与 `Page` 对象的 `Params` 方法：
+方法一：调用 `Page` 对象的 `Params` 方法：
 
 ```go-template
-{{ .Site.Params.headerTitle }}  →  夜不能寐
 {{ .Page.Params.title }}        →  Hugo 模板语法
 {{ .Params.title }}             →  Hugo 模板语法   {{/* 在模板顶层 . 与 Page 绑定 */}}
 ```
 
-
-方法二：通过全局函数 `site` 与 `page` 调用 `Params` 方法：
+方法二：通过全局函数 `page` 调用 `Params` 方法：
 
 ```go-template
-{{ site.Params.headerTitle }}   →  夜不能寐
 {{ page.Params.title }}         →  Hugo 模板语法
 ```
 
-> `site` 函数提供对 `Site` 对象的全局访问，`page` 函数提供对 `Page` 对象的全局访问。
+> `page` 函数提供对 `Page` 对象的全局访问。
 
 
 
