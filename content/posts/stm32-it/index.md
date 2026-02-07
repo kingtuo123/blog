@@ -5,40 +5,25 @@ draft: true
 ---
 
 
-## 异常与中断
+## 异常简介
 
-异常：由内核触发（如复位、硬件错误、SysTick 等）触发的事件。
+{{< img src="jianjie.svg" >}}
 
-中断：是异常的一个子集，由外部外设（如GPIO、定时器、USART等）触发的事件。
+- 系统异常：由内核、内核外设触发（如 SysTick 、MPU 等），异常编号 0 ~ 15 。
+- 外部中断：由设备外设触发（如 GPIO 、USART 等），异常编号 16 ~ 255 。
 
-
-
-中断是指系统停止当前正在运行的程序转到其他的服务，可能是程序接收了比自身高优先级的请求，或者是人为设置中断，中断是属于正常现象。
-
-异常是指由于CPU本身故障、程序故障或者请求服务等引起的错误，异常属于不正常现象。
 
 ## 异常编号
-
-异常编号是ARM Cortex-M内核硬件上定义和实现的。它是一个固定的、标准化的编号体系，所有Cortex-M内核都遵循这一规范。
-
-异常编号直接决定了该异常在异常向量表中的位置（偏移量）。向量表是一块连续的内存区域，每个条目（4字节）存放一个异常处理函数的地址。CPU根据异常号计算偏移量：
-
-```text
-向量地址 = 向量表基址 + 异常号 × 4
-```
-
-core 枚举值是 stm32f10x.h
-
 
 {{< table min-width="100" >}}
 |异常编号 |异常类型           |CMSIS-Core 枚举       | CMSIS-Core 枚举值 |异常处理名         |优先级     |
 |:--------|:------------------|:---------------------|:------------------|:------------------|:----------|
 |1        |复位               |--                    |--                 |Reset_Handler      |-3（最高） |
 |2        |不可屏蔽中断       |NonMaskableInt_IRQn   |-14                |NMI_Handler        |-2         |
-|3        |硬件错误           |MemoryManagement_IRQn |-13                |HardFault_Handler  |-1         |
-|4        |内存管理错误       |BusFault_IRQn         |-12                |MemManage_Handler  |可编程     |
-|5        |总线错误           |BusFault_IRQn         |-11                |BusFault_Handler   |可编程     |
-|6        |使用错误           |UsageFault_IRQn       |-10                |UsageFault_Handler |可编程     |
+|3        |硬件故障           |MemoryManagement_IRQn |-13                |HardFault_Handler  |-1         |
+|4        |内存管理故障       |BusFault_IRQn         |-12                |MemManage_Handler  |可编程     |
+|5        |总线故障           |BusFault_IRQn         |-11                |BusFault_Handler   |可编程     |
+|6        |使用故障           |UsageFault_IRQn       |-10                |UsageFault_Handler |可编程     |
 |7 ~ 10   |--                 |--                    |--                 |--                 |--         |
 |11       |系统服务调用       |SVCall_IRQn           |-5                 |SVC_Handler        |可编程     |
 |12       |调试监控           |DebugMonitor_IRQn     |-4                 |DebugMon_Handler   |可编程     |
@@ -48,9 +33,31 @@ core 枚举值是 stm32f10x.h
 |16 ~ 255 |外部中断 #0 ~ #239 |设备定义              |0 ~ 239            |设备定义           |可编程     |
 {{< /table >}}
 
+- 异常编号：硬件层面的编号体系，由 ARM 设计。
+- CMSIS-Core 枚举值：软件层面的编号体系，由芯片厂商设计。
+
+> CMSIS-Core 枚举值使用负数区分系统异常与外部中断，这样设计是为了编程的方便性，以及提高部分 API 函数的效率（设置优先级）。
+
+## 向量表
+
+向量表默认地址从 0 开始。
+
 
 
 ## 其它
+
+异常编号直接决定了该异常在异常向量表中的位置（偏移量）。向量表是一块连续的内存区域，每个条目（4字节）存放一个异常处理函数的地址。CPU根据异常号计算偏移量：
+
+
+core 枚举值是 stm32f10x.h
+
+```text
+向量地址 = 向量表偏移地址 + 异常编号 × 4
+```
+
+所有异常都在处理模式中操作
+
+SysTick是内核外设，不是芯片厂商添加的外设
 
 异常不走 NVIC ，优先级配置 SCB->SHP
 
