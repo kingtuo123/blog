@@ -113,7 +113,7 @@ looking at device '/devices/pci0000:00/0000:00:08.1/0000:c6:00.3/usb1/1-5/1-5:1.
   ATTR{power/runtime_suspended_time}=="0"
 ```
 
-由于没有能标识设备唯一性的 `ATTR` 属性，所以只能对所有蓝牙设备应用以下规则：
+由于没有能标识设备唯一性的 ATTR 属性，所以只能对所有蓝牙设备应用以下规则：
 
 {{< bar title="/etc/udev/rules.d/88-bluetooth.rules" >}}
 
