@@ -96,17 +96,17 @@ strong {
 
 
 /*****     短代码: notice     *****/
-blockquote.alarm {
+blockquote.red {
 	color: var(--Red);
 	background-color:  var(--Background-Red);
 	border-color: var(--Red);
 }
-blockquote.warn {
+blockquote.yellow {
 	color: var(--Yellow);
 	background-color: var(--Background-Yellow);
 	border-color: var(--Yellow);
 }
-blockquote.info {
+blockquote.blue {
 	color: var(--Blue);
 	background-color: var(--Background-Blue);
 	border-color: var(--Blue);

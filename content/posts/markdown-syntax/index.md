@@ -68,21 +68,21 @@ toc: true
 {{< bar block="短代码" >}}
 
 ```go-template
-{{</* notice type="info" */>}}
-这是 info 样式
+{{</* notice class="blue" */>}}
+这是 blue 样式
 {{</* /notice */>}}
 ```
 
-{{< notice type="info" >}}
-这是 info 样式
+{{< notice class="blue" >}}
+这是 blue 样式
 {{< /notice >}}
 
-{{< notice type="warn" >}}
-这是 warn 样式
+{{< notice class="yellow" >}}
+这是 yellow 样式
 {{< /notice >}}
 
-{{< notice type="alarm" >}}
-这是 alarm 样式
+{{< notice class="red" >}}
+这是 red 样式
 {{< /notice >}}
 
 
@@ -129,6 +129,7 @@ toc: true
 |`font-family`  |字体，只对 svg 图片有效，默认 `LXGW WenKai Mono`   |
 |`font-size`    |字体大小，只对 svg 图片有效，默认 `16px`           |
 |`scroll-x`     |图片溢出后左右滚动，默认 `false`，只对 svg 图片有效|
+|`margin`       |图片边距，格式：`margin="10px 0 15px 0"`           |
 
 {{< /table >}}
 
