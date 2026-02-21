@@ -1,0 +1,61 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram name="Page-1" id="CYN5rNMt5I8NPPckAReZ">
+    <mxGraphModel dx="1188" dy="839" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1140" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;*(.text)&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="160" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;*(.data)&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="160" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;*(.bss)&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="160" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);" value="" vertex="1">
+          <mxGeometry height="80" width="160" x="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-5" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;legacyAnchorPoints=0;fontColor=light-dark(#5C6A72,#D3C6AA);strokeColor=light-dark(#5C6A72,#D3C6AA);fillColor=none;size=0.4;" value="" vertex="1">
+          <mxGeometry height="200" width="30" x="330" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=left;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;SECTIOINS&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="100" x="370" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;0x10000&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="50" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;0x8000000&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="50" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-9" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="140" y="79.72" as="sourcePoint" />
+            <mxPoint x="160" y="79.72" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-10" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="140" y="199.72" as="sourcePoint" />
+            <mxPoint x="160" y="199.72" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;" value="&lt;font face=&quot;LXGW WenKai Mono&quot; style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt;_end_of_bss&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="29" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-16" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="140" y="279.6" as="sourcePoint" />
+            <mxPoint x="160" y="279.6" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=center;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;低地址&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="195" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="P9IbACG_4-FQTw3v7D2M-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=center;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;高地址&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="195" y="280" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

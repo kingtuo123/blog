@@ -25,7 +25,7 @@ header .title {
 	font-family: "LXGW WenKai Medium";
 	font-weight: normal;
 }
-.post-content code:not(.highlight code):not(blockquote code) {
+.post-content code:not(.highlight code):not(blockquote code):not(em code):not(strong code) {
 	font-family: "LXGW WenKai Mono";
 	font-weight: normal;
 }
