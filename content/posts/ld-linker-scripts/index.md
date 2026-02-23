@@ -213,7 +213,7 @@ $ ld main.o special.o -T my_script.ld -T insert_special.ld -o program
 
 ### 简单赋值
 
-支持 C 语言赋值运算符：
+支持 C 语言的赋值运算符：
 
 ```c
 symbol   =  expression ;
@@ -255,7 +255,7 @@ SECTIONS
 
 ### 源代码引用
 
-链接器脚本中定义的符号会在符号表中创建一个条目，但不会为它们分配任何内存（大小为 0 ）。
+链接器脚本中定义的符号会在符号表中创建一个条目，但不会为它分配任何内存（大小为 0 ）。
 因此，它是一个没有值的地址（地址常量？）。
 
 ```c
@@ -276,7 +276,7 @@ SECTIONS
 
 ```bash-session
 $ objdump -t target.elf
-[地址]    [标志]    [段]     [大小]   [符号名]
+[地址]    [标志]    [段]     [大小]    [符号名]
 20000000  g         .data    00000000  _sdata
 20000000  g      O  .data    00000004  count
 20000004  g         .data    00000000  _edata
@@ -289,15 +289,15 @@ $ objdump -t target.elf
 所以不能在 C 程序中获取 `_sdata` 的值（值是不存在的），但能获取 `_sdata` 的地址（使用 `&` ）：
 
 ```c
-extern char _sdata;
-char *p = &_sdata;
+extern int _sdata;
+int *p = &_sdata;
 ```
 
 或者声明为一个数组，数组首地址即为 `_sdata` 符号的地址：
 
 ```c
-extern char _sdata[];
-char *p = _sdata;
+extern int _sdata[];
+int *p = _sdata;
 ```
 
 在汇编中，符号本质上就是一个地址（指针），所以直接使用 `_sdata` 即可：
