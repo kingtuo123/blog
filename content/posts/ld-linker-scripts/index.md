@@ -252,6 +252,9 @@ SECTIONS
 
 当输入文件（程序）中没有定义 `symbol` 的值时，链接器才会使用 `PROVIDE` 命令中的 `symbol = expression` 的值。
 
+### PROVIDE_HIDDEN
+
+`PROVIDE` 与 `HIDDEN` 功能相结合。
 
 ### 源代码引用
 
@@ -305,6 +308,139 @@ int *p = _sdata;
 ```asm
 ldr  r0, =_sdata    /* r0 = 0x20000000 */
 ```
+
+
+## SECTIONS 命令
+
+`SECTIONS` 命令告知链接器如何将输入段映射到输出段，以及如何在内存中放置输出段。
+
+```text
+SECTIONS
+{
+    [段名]  [VMA地址]  [(段类型)]  :  [AT(LMA地址)]  [ALIGN(段对齐)|ALIGN_WITH_INPUT]  [SUBALIGN(子段对齐)]  [约束]
+    {
+        output-section-command
+        output-section-command
+        ...
+    } [>region] [AT>lma_region] [:phdr :phdr ...] [=fillexp] [,]
+}
+```
+
+`[ ]` 中的参数都是可选的。
+
+
+### [ 段名 ]
+
+以 `.` 开头，如 `.text` 、`.init` 、`.debug_info` 等。
+
+**`特殊段名：/DISCARD/`**
+
+作用是丢弃匹配的输入段，不将这些段包含在最终输出的可执行文件或库中：
+
+```c
+/DISCARD/ : { *(.debug*) }    // 丢弃所有调试信息段
+```
+
+### [ VMA地址 ]
+
+该地址是输出段的 VMA（虚拟内存地址）表达式。
+
+```asm
+.text   : { *(.text) }            // 段名后面没有指定地址，链接器会自动使用当前 '.' 的值作为 VMA
+.text . : { *(.text) }            // 显式指定 VMA = 当前的 '.' 值
+.text 0x08000000  : { *(.text) }  // 指定 VMA = 0x08000000
+.text ALIGN(0x10) : { *(.text) }  // 将 VMA 对齐到 0x10 字节边界，使得地址的最低四位为零，ALIGN 返回当前定位计数器向上对齐到指定值后的结果
+```
+
+LMA 默认等于 VMA ，除非使用 `AT` 明确指定 LMA 。
+
+
+### [ (段类型) ]
+
+**`NOLOAD`**
+
+表示这个段不应该被加载到内存中，或者不需要在程序运行时分配实际内存。
+
+```c
+.debug_info (NOLOAD) : {
+    *(.debug_info)
+    *(.debug_line)
+}
+```
+
+**`READONLY`**
+
+表示该输出段的内容在运行时不可被修改，并在生成的 ELF 文件中将该段标记为只读。
+
+**`TYPE = type`**
+
+用于显式指定输出段的段类型（sh_type），覆盖链接器默认生成的段类型。例如 `SHT_PROGBITS` 表示程序段：
+
+```c
+.text . (TYPE = SHT_PROGBITS) : { *(.text) }
+```
+
+使用 `readelf -S` 命令输出段的头信息：
+
+```bash-session
+$ readelf -S led-blink.elf
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .isr_vector       PROGBITS        08000000 001000 0001e4 00   A  0   0  1
+  [ 2] .text             PROGBITS        080001e4 0011e4 00059c 00  AX  0   0  4
+```
+
+更多段类型（sh_type）参考 [ELF 格式](https://refspecs.linuxfoundation.org/elf/elf.pdf) 中的相关内容。
+
+**`READONLY ( TYPE = type )`**
+
+这种语法形式将 `READONLY` 与 `TYPE` 相结合。
+
+
+### [ AT(LMA地址) ]
+
+指定 LMA 的地址。
+
+```
+.bss : AT(0x20000000) { *(.bss) }
+```
+
+### [ ALIGN(段对齐) | ALIGN_WITH_INPUT ]
+
+输出段起始地址对齐：
+
+```c
+.bss : ALIGN(4) { *(.bss) }    // .bss 段起始地址 4 字节对齐
+```
+
+`ALIGN_WITH_INPUT`：不太清楚（确保输出段的对齐要求与输入段相同，防止因重新对齐导致的内存布局变化？）。
+
+
+### [ SUBALIGN(子段对齐) ]
+
+强制输入段在输出段内对齐：
+
+```c
+.text : SUBALIGN(4)
+{
+    *(.text.func1)    // 强制 4 字节对齐
+    *(.text.func2)    // 强制 4 字节对齐
+    *(.text.func3)    // 强制 4 字节对齐
+}
+```
+
+```c
+.text : SUBALIGN(4)
+{
+    *(.text.*)        // 匹配的 .text.func1 ， .text.func2 ， ... 都强制 4 字节对齐
+}
+```
+
+### [ 约束 ]
+
+仅两个关键字。`ONLY_IF_RO`：仅当所有输入节均为只读才创建输出节。`ONLY_IF_RW`：仅当所有输入节均为读写时才创建输出节。
+
 
 
 ## 参考链接
