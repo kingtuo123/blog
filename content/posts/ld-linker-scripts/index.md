@@ -331,8 +331,6 @@ SECTIONS
 
 ### [ 段名 ]
 
-以 `.` 开头，如 `.text` 、`.init` 、`.debug_info` 等。段名之后要跟一个空格。
-
 **`特殊段名：/DISCARD/`**
 
 作用是丢弃匹配的输入段，不将这些段包含在最终输出的可执行文件或库中：
@@ -439,21 +437,34 @@ Section Headers:
 
 ### [ 约束 ]
 
-仅两个关键字。`ONLY_IF_RO`：仅当所有输入段均为只读才创建输出段。`ONLY_IF_RW`：仅当所有输入段均为读写时才创建输出段。
+仅两个关键字。`ONLY_IF_RO` 仅当所有输入段均为只读才创建输出段。`ONLY_IF_RW` 仅当所有输入段均为读写时才创建输出段。
 
 
 ### [ 输入段命令 ]
 
-```bash
-.text : {
-    *(.text)
+**`通配符`**
+
+{{< table thead="false" min-width="100" >}}
+|        |                         |
+|:-------|:------------------------|
+|`*`     |匹配任意数量的字符       |
+|`?`     |匹配任意单个字符         |
+|`[a-z]` |匹配集合中的任意一个字符 |
+{{< /table >}}
+
+如果一个文件名匹配多个通配符模式，链接器将使用链接脚本中的第一个匹配项：
+
+```c
+.data : {
+    *(.data)
+}
+.data1 : {
+    data.o(.data)    /* 如果 data.o 存在，该规则不会被使用 */
 }
 ```
 
-文件名可以使用 `*` 通配符匹配所有输入文件，或指定文件如 `main.o(.text)` 。
-
 {{< notice class="yellow" >}}
-注意：不是从当前目录中匹配，是从命令行或链接器脚本中定义的输入文件中匹配。
+文件名通配符模式仅匹配在命令行或 INPUT 命令中明确指定的文件。链接器不会通过搜索目录来扩展通配符。
 {{< /notice >}}
 
 **`EXCLUDE_FILE`**
@@ -523,7 +534,7 @@ Section Headers:                                                    ↓
 
 其中：`A` (ALLOC)：段在内存中分配。`X` (EXEC)：段可执行。
 
-**其它**
+**`ARCHIVE:FILE`**
 
 {{< notice class="red" >}}
 可能有误，仅供参考。
@@ -536,31 +547,13 @@ Section Headers:                                                    ↓
     libc.a:         (.text)    /* 匹配 libc.a 文件中的所有 .text 段               */
     libc.a:printf.o (.text)    /* 匹配 libc.a 文件中的 printf.o 中的所有 .text 段 */
           :printf.o (.text)    /* 匹配非静态库文件中的 printf.o 中的所有 .text 段 */
+           printf.o            /* 匹配 printf.o 中所有段                          */
 }
 ```
 
 `archive:file` 是一个整体，不要在冒号 `:` 左右加空格，错误的写法 `archive : file` 。
 
-### 输入节通配符模式
-
-|||
-|:--|:--|
-|`*`|匹配任意数量的字符|
-|`?`|匹配任意单个字符|
-|`[a-z]`|匹配集合中的任意一个字符|
-
-如果一个文件名匹配多个通配符模式，链接器将使用链接脚本中的第一个匹配项：
-
-```c
-.data : {
-    *(.data)
-}
-.data1 : {
-    data.o(.data)    /* 该规则不会被使用 */
-}
-```
-
-#### SORT_BY_NAME
+**`SORT_BY_NAME`**
 
 使用 `SORT_BY_NAME` 可以按名称升序（a → z）对输入段进行排序：
 
@@ -570,11 +563,11 @@ Section Headers:                                                    ↓
 }
 ```
 
-#### SORT
+**`SORT`**
 
 `SORT` 是 `SORT_BY_NAME` 的别名。
 
-#### SORT_BY_ALIGNMENT
+**`SORT_BY_ALIGNMENT`**
 
 `SORT_BY_ALIGNMENT` 按输入段的对齐大小降序：
 
@@ -600,7 +593,7 @@ Section Headers:                                                    ↓
 .text.a    (align=4)
 ```
 
-#### SORT_BY_INIT_PRIORITY
+**`SORT_BY_INIT_PRIORITY`**
 
 `SORT_BY_INIT_PRIORITY` 表示按优先级升序，数字越小优先级越高：
 
@@ -629,7 +622,7 @@ Section Headers:                                                    ↓
 > `init_priority` 是 GCC 的一个编译器扩展属性，用于控制 C++ 全局对象的初始化顺序，范围 `101 ~ 65535` 。
 
 
-#### REVERSE
+**`REVERSE`**
 
 `REVERSE` 表示排序应反向进行。如果单独使用，则 `REVERSE` 效果同 `SORT_BY_NAME` 。
 
@@ -649,7 +642,7 @@ Section Headers:                                                    ↓
 }
 ```
 
-#### 嵌套排序
+**`嵌套排序`**
 
 ```c
 .text : {
@@ -676,17 +669,23 @@ Section Headers:                                                    ↓
 如果链接器脚本中的段排序命令已嵌套，命令行选项将被忽略。
 
 
+**`输入段的垃圾回收`**
+
+
+链接器 `--gc-sections` 参数（garbage collection）会丢弃未被引用的段。要保留这些段，在输入段周围加上 `KEEP()` ：
+
+```c
+.text : {
+    KEEP(*(.init))
+}
+```
 
 
 
 
 
 
+## 官方文档
 
-
-
-
-## 参考链接
-
-- [gnu](https://sourceware.org/binutils/docs/)
-- [Linker Scripts](https://sourceware.org/binutils/docs/ld/Scripts.html)
+- [Binutils](https://sourceware.org/binutils/docs/)
+- [LD](https://sourceware.org/binutils/docs/ld/index.html#SEC_Contents)
