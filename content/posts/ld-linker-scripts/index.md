@@ -321,7 +321,7 @@ SECTIONS
         [输入段命令]
         [输入段命令]
         ...
-    } [>region] [AT>lma_region] [:phdr :phdr ...] [=fillexp] [,]
+    } [>VMA区域] [AT>LMA区域] [:phdr :phdr ...] [=fillexp] [,]
 }
 ```
 
@@ -342,7 +342,7 @@ SECTIONS
 
 ### [ VMA地址 ]
 
-该地址是输出段的 VMA（虚拟内存地址）表达式。
+该选项是输出段的 VMA 表达式（若未指定 VMA ，VMA = `.` ）：
 
 ```asm
 .text   : { *(.text) }            /* 段名后面没有指定地址，链接器会自动使用当前 '.' 的值作为 VMA                                           */
@@ -350,8 +350,6 @@ SECTIONS
 .text 0x08000000  : { *(.text) }  /* 指定 VMA = 0x08000000                                                                                 */
 .text ALIGN(0x10) : { *(.text) }  /* 将 VMA 对齐到 0x10 字节边界，使得地址的最低四位为零，ALIGN 返回当前定位计数器向上对齐到指定值后的结果 */
 ```
-
-LMA 默认等于 VMA ，除非使用 `AT` 明确指定 LMA 。
 
 
 ### [ (段类型) ]
@@ -396,21 +394,27 @@ Section Headers:
 
 这种语法形式将 `READONLY` 与 `TYPE` 相结合。
 
+**`DSECT 、COPY 、INFO 、OVERLAY`**
+
+这些类型名称是为了向后兼容而支持的，并且很少使用。
+它们都具有相同的效果：该输出段被标记为不可分配，以便在程序运行时不为该段分配内存。
+
 
 ### [ AT(LMA地址) ]
 
-指定 LMA 的地址。
+指定 LMA 的地址（若未指定 LMA ，则 LMA = VMA ）：
 
 ```c
-.bss : AT(0x20000000) { *(.bss) }
+.data . : AT(0x20000000) { *(.data) }
 ```
+
 
 ### [ ALIGN(段对齐) | ALIGN_WITH_INPUT ]
 
 输出段起始地址对齐：
 
 ```c
-.bss : ALIGN(4) { *(.bss) }    /* .bss 段起始地址 4 字节对齐 */
+.data . : ALIGN(4) { *(.data) }    /* .bss 段起始地址 4 字节对齐 */
 ```
 
 `ALIGN_WITH_INPUT`：不太清楚（确保输出段的对齐要求与输入段相同，防止因重新对齐导致的内存布局变化？）。
@@ -749,6 +753,100 @@ Section Headers:                                                    ↓
 注意：默认情况下此指令处于禁用状态且不会产生任何效果。仅当使用 `--enable-linker-version` 命令行选项时才会激活该功能。
 
 
+### [ >VMA区域 ]
+
+在 `MEMORY` 命令中定义的区域。
+
+```c
+MEMORY {
+    rom : ORIGIN = 0x1000, LENGTH = 0x1000
+}
+SECTIONS {
+    ROM : {
+        *(.text)
+    } >rom
+}
+```
+
+
+### [ AT>LMA区域 ]
+
+在 `MEMORY` 命令中定义的区域。
+
+
+## PHDRS 命令
+
+`PHDRS` 用于手动定义 ELF 文件中的程序头（Program Headers）。使用 `objdump -p` 命令打印程序头。
+
+```text
+PHDRS
+{
+    名称  类型  [FILEHDR]  [PHDRS]  [AT ( 地址 )]  [FLAGS ( 标志 )] ;
+}
+```
+
+### 名称
+
+用户自定义的名称。这不是最终输出文件中的字段，仅用于在 `SECTIONS` 命令中引用这个程序头。
+
+### 类型
+
+程序头的类型。该类型可能是以下之一。数字表示关键字的值。
+
+```makefile
+PT_NULL (0)    : 表示未使用的程序头。
+PT_LOAD (1)    : 表示此程序头描述了一个需要从文件中加载的段。
+PT_DYNAMIC (2) : 表示一个可以找到动态链接信息的段。
+PT_INTERP (3)  : 指示可能包含程序解释器名称的段。
+PT_NOTE (4)    : 指示包含注释信息的段。
+PT_SHLIB (5)   : 一个保留的程序头类型，由 ELF ABI 定义但未具体说明。
+PT_PHDR (6)    : 指示可以找到程序头的段。
+PT_TLS (7)     : 表示一个包含线程本地存储的段。
+表达式         : 一个给出程序头数字类型的表达式。这可用于上述未定义的类型。
+```
+
+### [ FILEHDR ]
+
+表示这个段包含了 ELF 文件头。
+
+
+### [ PHDRS ]
+
+表示这个段包含了 ELF 程序头表本身。
+
+### [ AT ( 地址 ) ]
+
+指定 LMA 地址。
+
+### [ FLAGS ( 标志 ) ]
+
+用于设置程序头的 `p_flags` 字段。
+
+### 示例
+
+```c
+PHDRS
+{
+    headers PT_PHDR PHDRS ;
+    interp PT_INTERP ;
+    text PT_LOAD FILEHDR PHDRS ;
+    data PT_LOAD ;
+    dynamic PT_DYNAMIC ;
+}
+
+SECTIONS
+{
+    . = SIZEOF_HEADERS;
+    .interp  : { *(.interp) } :text :interp
+    .text    : { *(.text)   } :text
+    .rodata  : { *(.rodata) }
+    ...
+    . = . + 0x1000;
+    .data    : { *(.data)    } :data
+    .dynamic : { *(.dynamic) } :data :dynamic
+    ...
+}
+```
 
 
 ## 官方文档
