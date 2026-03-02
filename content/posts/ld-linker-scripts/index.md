@@ -321,7 +321,7 @@ SECTIONS
         [输入段命令]
         [输入段命令]
         ...
-    } [>VMA区域] [AT>LMA区域] [:phdr :phdr ...] [=fillexp] [,]
+    } [>VMA区域]  [AT>LMA区域]  [:程序段1 :程序段2 ...]  [=填充]  [,]
 }
 ```
 
@@ -713,7 +713,7 @@ Section Headers:                                                    ↓
 
 **`FILL`**
 
-`FILL` 用于填充段中任何未明确指定的内存区域（例如对齐产生的间隙），填充值**固定大端序**，仅影响 `FILL` 命令之后的部分。
+`FILL` 用于填充段中任何未明确指定的内存区域（例如对齐产生的间隙），填充值**固定大端序**，仅影响 `FILL` 命令之后的部分。优先级高于 <a href="#-%e5%a1%ab%e5%85%85-" >[=填充]</a> 。
 
 对于简单数字表达式，其值会被零扩展到 4 字节，如果表达式的结果值超过 4 个有效字节，则仅使用该值的最低 4 个字节：
 
@@ -772,6 +772,56 @@ SECTIONS {
 ### [ AT>LMA区域 ]
 
 在 `MEMORY` 命令中定义的区域。
+
+
+### [ :程序段1 :程序段2 ... ]
+
+将某个段分配给在 `PHDRS` 命令中定义的程序段。
+
+```c
+PHDRS {
+    text PT_LOAD ;
+}
+SECTIONS {
+    .text : {
+        *(.text)
+    } :text
+}
+```
+
+### [ =填充 ]
+
+填充模式参考上面的 `FILL` 命令：
+
+```c
+.text : {
+    *(.text)
+} =0x90909090
+```
+
+
+## OVERLAY 命令
+
+```text
+OVERLAY [start] : [NOCROSSREFS] [AT ( ldaddr )]
+{
+    secname1
+    {
+        output-section-command
+        output-section-command
+        ...
+    } [:phdr...] [=fill]
+    secname2
+    {
+        output-section-command
+        output-section-command
+        ...
+    } [:phdr...] [=fill]
+    ...
+} [>region] [:phdr...] [=fill] [,]
+```
+
+
 
 
 ## PHDRS 命令
