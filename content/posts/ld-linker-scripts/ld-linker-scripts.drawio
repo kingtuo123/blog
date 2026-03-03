@@ -55,6 +55,93 @@
         <mxCell id="P9IbACG_4-FQTw3v7D2M-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=center;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170)); font-size: 16px;&quot; face=&quot;LXGW WenKai Mono&quot;&gt;高地址&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="90" x="195" y="280" as="geometry" />
         </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;.text1&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="400" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;.text0&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="400" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=center;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;高地址&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="435" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=center;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;低地址&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="90" x="435" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="80" width="160" x="400" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);fontColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;&lt;span&gt;OVERLAY 区域&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="160" x="400" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;0x2000&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="320" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-8" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="380" y="599.72" as="sourcePoint" />
+            <mxPoint x="400" y="599.72" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;0x1000&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="320" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-10" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="380" y="759.72" as="sourcePoint" />
+            <mxPoint x="400" y="759.72" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;LMA区域 / ROM&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="120" x="180" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=right;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;VMA区域 / RAM&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="120" x="180" y="565" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=left;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;&lt;span&gt;__load_start_text0&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="160" x="580" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=left;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;font&gt;&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;&lt;span&gt;__load_stop_text0 =&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span&gt;__load_start_text1&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="320" x="580" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-18" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="580" y="720" as="sourcePoint" />
+            <mxPoint x="560" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-19" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="580" y="759.67" as="sourcePoint" />
+            <mxPoint x="560" y="759.67" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontColor=light-dark(#5C6A72,#D3C6AA);align=left;fontFamily=LXGW WenKai Mono;fontSize=16;" value="&lt;font style=&quot;color: light-dark(rgb(92, 106, 114), rgb(211, 198, 170));&quot;&gt;&lt;span&gt;__load_stop_text1&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="160" x="580" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-21" edge="1" parent="1" style="endArrow=blockThin;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);labelBackgroundColor=none;strokeColor=light-dark(#5C6A72,#D3C6AA);endFill=1;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="580" y="680" as="sourcePoint" />
+            <mxPoint x="560" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-24" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;strokeColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="40" width="20" x="300" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-25" parent="1" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;strokeColor=light-dark(#5C6A72,#D3C6AA);fontFamily=LXGW WenKai Mono;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="80" width="20" x="300" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-26" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);strokeColor=light-dark(#5C6A72,#D3C6AA);entryX=0.907;entryY=0.009;entryDx=0;entryDy=0;entryPerimeter=0;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="680" as="sourcePoint" />
+            <mxPoint x="320" y="679.9999999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uKYVGLPsOAl_X36G2XjA-27" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontColor=light-dark(#5C6A72,#D3C6AA);strokeColor=light-dark(#5C6A72,#D3C6AA);entryX=0.907;entryY=0.009;entryDx=0;entryDy=0;entryPerimeter=0;fontFamily=LXGW WenKai Mono;fontSize=16;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="560" as="sourcePoint" />
+            <mxPoint x="320" y="559.9999999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

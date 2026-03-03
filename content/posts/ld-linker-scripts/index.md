@@ -318,8 +318,8 @@ SECTIONS
 {
     [段名]  [VMA地址]  [(段类型)]  :  [AT(LMA地址)]  [ALIGN(段对齐)|ALIGN_WITH_INPUT]  [SUBALIGN(子段对齐)]  [约束]
     {
-        [输入段命令]
-        [输入段命令]
+        [输出段命令]
+        [输出段命令]
         ...
     } [>VMA区域]  [AT>LMA区域]  [:程序段1 :程序段2 ...]  [=填充]  [,]
 }
@@ -443,7 +443,7 @@ Section Headers:
 仅两个关键字。`ONLY_IF_RO` 仅当所有输入段均为只读才创建输出段。`ONLY_IF_RW` 仅当所有输入段均为读写时才创建输出段。
 
 
-### [ 输入段命令 ]
+### [ 输出段命令 ]
 
 **`通配符`**
 
@@ -803,24 +803,110 @@ SECTIONS {
 ## OVERLAY 命令
 
 ```text
-OVERLAY [start] : [NOCROSSREFS] [AT ( ldaddr )]
+SECTIONS
 {
-    secname1
+    OVERLAY  [VMA地址]  :  [NOCROSSREFS]  [AT (LMA地址)]
     {
-        output-section-command
-        output-section-command
+        段名1 {
+            ...
+        } [:程序段 ...]  [=填充]
+
+        段名2 {
+            ...
+        } [:程序段 ...]  [=填充]
         ...
-    } [:phdr...] [=fill]
-    secname2
-    {
-        output-section-command
-        output-section-command
-        ...
-    } [:phdr...] [=fill]
-    ...
-} [>region] [:phdr...] [=fill] [,]
+    } [>VMA区域]  [:程序段 ...]  [=填充]  [,]
+}
 ```
 
+`OVERLAY` 主要用于让不同的段共享同一块内存区域。链接器会自动为每个段生成两个符号 `__load_start_段名` 和 `__load_stop_段名`（段名中不符合 C 标识符规则的字符将被移除）。
+
+**示例**
+
+{{< img src="overlay.svg" >}}
+
+```c
+SECTIONS
+{
+    OVERLAY 0x2000 : AT (0x1000)
+    {
+        .text0 { driver_a.o(.text) }
+        .text1 { driver_b.o(.text) }
+    }
+}
+```
+
+C 代码如下所示：
+
+```c
+extern char  __load_start_text0[],  __load_stop_text0[],  __load_start_text1[],  __load_stop_text1[];
+
+void use_driver_a(void) {
+    memcpy ((char *) 0x2000,  __load_start_text0,  __load_stop_text0 - __load_start_text0);    /* 加载驱动程序 A */
+    driver_a_init();    /* 调用 driver A 的函数 */
+}
+
+void use_driver_b(void) {
+    memcpy ((char *) 0x2000,  __load_start_text1,  __load_stop_text1 - __load_start_text1);    /* 加载驱动程序 B */
+    driver_b_init();  /* 调用 driver B 的函数 */
+}
+```
+
+` OVERLAY ` 命令只是一种语法糖，因为它所做的所有事情都可以通过更基础的命令实现。上面的示例可以完全等价地写成如下形式：
+
+```c
+SECTIONS
+{
+    .text0 0x2000 : AT (0x1000) { driver_a.o(.text) }
+    PROVIDE (__load_start_text0 = LOADADDR (.text0));
+    PROVIDE (__load_stop_text0  = LOADADDR (.text0) + SIZEOF (.text0));
+
+    .text1 0x2000 : AT (0x1000 + SIZEOF (.text0)) { driver_b.o(.text) }
+    PROVIDE (__load_start_text1 = LOADADDR (.text1));
+    PROVIDE (__load_stop_text1  = LOADADDR (.text1) + SIZEOF (.text1));
+
+    . = 0x2000 + MAX (SIZEOF (.text0), SIZEOF (.text1));
+}
+```
+
+
+## MEMORY 命令
+
+`MEMORY` 命令用于描述目标系统可用内存区域。
+
+<pre>
+MEMORY
+{
+    区域名  [(属性)]  :  ORIGIN = 起始地址,  LENGTH = 长度
+}
+</pre>
+
+
+**[ (属性) ]**
+
+```makefile
+R  : 只读
+W  : 读写
+X  : 可执行
+A  : 可分配
+I  : 已初始化
+L  : 与 I 相同
+!  : 对上述属性取反
+```
+
+**长度**
+
+支持后缀 `K` 和 `M` 。
+
+**示例**
+
+```
+MEMORY
+{
+    rom (rx)  : ORIGIN = 0, LENGTH = 256K
+    ram (!rx) : org = 0x40000000, l = 4M
+}
+```
 
 
 
@@ -878,9 +964,9 @@ PT_TLS (7)     : 表示一个包含线程本地存储的段。
 PHDRS
 {
     headers PT_PHDR PHDRS ;
-    interp PT_INTERP ;
-    text PT_LOAD FILEHDR PHDRS ;
-    data PT_LOAD ;
+    interp  PT_INTERP ;
+    text    PT_LOAD FILEHDR PHDRS ;
+    data    PT_LOAD ;
     dynamic PT_DYNAMIC ;
 }
 
@@ -899,7 +985,7 @@ SECTIONS
 ```
 
 
-## 官方文档
+## 参考链接
 
 - [Binutils](https://sourceware.org/binutils/docs/)
 - [LD](https://sourceware.org/binutils/docs/ld/index.html#SEC_Contents)
