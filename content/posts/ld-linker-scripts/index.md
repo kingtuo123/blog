@@ -1,5 +1,5 @@
 ---
-title: "LD 链接器脚本语法"
+title: "LD 链接器脚本"
 date: "2026-02-19"
 toc: true
 draft: true
@@ -981,6 +981,102 @@ SECTIONS
     .data    : { *(.data)    } :data
     .dynamic : { *(.dynamic) } :data :dynamic
     ...
+}
+```
+
+
+## 符号常量
+
+`CONSTANT(常量)` 用于访问链接器内预定义的符号常量。常量有：`MAXPAGESIZE` 目标的最大页面尺寸、`COMMONPAGESIZE` 目标的默认页面尺寸。
+
+创建一个与目标支持的最大页面边界对齐的文本段：
+
+```c
+.text ALIGN (CONSTANT (MAXPAGESIZE)) : { *(.text) }
+```
+
+
+## 孤儿段
+
+孤儿段（Orphan Sections）是指存在于输入文件中，但未通过链接器脚本明确放置到输出文件中的段。当出现孤儿段时，链接器会尝试将其合理地放置在输出文件中。
+
+命令行选项 `--orphan-handling` 和 `--unique` 可用于控制孤儿段如何放置。
+
+
+## 位置计数器
+
+位置计数器 `.` 仅在 `SECTIONS` 命令中使用，且始终代表 VMA 。当 `.` 位于输出段命令内时，`.` 表示该段起始处的字节偏移量：
+
+```c
+SECTIONS
+{
+    . = 0x100;         /* VMA = 0x100 绝对地址                                                           */
+    .text: {
+        . = 0x80;      /* 相对地址，相对 .text 起始偏移 0x80 -> 0x100 + 0x80                             */
+        *(.text)
+        . = 0x200;     /* 不论 *(.text) 多大，.text 的结束地址为 0x100 + 0x200 ，即 .text 固定大小 0x200 */
+    }
+    . = 0x500;         /* VMA = 0x500 绝对地址                                                           */
+    .data: {
+        . = 0x80;      /* 相对地址，相对 .data 起始偏移 0x80 -> 0x500 + 0x80                             */
+        *(.data)
+        . += 0x600;    /* . = . + 0x600  ->  . = (0x80 + *(.data)) + 0x600                               */
+    }
+}
+```
+
+{{< img src="count.svg" >}}
+
+{{< notice class="yellow" >}}
+疑问：输出段命令之外的数字为绝对地址，输出段命令内的数字为相对地址？
+{{< /notice >}}
+
+
+
+链接器 `-r` 参数表示生成可重定位文件，作用是将多个目标文件 `.o` 链接在一起，但仍然输出一个目标文件 `.o` ，而不是最终的可执行文件或共享库。
+如果输出段命令内的 `. = 0x80;` 是绝对地址，将无法再重定位，所以 `. = 0x80;` 只能是相对地址 ？？？
+
+> 详见 [The Location Counter](https://sourceware.org/binutils/docs/ld/Location-Counter.html) 和 [The Section of an Expression](https://sourceware.org/binutils/docs/ld/Expression-Section.html) 。
+
+
+
+## 内置函数
+
+**`ABSOLUTE(exp)`**
+
+返回表达式 exp 的绝对值。
+
+```c
+SECTIONS
+{
+    . = 0x1000;
+    .text : {
+        _stext0 = 0x200;              /* _stext0 = 0x1000 + 0x200 */
+        _stext1 = ABSOLUTE(0x200);    /* _stext1 = 0x200          */
+        *(.text)
+    }
+}
+```
+
+**`ADDR(section)`**
+
+返回指定段的 VMA 地址。
+
+
+**`ALIGN(align)`** 、**`ALIGN(exp,align)`**
+
+返回位置计数器 `.` 或对齐到下一个对齐边界的任意表达式。`ALIGN(align)` 等价于 `ALIGN(ABSOLUTE(.), align)` 。
+
+```c
+. = 0x100
+.text : {
+    . = ALIGN(0x11,4);    /* 返回 0x14 -> 0x114 */
+    *(.text)
+}
+. = 0x200
+.data : {
+    . = ALIGN(4);         /* 返回 0x0  -> 0x200 */
+    *(.data)
 }
 ```
 
