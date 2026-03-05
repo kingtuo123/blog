@@ -1070,15 +1070,200 @@ SECTIONS
 ```c
 . = 0x100
 .text : {
-    . = ALIGN(0x11,4);    /* 返回 0x14 -> 0x114 */
+    . = ALIGN(0x11,4);    /* . 相对 .text 起始偏移为 0 ，ALIGN 从 0x11 开始对齐（返回 0x14），对齐后 0x114 */
     *(.text)
 }
 . = 0x200
 .data : {
-    . = ALIGN(4);         /* 返回 0x0  -> 0x200 */
+    . = ALIGN(4);         /* . 相对 .data 起始偏移为 0 ，ALIGN 从 0 开始对齐（返回 0），对齐后 0x200 */
     *(.data)
 }
 ```
+
+**`ALIGNOF(section)`**
+
+返回指定段的对齐字节数。若该段未分配则返回零。若段不存在则报错。若参数为 `NEXT_SECTION` 则返回脚本中下一个段的对齐方式。
+
+
+**`BLOCK(exp)`**
+
+这是 `ALIGN` 的同义词，用于与旧版链接器脚本保持兼容。
+
+
+**`DATA_SEGMENT_ALIGN(maxpagesize, commonpagesize)`**
+
+该命令只能在 `SECTIONS` 命令中使用，不能用于任何输出段命令内部，且只能使用一次。
+`maxpagesize` 为最大页面大小，`commonpagesize` 为默认页面大小。该命令等价于以下任一情况（哪个计算结果占用的页面数量少就用哪个）：
+
+```c
+(ALIGN(maxpagesize) + (. & (maxpagesize - 1)))
+(ALIGN(maxpagesize) + ((. + commonpagesize - 1) & (maxpagesize - commonpagesize)))
+```
+
+示例：
+
+```c
+SECTIONS
+{
+    . = 0x0;
+    .text : {
+        *(.text)
+        . = 0x2800;
+    }
+    . = DATA_SEGMENT_ALIGN(0x4000, 0x1000);
+    .data : {
+        *(.data)
+        . = 0x1000;
+    }
+    . = DATA_SEGMENT_END(.);
+}
+```
+
+计算结果采用 `0x7000` ，只使用了一个 4K 页：
+
+```c
+0x4000 + (0x2800 & (0x4000 - 1)) = 0x6800
+0x4000 + ((0x2800 + 0x1000 - 1) & (0x4000 - 0x1000)) = 0x7000
+```
+
+{{< img src="data-align.svg" >}}
+
+
+**`ATA_SEGMENT_END(exp)`**
+
+用于定义 `DATA_SEGMENT_ALIGN` 的结束。
+
+
+**`DATA_SEGMENT_RELRO_END(offset, exp)`**
+
+搞不懂，详见 [DATA_SEGMENT_RELRO_END](https://sourceware.org/binutils/docs/ld/Builtin-Functions.html#index-DATA_005fSEGMENT_005fRELRO_005fEND_0028offset_002c-exp_0029) 。
+
+
+**`DEFINED(symbol)`**
+
+若符号存在于链接器全局符号表中，且在使用 `DEFINED` 的脚本语句之前已定义，则返回 1；否则返回 0。此函数可用于为符号提供默认值。
+
+```c
+SECTIONS {
+    .text : {
+        begin = DEFINED(begin) ? begin : . ;
+        ...
+    }
+}
+```
+
+**`ORIGIN(memory)`**
+
+返回名为 memory 的内存区域的起始地址。
+
+
+**`LENGTH(memory)`**
+
+返回名为 memory 的内存区域长度。
+
+```c
+MEMORY
+{
+    RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 64K
+    FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
+}
+_estack = ORIGIN(RAM) + LENGTH(RAM);
+```
+
+**`LOADADDR(section)`**
+
+返回指定段的 LMA 。
+
+```c
+_sidata = LOADADDR(.data);
+```
+
+**`LOG2CEIL(exp)`**
+
+计算 log₂(exp) ，结果向上取整。
+
+```c
+.data : {
+    . = ALIGN(1 << LOG2CEIL(100));    /* LOG2CEIL(100) = 7 ，1 << 7 对齐到 128 字节 */
+}
+```
+
+**`MAX(exp1, exp2)`**
+
+返回 exp1 和 exp2 中的最大值。
+
+
+**`NEXT(exp)`**
+
+与 `ALIGN` 函数等效？（实在搞不清楚在哪种情况下与 `ALIGN` 有差异？同样的 exp 返回值都一样）
+
+
+**`SEGMENT_START(segment, default)`**
+
+返回指定段的基地址。
+
+segment：段名称，如 `text` 、`data` 、`bss` 。
+
+default：当命令行未指定该段地址时使用的默认地址，命令行参数只支持 `-Ttext` 、`-Tdata` 、`-Tbss` 。
+
+```c
+SECTIONS
+{
+    . = SEGMENT_START("text", 0x1000);
+    text : {
+        _stext = . ;
+        *(.text)
+    }
+}
+```
+
+以上脚本中 `_stext = 0x1000` 。当使用命令行参数 `-Ttext=0x2000` 时，`_stext = 0x2000` 。
+
+
+**`SIZEOF(section)`**
+
+返回指定段的大小（以字节为单位）。
+
+
+**`SIZEOF_HEADERS`**
+
+返回输出文件头部的大小（以字节为单位）。
+
+```c
+SECTIONS
+{
+    _size = SIZEOF_HEADERS ;
+    ...
+}
+```
+
+```bash-session {hl_lines=[18,19,20]}
+$ objdump -t target.elf | grep _size
+00000094 g       *ABS*	00000000 _size
+$ readelf -h target.elf
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Version:                           0x1
+  Entry point address:               0x8000271
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          76864 (bytes into file)
+  Flags:                             0x5000200, Version5 EABI, soft-float ABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         3
+  Size of section headers:           40 (bytes)
+  Number of section headers:         22
+  Section header string table index: 21
+```
+
+计算结果： 52 + 32 * 3 = 148 字节 = 0x94 。
 
 
 ## 参考链接
