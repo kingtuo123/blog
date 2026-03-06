@@ -8,11 +8,9 @@ draft: true
 
 ## 基本概念
 
-- VMA（虚拟内存地址）：程序运行时的地址，即堆栈上的地址。
-- LMA（加载内存地址）：程序数据存储的地址，比如已初始化的全局变量的值在 FLASH 中存储的地址就是 LMA ，当这个值被加载到 SRAM 中栈上的地址就是 VMA 。
-- Symbol Name（符号名）：用于符号解析。它代表函数或变量的标识符，由编译器从源代码中的函数名直接生成。使用 `objdump -t <目标文件>` 命令查看符号。
-- Section Name（段名）：用于内存布局。以 `.` 开头，可能包含函数名作为段名的一部分（特别是在使用 `-ffunction-sections` 参数时）。使用 `objdump -h <目标文件>` 命令查看段。
+VMA（虚拟内存地址）：程序运行时的地址，即堆栈上的地址。
 
+LMA（加载内存地址）：程序数据存储的地址，比如已初始化的全局变量的值在 FLASH 中的存储地址就是 LMA ，当这个值被加载到 SRAM 上的地址就是 VMA 。
 
 
 ## 简单示例
@@ -26,11 +24,8 @@ SECTIONS
     .text : { *(.text) }
     . = 0x8000000;
     .data : { *(.data) }
-    .bss  :
-    {
-        *(.bss)
-        _end_of_bss = .;
-    }
+    .bss  : { *(.bss)  }
+    _end_of_bss = . ;
 }
 ```
 
@@ -39,9 +34,8 @@ SECTIONS
 {{< img src="simple-map.svg" >}}
 
 
-`*` 表示匹配任意文件名的通配符。`*(.text)` 表示所有输入文件中的 `.text` 段。
-
-`.` 表示当前位置计数器。它从 `0x0` 开始，可以直接修改，也可以通过添加段、常量等间接修改。因此，如果你在 `.bss` 段之后读取位置计数器的值，它的值将是 `0x8000000` 加上你添加的段的大小。
+- `*` 表示匹配任意数量的字符。`*(.text)` 表示匹配所有输入文件中的 `.text` 段。
+- `.` 表示当前位置计数器。它从 `0` 开始，可以直接修改，也可以通过添加段来间接修改。因此，如果你在 `.bss` 段之后读取位置计数器的值，它的值将是 `0x8000000` 加上你添加的段的大小。
 
 
 
@@ -67,24 +61,24 @@ SECTIONS
 
 **`INPUT(文件1, 文件2, ...)`**
 
-指定输入文件。如 `INPUT(utils.o)` 等同于命令行中的 `ld utils.o` 。如 `INPUT (-lfile)` ，ld 会将名称转换为 `libfile.a` ，类似于命令行参数 `-l` 。
+指定输入文件。如 `INPUT(utils.o)` 等同命令行 `ld utils.o` 。如 `INPUT (-lfile)` ，ld 会将名称转换为 `libfile.a` ，等同命令行 `-lfile` 。
 
 **`GROUP(文件1, 文件2, ...)`**
 
-类似于 `INPUT` 命令，不同之处（没太搞懂，`INPUT` 是单次搜索，`GROUP` 会多次搜索直到没有未解析的引用？）。
+类似于 `INPUT` 命令，不同之处（没搞懂，`INPUT` 是单次搜索，`GROUP` 会多次搜索直到没有未解析的引用？）。
 
 **`AS_NEEDED(文件1, 文件2, ...)`**
 
-仅在 `INPUT` 或 `GROUP` 命令内部使用（不太清楚，例如 `GROUP (AS_NEEDED(libfoo.so))` 仅在共享库 `libfoo.so` 中的函数需要时才会被添加，不适用于静态库？）。
+仅在 `INPUT` 或 `GROUP` 命令内部使用（没搞懂，例如 `GROUP (AS_NEEDED(libfoo.so))` 仅在共享库 `libfoo.so` 中的函数需要时才会被添加，不适用于静态库？）。
 
 
 **`OUTPUT(文件名)`**
 
-用于指定输出文件的名称。如 `OUTPUT(target.elf)` 等同于命令行中的 `-o target.elf` 。
+用于指定输出文件的名称。如 `OUTPUT(target.elf)` 等同命令行 `-o target.elf` 。
 
 **`SEARCH_DIR(路径)`**
 
-指定输入文件的搜索路径。如 `SEARCH_DIR(path)` 等同于命令行中的 `-L path` 。
+指定输入文件的搜索路径。如 `SEARCH_DIR(path)` 等同命令行 `-L path` 。
 
 **`STARTUP(文件名)`**
 
@@ -96,7 +90,7 @@ SECTIONS
 
 **`OUTPUT_FORMAT(格式)`**
 
-通过 `objdump -i` 命令查看你的工具链支持哪些格式（通常默认格式是第一个），比如 `elf32-littlearm` 。等同于命令行中 `--oformat` 选项。
+通过 `objdump -i` 命令查看你的工具链支持哪些格式（通常默认格式是第一个），如 `elf32-littlearm` 。等同于命令行中 `--oformat` 选项。
 
 **`OUTPUT_FORMAT(默认格式, 大端格式, 小端格式)`**
 
@@ -152,16 +146,16 @@ SECTIONS
 
 **`FORCE_COMMON_ALLOCATION`**
 
-强制为公共符号分配空间（不太清楚，`.common` 通常存放未初始化的全局变量，可能是为了防止变量被优化丢弃掉？即使没用也要分配？）。
+强制为 COMMON 符号分配空间（没搞懂，COMMON 通常存放未初始化的全局变量，可能是为了防止变量被优化丢弃掉？即使未被引用也要分配？）。
 等同命令行 `-d` 选项。
 
 **`INHIBIT_COMMON_ALLOCATION`**
 
-等同 `--no-define-common` 选项。
+禁止为 COMMON 符号分配空间，等同 `--no-define-common` 选项。
 
 **` FORCE_GROUP_ALLOCATION`**
 
-等同 `--force-group-allocation` 选项。
+等同 `--force-group-allocation` 选项（没搞懂）。
 
 **`INSERT [ AFTER | BEFORE ] 输出段`**
 
@@ -210,29 +204,25 @@ $ ld main.o special.o -T my_script.ld -T insert_special.ld -o program
 
 ## 符号赋值
 
-### 简单赋值
+**简单赋值**
 
 支持 C 语言的赋值运算符：
 
 ```c
-symbol   =  expression ;
-symbol  +=  expression ;
-symbol  -=  expression ;
-symbol  *=  expression ;
-symbol  /=  expression ;
-symbol <<=  expression ;
-symbol >>=  expression ;
-symbol  &=  expression ;
-symbol  |=  expression ;
+symbol   = expression ;
+symbol  += expression ;
+symbol  -= expression ;
+symbol  *= expression ;
+symbol  /= expression ;
+symbol <<= expression ;
+symbol >>= expression ;
+symbol  &= expression ;
+symbol  |= expression ;
 ```
 
-- 表达式后的分号 `;` 是必需的。
-- 特殊符号 `.` 表示位置计数器。只能在 `SECTIONS` 命令中使用此符号。
+**`HIDDEN ( symbol = expression )`**
 
-
-### HIDDEN ( symbol = expression )
-
-让符号对外部模块不可见。
+让符号对外部模块不可见：
 
 ```c
 SECTIONS
@@ -247,26 +237,25 @@ SECTIONS
 
 例如当前链接脚本输出的 `libmath.so` 文件称为内部模块，则其它需要与 `libmath.so` 链接的外部模块将无法引用 `_etext` 。
 
-### PROVIDE ( symbol = expression )
+**`PROVIDE ( symbol = expression )`**
 
 类似弱定义，当输入文件中没有定义 `symbol` 的值时，链接器才会使用 `PROVIDE` 命令中的 `symbol = expression` 的值。
 
-### PROVIDE_HIDDEN
+**`PROVIDE_HIDDEN`**
 
 `PROVIDE` 与 `HIDDEN` 组合后的效果。
 
-### 源代码引用
+## 源代码引用
 
 链接器脚本中定义的符号会在符号表中创建一个条目，但不会为它分配任何内存（大小为 0 ）。
-因此，它是一个没有值的地址（地址常量？）。
+因此，它是一个没有值的地址。
 
 ```c
 SECTIONS
 {
     .text : { *(.text) }
     . = 0x20000000;
-    .data :
-    {
+    .data : {
         _sdata = .;
         *(.data)
         _edata = .;
@@ -274,7 +263,7 @@ SECTIONS
 }
 ```
 
-以上脚本在链接后（该脚本仅示意不能运行），其符号表输出的部分内容可能如下：
+以上脚本输出文件的符号表可能如下：
 
 ```bash-session
 $ objdump -t target.elf
@@ -321,7 +310,7 @@ SECTIONS
         [输出段命令]
         [输出段命令]
         ...
-    } [>VMA区域]  [AT>LMA区域]  [:程序段1 :程序段2 ...]  [=填充]  [,]
+    } [>VMA区域]  [AT>LMA区域]  [:程序头1 :程序头2 ...]  [=填充]  [,]
 }
 ```
 
@@ -377,7 +366,7 @@ SECTIONS
 .text . (TYPE = SHT_PROGBITS) : { *(.text) }
 ```
 
-使用 `readelf -S` 命令输出段的头信息：
+使用 `readelf -S` 命令可查看段的头信息：
 
 ```bash-session
 $ readelf -S target.elf
@@ -388,11 +377,11 @@ Section Headers:
   [ 2] .text             PROGBITS        080001e4 0011e4 00059c 00  AX  0   0  4
 ```
 
-更多段类型（sh_type）参考 [ELF 格式](https://refspecs.linuxfoundation.org/elf/elf.pdf) 中的相关内容。
+> 更多段类型参考 [ELF 格式](https://refspecs.linuxfoundation.org/elf/elf.pdf) 中 sh_type 的相关内容。
 
 **`READONLY ( TYPE = type )`**
 
-这种语法形式将 `READONLY` 与 `TYPE` 相结合。
+这种语法形式将 `READONLY` 与 `TYPE` 效果相结合。
 
 **`DSECT 、COPY 、INFO 、OVERLAY`**
 
@@ -440,7 +429,9 @@ Section Headers:
 
 ### [ 约束 ]
 
-仅两个关键字。`ONLY_IF_RO` 仅当所有输入段均为只读才创建输出段。`ONLY_IF_RW` 仅当所有输入段均为读写时才创建输出段。
+`ONLY_IF_RO` 仅当所有输入段均为**只读**时才创建输出段。
+
+`ONLY_IF_RW` 仅当所有输入段均为**读写**时才创建输出段。
 
 
 ### [ 输出段命令 ]
@@ -521,7 +512,8 @@ Section Headers:
 ```
 
 `SHF_MERGE` 表示可合并。`SHF_STRINGS` 表示包含字符串。`SHF_WRITE` 表示段可写。
-更多标志参考 [ELF 格式](https://refspecs.linuxfoundation.org/elf/elf.pdf) 中 sh_flags 的相关内容。
+
+> 更多标志参考 [ELF 格式](https://refspecs.linuxfoundation.org/elf/elf.pdf) 中 sh_flags 的相关内容。
 
 使用 `readelf -S` 命令查看段标志，其中 `Flg` 一列为段标志：
 
@@ -534,16 +526,12 @@ Section Headers:                                                    ↓
   [ 2] .text             PROGBITS        080001e4 0011e4 00059c 00  AX  0   0  4
 ```
 
-
 其中：`A` (ALLOC)：段在内存中分配。`X` (EXEC)：段可执行。
+
 
 **`ARCHIVE:FILE`**
 
-{{< notice class="red" >}}
-可能有误，仅供参考。
-{{< /notice >}}
-
-官方文档中关于 `archive:file` 的描述，没太看懂，应该是静态库，可能如下。详见 [3.6.4.1 Input Section Basics](https://sourceware.org/binutils/docs/ld/Input-Section-Basics.html) 。
+官方文档中关于 `archive:file` 的描述，没搞懂，应该是静态库，可能如下。详见 [3.6.4.1 Input Section Basics](https://sourceware.org/binutils/docs/ld/Input-Section-Basics.html) 。
 
 ```c
 .text : {
@@ -554,7 +542,7 @@ Section Headers:                                                    ↓
 }
 ```
 
-`archive:file` 是一个整体，不要在冒号 `:` 左右加空格，错误的写法 `archive : file` 。
+`archive:file` 是一个整体，不要在冒号 `:` 左右加空格 。
 
 **`SORT_BY_NAME`**
 
@@ -774,9 +762,9 @@ SECTIONS {
 在 `MEMORY` 命令中定义的区域。
 
 
-### [ :程序段1 :程序段2 ... ]
+### [ :程序头1 :程序头2 ... ]
 
-将某个段分配给在 `PHDRS` 命令中定义的程序段。
+将某个段分配给在 `PHDRS` 命令中定义的程序头。
 
 ```c
 PHDRS {
@@ -809,13 +797,13 @@ SECTIONS
     {
         段名1 {
             ...
-        } [:程序段 ...]  [=填充]
+        } [:程序头 ...]  [=填充]
 
         段名2 {
             ...
-        } [:程序段 ...]  [=填充]
+        } [:程序头 ...]  [=填充]
         ...
-    } [>VMA区域]  [:程序段 ...]  [=填充]  [,]
+    } [>VMA区域]  [:程序头 ...]  [=填充]  [,]
 }
 ```
 
@@ -921,11 +909,11 @@ PHDRS
 }
 ```
 
-### 名称
+**名称**
 
 用户自定义的名称。这不是最终输出文件中的字段，仅用于在 `SECTIONS` 命令中引用这个程序头。
 
-### 类型
+**类型**
 
 程序头的类型。该类型可能是以下之一。数字表示关键字的值。
 
@@ -941,24 +929,24 @@ PT_TLS (7)     : 表示一个包含线程本地存储的段。
 表达式         : 一个给出程序头数字类型的表达式。这可用于上述未定义的类型。
 ```
 
-### [ FILEHDR ]
+**`[ FILEHDR ]`**
 
 表示这个段包含了 ELF 文件头。
 
 
-### [ PHDRS ]
+**`[ PHDRS ]`**
 
 表示这个段包含了 ELF 程序头表本身。
 
-### [ AT ( 地址 ) ]
+**`[ AT ( 地址 ) ]`**
 
 指定 LMA 地址。
 
-### [ FLAGS ( 标志 ) ]
+**`[ FLAGS ( 标志 ) ]`**
 
 用于设置程序头的 `p_flags` 字段。
 
-### 示例
+**示例**
 
 ```c
 PHDRS
