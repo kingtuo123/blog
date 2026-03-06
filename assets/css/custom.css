@@ -161,6 +161,16 @@ blockquote.blue {
 
 
 
+/*****     短代码: pre     *****/
+.highlight.raw-code > pre {
+    padding: 10px;
+    background-color: transparent;
+    border: 0;
+}
+
+
+
+
 /*****     其它     *****/
 .highlight.fixed-height > pre {
 	overflow-y: auto;

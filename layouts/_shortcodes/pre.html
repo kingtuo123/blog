@@ -1,0 +1,5 @@
+{{ $type := .Get "type" | default "text" }}
+
+{{ $content := printf "```%s{class=\"raw-code\"}%s\n```" $type  .Inner }}
+
+{{- $content | markdownify -}}

@@ -860,19 +860,17 @@ SECTIONS
 
 ## MEMORY 命令
 
-`MEMORY` 命令用于描述目标系统可用内存区域。
-
-<pre>
+{{< pre type="c">}}
 MEMORY
 {
     区域名  [(属性)]  :  ORIGIN = 起始地址,  LENGTH = 长度
 }
-</pre>
+{{< /pre >}}
 
 
 **[ (属性) ]**
 
-```makefile
+{{< pre type="makefile">}}
 R  : 只读
 W  : 读写
 X  : 可执行
@@ -880,7 +878,7 @@ A  : 可分配
 I  : 已初始化
 L  : 与 I 相同
 !  : 对上述属性取反
-```
+{{< /pre >}}
 
 **长度**
 
@@ -888,7 +886,7 @@ L  : 与 I 相同
 
 **示例**
 
-```
+```c
 MEMORY
 {
     rom (rx)  : ORIGIN = 0, LENGTH = 256K
@@ -902,12 +900,12 @@ MEMORY
 
 `PHDRS` 用于手动定义 ELF 文件中的程序头（Program Headers）。使用 `objdump -p` 命令打印程序头。
 
-```text
+{{< pre type="c" >}}
 PHDRS
 {
     名称  类型  [FILEHDR]  [PHDRS]  [AT ( 地址 )]  [FLAGS ( 标志 )] ;
 }
-```
+{{< /pre >}}
 
 **名称**
 
@@ -917,7 +915,7 @@ PHDRS
 
 程序头的类型。该类型可能是以下之一。数字表示关键字的值。
 
-```makefile
+{{< pre type="makefile">}}
 PT_NULL (0)    : 表示未使用的程序头。
 PT_LOAD (1)    : 表示此程序头描述了一个需要从文件中加载的段。
 PT_DYNAMIC (2) : 表示一个可以找到动态链接信息的段。
@@ -927,7 +925,7 @@ PT_SHLIB (5)   : 一个保留的程序头类型，由 ELF ABI 定义但未具体
 PT_PHDR (6)    : 指示可以找到程序头的段。
 PT_TLS (7)     : 表示一个包含线程本地存储的段。
 表达式         : 一个给出程序头数字类型的表达式。这可用于上述未定义的类型。
-```
+{{< /pre >}}
 
 **`[ FILEHDR ]`**
 
