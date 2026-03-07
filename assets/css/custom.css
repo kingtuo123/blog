@@ -120,23 +120,24 @@ blockquote.blue {
 .code-bar {
 	font-family: 'Maple Mono NF CN Light';
 	font-size: 15px;
+    line-height: 35px;
+    margin-bottom: -35px;
 	color: light-dark(#5C6A72, #9DA9A0);
 	background-color: light-dark(#F3EAD3, #333C43);
 	border-radius: var(--post-border-radius) var(--post-border-radius) 0 0;
-	padding: 5px;
-	margin-top: 10px;
-	margin-bottom: -12px;
+	padding-left: 6px;
     overflow-x: auto;
     word-break: break-all;
 	white-space: nowrap;
 	position: relative;
 	z-index: 99;
-	border: 1px solid var(--post-pre-border-fg);
+	border: 0px solid var(--post-pre-border-fg);
 	transition: background-color var(--transition-time) ease, color var(--transition-time) ease, border-color var(--transition-time) ease;
 }
 .code-bar span:first-child {
 	color: light-dark(#F3EAD3, #333C43);
 	background-color: light-dark(#5C6A72, #859289);
+    box-shadow : var(--shadow);
 	padding: 1px 5px;
 	border-radius: 6px;
 	margin-right: 10px;
@@ -144,8 +145,6 @@ blockquote.blue {
 	transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
 }
 .code-bar.terminal {
-	border: 1px solid var(--post-pre-term-border-fg);
-	border-bottom: 1px solid light-dark(#4D5960, #434F55);
 	color: light-dark(#9DA9A0, #9DA9A0);
 	background-color: light-dark(#333C43, #272E33);
 }
@@ -153,25 +152,21 @@ blockquote.blue {
 	color: light-dark(#333C43, #272E33);
 	background-color: light-dark(#9DA9A0, #859289);
 }
-.code-bar + .highlight > pre {
-	border-radius: 0px 0px var(--post-border-radius) var(--post-border-radius);
+.code-bar + .highlight {
+    margin-top: 0px;
+    padding-top: 35px;
 }
 
-
-
-
-
-/*****     短代码: pre     *****/
-.highlight.raw-code > pre {
-    padding: 10px;
-    background-color: transparent;
-    border: 0;
-}
 
 
 
 
 /*****     其它     *****/
+.highlight.none-bg {
+    background-color: transparent;
+    box-shadow: none;
+    border: 0;
+}
 .highlight.fixed-height > pre {
 	overflow-y: auto;
 	max-height: 60vh;
