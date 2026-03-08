@@ -24,7 +24,7 @@ toc: false
     }
     input[type="text"] {
         color: var(--text);
-        border: 1px solid var(--home-search-border-fg);
+        border: 1px solid var(--Background-2);
         width: 100%;
         padding: 8px;
         box-sizing: border-box;
@@ -33,7 +33,7 @@ toc: false
     }
 
     input[type="text"]:focus {
-        border: 1px solid var(--home-search-border-focus-fg);
+        border: 1px solid var(--Green);
         outline: none;
     }
 
@@ -52,7 +52,7 @@ toc: false
         padding: 10px;
         color: var(--fg);
         background-color: light-dark(#F3EAD3, #333C43);
-        border: 1px solid var(--home-search-border-fg);
+        border: 1px solid var(--Background-2);
         border-radius: 10px;
         transition: all var(--transition-time) ease;
     }
@@ -148,7 +148,7 @@ toc: false
 
 ## 速查
 
-{{< table  min-width="100,,,100"  >}}
+{{< table  min-width="100,,,100"  mono="true"  >}}
 
 |锚点             |                                       |           |                                           |
 |:----------------|:--------------------------------------|:----------|:------------------------------------------|
@@ -159,7 +159,7 @@ toc: false
 |**字符类**       |                                       |           |                                           |
 |`[abc]`          |匹配集合中的任意字符                   |`b[eo]r`   |bar `ber` bir `bor` bur                    |
 |`[^abc]`         |匹配不在集合中的任意字符               |`b[^eo]r`  |`bar` ber `bir` bor `bur`                  |
-|`[a-z]`          |匹配两个字符之间的任意字符             |`[e-i]`    |abcd `e` `f` `g` `h` `i` jklmnopqrs        |
+|`[a-z]`          |匹配两个字符之间的任意字符             |`[e-i]`    |abcd `e` `f` `g` `h` `i` jklmnop           |
 |`.`              |匹配除换行符之外的任意字符             |`.`        |`h` `i` `0` `1` `2` `_` `-` `!` `?`        |
 |`\w`             |匹配字母、数字或下划线                 |`\w`       |`h` `i` `0` `1` `2` `_` -!?                |
 |`\W`             |匹配除字母、数字和下划线之外的任意字符 |`\W`       |hi012_ `-` `!` `?`                         |
@@ -170,11 +170,11 @@ toc: false
 |**量词与分支**   |                                       |           |                                           |
 |`+`              |匹配 1 次或多次                        |`be+p`     |bp `bep` `beep` `beeep`                    |
 |`*`              |匹配 0 次或多次                        |`be*p`     |`bp` `bep` `beep` `beeep`                  |
-|`?`              |匹配 0 次或 1 次                       |`colou?r`  |`color`, `colour`                          |
+|`?`              |匹配 0 次或 1 次                       |`colou?r`  |`color`  `colour`                          |
 |`{n}`            |匹配刚好 n 次                          |`be{1}p`   |bp `bep` beep beeep                        |
 |`{n,}`           |匹配至少 n 次                          |`be{1,}p`  |bp `bep` `beep` `beeep`                    |
 |`{n,m}`          |匹配 n 到 m 次                         |`be{1,2}p` |bp `bep` `beep` beeep                      |
-|`a\|b`           |匹配 a 或 b                            |`(c\|r)at` |fat, `cat`, `rat`                          |
+|`a\|b`           |匹配 a 或 b                            |`(c\|r)at` |fat  `cat`  `rat`                          |
 |**组和引用**     |                                       |           |                                           |
 |`(abc)`          |将 abc 作为一个整体（组）进行匹配      |`(ha)+`    |`hahaha` `ha`h `haha`                      |
 |`\1`             |引用第一个组（第一个括号中的内容）     |`(\w)a\1`  |`hah` haa `dad`                            |
@@ -183,14 +183,14 @@ toc: false
 |`(?=abc)`        |正向先行断言，匹配后面紧跟 abc 的位置  |`\d(?=nd)` |1st `2`nd 3pc                              |
 |`(?!abc)`        |负向先行断言，匹配后面不紧跟 abc 的位置|`\d(?!nd)` |`1`st 2nd `3`pc                            |
 |`(?<=abc)`       |正向后行断言，匹配前面紧跟 abc 的位置  |`(?<=%)\d` |#1 $2 %`3`                                 |
-|`(?<!abc)`       |负向后行断言，匹配前面不紧跟 abc 的位置|`(?<!%)\d` |#`1` $`2` %3                                 |
+|`(?<!abc)`       |负向后行断言，匹配前面不紧跟 abc 的位置|`(?<!%)\d` |#`1` $`2` %3                               |
 
 {{< /table >}}
 
 
 ## 非贪婪匹配
 
-{{< table thead="false" min-width="300,100" >}}
+{{< table thead="false" min-width="300,100" mono="true" >}}
 |                              |       |              |
 |:-----------------------------|:------|:-------------|
 |贪婪匹配                      |`n.*b` |`noobnoobnoob`|

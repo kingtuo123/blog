@@ -9,7 +9,7 @@ header .title {
 }
 /*****     字体：主页     *****/
 .post-list .title {
-	font-family: "LXGW WenKai Medium";
+	font-family: "LXGW WenKai";
 	font-weight: normal;
 }
 /*****     字体：文章     *****/
@@ -51,6 +51,9 @@ strong {
 	width: 100%;
 	white-space: nowrap;
 	overflow-x: auto;
+}
+.table-container.mono {
+	font-family: "LXGW WenKai Mono";
 }
 .no-thead thead {
 	display: none;
