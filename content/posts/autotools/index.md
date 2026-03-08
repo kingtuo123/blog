@@ -30,7 +30,7 @@ $ make install
 
 `./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件
 
-```makefile
+```makefile{class="none-bg"}
 *.in            : 模板文件，可以手动编写，也可以由 autoheader、automake 工具生成
 config.log      : 记录了 ./configure 和 config.status 执行过程中的日志及各种变量，用于调试
 config.cache    : 由 ./configure -C 参数生成的缓存文件，提升重复 ./configure 的速度
@@ -66,7 +66,7 @@ install:
 
 详见 [Standard Targets for Users](https://www.gnu.org/prep/standards/html_node/Standard-Targets.html)
 
-```Makefile
+```Makefile{class="none-bg"}
 all             : 默认目标，构建程序、库、文档等
 install         : 安装需要安装的内容
 uninstall       : 删除安装的内容
@@ -83,7 +83,7 @@ dist            : 创建 PACKAGE-VERSION.tar.gz 压缩包
 
 目录变量指定了各类文件的安装位置，详见 [Variables for Installation Directories](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html)
 
-```shell
+```shell{class="none-bg"}
 # 目录变量      # 默认值
 prefix          = /usr/local
 exec_prefix     = ${prefix}
@@ -308,7 +308,7 @@ config.h        config.log   configure
 
 创建下列文件：
 
-```text
+```text{class="none-bg"}
 ./
 ├── configure.ac
 ├── Makefile.am
@@ -390,7 +390,7 @@ hello_SOURCES = main.c
 
 `bin_PROGRAMS` 命名规则如下，详见 [The Uniform Naming Scheme](https://www.gnu.org/software/automake/manual/html_node/Uniform.html)：
 
-```text
+```text{class="none-bg"}
 bin_PROGRAMS  ==>  prefix_PRIMARY  ==>  由 prefix 和 PRIMARY 两部分组成
 
 prefix   :  匹配 *dir 的目录变量，例如 bindir，libdir，datadir 等
