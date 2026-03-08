@@ -304,7 +304,7 @@ ldr  r0, =_sdata    /* r0 = 0x20000000 */
 ```text{class="none-bg"}
 SECTIONS
 {
-    [段名]  [VMA地址]  [(段类型)]  :  [AT(LMA地址)]  [ALIGN(段对齐)|ALIGN_WITH_INPUT]  [SUBALIGN(子段对齐)]  [约束]
+    段名  [VMA地址]  [(段类型)]  :  [AT(LMA地址)]  [ALIGN(段对齐)|ALIGN_WITH_INPUT]  [SUBALIGN(子段对齐)]  [约束]
     {
         [输出段命令]
         [输出段命令]
@@ -313,10 +313,9 @@ SECTIONS
 }
 ```
 
-`[ ]` 中的参数都是可选的。
 
 
-### [ 段名 ]
+### 段名
 
 **`特殊段名：/DISCARD/`**
 
