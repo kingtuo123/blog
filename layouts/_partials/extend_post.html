@@ -1,0 +1,10 @@
+{{ if .Site.Params.articleCorrection }}
+<div class="correction-container">
+    <a class="button" target="_blank" rel="noopener noreferrer" href="https://github.com/kingtuo123/blog/tree/main/content/{{ .File.Path }}">
+        <svg id="edit" width="32" height="32" fill="currentColor" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="38204" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M578.746 225.228l241.36 241.36L432.03 854.66 190.672 613.302l388.074-388.074z m86.239-86.239c23.814-23.814 62.058-24.18 86.27 0.031L906.312 294.08c23.831 23.831 24.011 62.29 0.031 86.27l-43.12 43.119-241.358-241.36 43.119-43.119zM184.228 798.95c-1.234 35.562 26.448 63.395 62.156 62.156l185.647-6.444-241.359-241.359-6.444 185.647z" p-id="38205"></path></svg>
+        <span class="title" >纠错</span>
+    </a>
+</div>
+{{ else }}
+<div style="margin-bottom: 30px;"></div>
+{{ end }}

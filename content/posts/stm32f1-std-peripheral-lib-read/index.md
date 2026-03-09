@@ -2888,7 +2888,7 @@ startup_stm32f10x_hd_vl.s:  .word  BootRAM    /*  0x1E0   */
 
 第三和第四个字分别是 NMI 和 HardFault 向量。它们的最低位为 0 （CM3 不支持 ARM 状态），因此当 VTOR 仍为零时，若发生这些异常中的任何一个，处理器将触发双重异常。
 
-根据 <a href="#gcc-启动文件">GCC 启动文件</a> 与 <a href="#gcc-链接脚本">GCC 链接脚本</a> ，地址 `0x200001E0` 位置是向量表中 `BootRAM` 所在，且 `BootRAM = 0xF1E0F85F` ，
+根据 [GCC 启动文件](#gcc-启动文件) 与 [GCC 链接脚本](#gcc-链接脚本) ，地址 `0x200001E0` 位置是向量表中 `BootRAM` 所在，且 `BootRAM = 0xF1E0F85F` ，
 `0xF1E0F85F` 这个值实际是汇编指令 `LDR.W PC, [PC, #-0x1E0]` 的机器码，作用是 `PC = *(PC - 0x1E0)` ，指令执行后的 PC 指向真正的入口程序地址，
 详情参考 [这篇帖子](https://stackoverflow.com/questions/50977529/arm-cortex-m3-boot-from-ram-initial-state/51005367#51005367) 。
 
@@ -2901,8 +2901,8 @@ startup_stm32f10x_hd_vl.s:  .word  BootRAM    /*  0x1E0   */
 2. 设置链接脚本中的 RAM 区起始地址，与 RAM 区大小。
 3. 设置链接脚本中的 FLASH 区的起始地址为 `0x20000000`，与 FLASH 区大小。
 4. 从上图的流程中可以看出，向量表中的 `_estack` 栈初始地址没有起到作用，初始栈顶被强制设置为 `0x20005000` ，
-所以用户需要在 main 函数调用前设置 SP ，可以使用 <a href="#core_cm3c">core_cm3.c</a> 中的 `__set_MSP` 函数。
-5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可使用 <a href="#system_stm32f10xc">system_stm32f10x.c</a> 中的 `VECT_TAB_SRAM` 宏，如下：
+所以用户需要在 main 函数调用前设置 SP ，可以使用 [core_cm3.c](#core_cm3c) 中的 `__set_MSP` 函数。
+5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可使用 [system_stm32f10x.c](#system_stm32f10xc) 中的 `VECT_TAB_SRAM` 宏，如下：
 
 {{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" >}}
 ```c

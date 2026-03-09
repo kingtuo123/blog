@@ -3,43 +3,59 @@ html, body {
 	font-family: "LXGW WenKai";
 	font-weight: normal;
 }
-header .title {
-	font-family: "LXGW WenKai Medium";
-	font-weight: normal;
-}
 /*****     字体：主页     *****/
 .post-list .title {
 	font-family: "LXGW WenKai";
 	font-weight: normal;
 }
 /*****     字体：文章     *****/
-#toc-toggle {
-	font-family: "LXGW WenKai Medium";
-	font-weight: normal;
-}
-.post-content table th {
-	font-family: "LXGW WenKai Medium";
-	font-weight:normal;
-}
-.post-content h1,h2,h3,h4,h5,h6 {
-	font-family: "LXGW WenKai Medium";
-	font-weight: normal;
-}
-.post-content code:not(.highlight code):not(blockquote code):not(em code):not(strong code) {
-	font-family: "LXGW WenKai Mono";
-	font-weight: normal;
-}
-.post-content blockquote code{
-	font-family: "LXGW WenKai Mono";
-	font-weight: normal;
-}
-.post-content pre code {
-	font-family: "Maple Mono NF CN Light";
-	font-weight: normal;
-}
-strong {
-	font-family: "LXGW WenKai Medium";
-	font-weight: normal;
+.post-container {
+    .post-title {
+        h1{
+            font-family: "LXGW WenKai Medium";
+            font-weight: normal;
+        }
+    }
+    .toc {
+        #toc-toggle{
+            font-family: "LXGW WenKai Medium";
+            font-weight: normal;
+        }
+        #TableOfContents {
+            font-family: "LXGW WenKai";
+            font-weight: normal;
+        }
+    }
+    .main-text {
+        table th {
+            font-family: "LXGW WenKai Medium";
+            font-weight:normal;
+        }
+        h2,h3,h4,h5,h6 {
+            font-family: "LXGW WenKai Medium";
+            font-weight: normal;
+        }
+        code {
+            font-family: "LXGW WenKai Mono";
+            font-weight: normal;
+        }
+        blockquote code{
+            font-family: "LXGW WenKai Mono";
+            font-weight: normal;
+        }
+        pre code {
+            font-family: "Maple Mono NF CN Light";
+            font-weight: normal;
+        }
+        strong {
+            font-family: "LXGW WenKai Medium";
+            font-weight: normal;
+        }
+        strong code {
+            font-family: "LXGW WenKai Mono Medium";
+            font-weight: normal;
+        }
+    }
 }
 
 
@@ -47,19 +63,21 @@ strong {
 
 
 /*****     短代码: table     *****/
-.table-container {
-	width: 100%;
-	white-space: nowrap;
-	overflow-x: auto;
-}
-.table-container.mono {
-	font-family: "LXGW WenKai Mono";
-}
-.no-thead thead {
-	display: none;
-}
-.no-border td {
-	border-color: transparent;
+.main-text{
+    .table-container {
+        width: 100%;
+        white-space: nowrap;
+        overflow-x: auto;
+    }
+    .table-container.mono {
+        font-family: "LXGW WenKai Mono";
+    }
+    .no-thead thead {
+        display: none;
+    }
+    .no-border td {
+        border-color: transparent;
+    }
 }
 
 
@@ -67,31 +85,33 @@ strong {
 
 
 /*****     短代码: img     *****/
-.svg-container svg {
-	margin: 0;
-	max-width: 100%;
-	height: auto;
-	transform: translateZ(0);          /* 开启硬件加速 */
-	-webkit-transform: translateZ(0);  /* Safari 前缀 */
+.main-text{
+    .svg-container svg {
+        margin: 0;
+        max-width: 100%;
+        height: auto;
+        transform: translateZ(0);          /* 开启硬件加速 */
+        -webkit-transform: translateZ(0);  /* Safari 前缀 */
+    }
+    .svg-container.scroll-x {
+        overflow-x: auto;
+    }
+    .svg-container.scroll-x svg{
+        overflow-x: auto;
+        width: initial !important;
+        height: initial !important;
+        min-width: none !important;
+        max-width: none !important;
+    }
+    .svg-container svg font,
+    .svg-container svg path,
+    .svg-container svg rect {
+        transition: all var(--transition-time) ease;
+    }
 }
-.svg-container.scroll-x {
-	overflow-x: auto;
-}
-.svg-container.scroll-x svg{
-	overflow-x: auto;
-	width: initial !important;
-	height: initial !important;
-	min-width: none !important;
-	max-width: none !important;
-}
-.svg-container svg font,
-.svg-container svg path,
-.svg-container svg rect {
-	transition: all var(--transition-time) ease;
-}
-.dark .auto-dim img {
-	filter: brightness(70%);
-	transition: filter var(--transition-time) ease;
+.dark .main-text .auto-dim img {
+    filter: brightness(70%);
+    transition: filter var(--transition-time) ease;
 } 
 
 
@@ -99,20 +119,22 @@ strong {
 
 
 /*****     短代码: notice     *****/
-blockquote.red {
-	color: var(--Red);
-	background-color:  var(--Background-Red);
-	border-color: var(--Red);
-}
-blockquote.yellow {
-	color: var(--Yellow);
-	background-color: var(--Background-Yellow);
-	border-color: var(--Yellow);
-}
-blockquote.blue {
-	color: var(--Blue);
-	background-color: var(--Background-Blue);
-	border-color: var(--Blue);
+.main-text{
+    blockquote.red {
+        color: var(--Red);
+        background-color:  var(--Background-Red);
+        border-color: var(--Red);
+    }
+    blockquote.yellow {
+        color: var(--Yellow);
+        background-color: var(--Background-Yellow);
+        border-color: var(--Yellow);
+    }
+    blockquote.blue {
+        color: var(--Blue);
+        background-color: var(--Background-Blue);
+        border-color: var(--Blue);
+    }
 }
 
 
@@ -120,44 +142,46 @@ blockquote.blue {
 
 
 /*****     短代码: bar     *****/
-.code-bar {
-	font-family: 'Maple Mono NF CN Light';
-	font-size: 15px;
-    line-height: 35px;
-    margin-bottom: -35px;
-	color: light-dark(#5C6A72, #9DA9A0);
-	background-color: light-dark(#F3EAD3, #333C43);
-	border-radius: var(--post-border-radius) var(--post-border-radius) 0 0;
-	padding-left: 6px;
-    overflow-x: auto;
-    word-break: break-all;
-	white-space: nowrap;
-	position: relative;
-	z-index: 99;
-	border: 0px solid var(--post-pre-border-fg);
-	transition: background-color var(--transition-time) ease, color var(--transition-time) ease, border-color var(--transition-time) ease;
-}
-.code-bar span:first-child {
-	color: light-dark(#F3EAD3, #333C43);
-	background-color: light-dark(#5C6A72, #859289);
-    box-shadow : var(--shadow);
-	padding: 1px 5px;
-	border-radius: 6px;
-	margin-right: 10px;
-	user-select: none;
-	transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
-}
-.code-bar.terminal {
-	color: light-dark(#9DA9A0, #9DA9A0);
-	background-color: light-dark(#333C43, #272E33);
-}
-.code-bar.terminal span:first-child {
-	color: light-dark(#333C43, #272E33);
-	background-color: light-dark(#9DA9A0, #859289);
-}
-.code-bar + .highlight {
-    margin-top: 0px;
-    padding-top: 35px;
+.main-text{
+    .code-bar {
+        font-family: 'Maple Mono NF CN Light';
+        font-size: 15px;
+        line-height: 35px;
+        margin-bottom: -35px;
+        color: light-dark(#5C6A72, #9DA9A0);
+        background-color: light-dark(#F3EAD3, #333C43);
+        border-radius: var(--post-border-radius) var(--post-border-radius) 0 0;
+        padding-left: 6px;
+        overflow-x: auto;
+        word-break: break-all;
+        white-space: nowrap;
+        position: relative;
+        z-index: 99;
+        border: 0px solid var(--post-pre-border-fg);
+        transition: background-color var(--transition-time) ease, color var(--transition-time) ease, border-color var(--transition-time) ease;
+    }
+    .code-bar span:first-child {
+        color: light-dark(#F3EAD3, #333C43);
+        background-color: light-dark(#5C6A72, #859289);
+        box-shadow : var(--shadow);
+        padding: 1px 5px;
+        border-radius: 6px;
+        margin-right: 10px;
+        user-select: none;
+        transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
+    }
+    .code-bar.terminal {
+        color: light-dark(#9DA9A0, #9DA9A0);
+        background-color: light-dark(#333C43, #272E33);
+    }
+    .code-bar.terminal span:first-child {
+        color: light-dark(#333C43, #272E33);
+        background-color: light-dark(#9DA9A0, #859289);
+    }
+    .code-bar + .highlight {
+        margin-top: 0px;
+        padding-top: 35px;
+    }
 }
 
 
@@ -165,12 +189,53 @@ blockquote.blue {
 
 
 /*****     其它     *****/
-.highlight.none-bg {
-    background-color: transparent;
-    box-shadow: none;
-    border: 0;
+.main-text{
+    .highlight.none-bg {
+        background-color: transparent;
+        box-shadow: none;
+        border: 0;
+    }
+    .highlight.fixed-height > pre {
+        overflow-y: auto;
+        max-height: 60vh;
+    }
 }
-.highlight.fixed-height > pre {
-	overflow-y: auto;
-	max-height: 60vh;
+
+
+
+
+
+/*****     文章纠错      *****/
+.correction-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 80px 0 0 0;
+    user-select: none;
+    a.button {
+        color: var(--Gray-1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        border-radius: 10px;
+        border: 1px dashed transparent;
+        width: 100px;
+        height: 70px;
+        transition: all var(--transition-time) ease;
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+        .title {
+            font-size: 14px;
+            line-height: 2.0;
+        }
+        &:hover {
+            border: 1px dashed var(--Red);
+            color: var(--Red);
+        }
+    }
 }

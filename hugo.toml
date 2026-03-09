@@ -11,6 +11,7 @@ enableRobotsTXT = true
 	defaultTheme = "dark"       # 默认主题 light 或 dark 或 auto
     profileName  = "King's Blog"
     profileSlogan = "夜夜夜夜夜夜夜夜夜不能寐吗？"
+    articleCorrection = false
 
 [markup]
 	[markup.goldmark]
