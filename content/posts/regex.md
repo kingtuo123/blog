@@ -9,22 +9,30 @@ toc: false
 
 
 <style>
-    .container {
-        /*max-width: 500px;*/
+    .regex-container {
+        position: sticky;
+        top: 10px;
+        padding: 10px;
+        box-shadow: var(--shadow);
+        background-color:light-dark(#F4F0D944, #343F4444);
+        border-radius: 10px;
+        backdrop-filter: blur(20px);
+        transition: background-color var(--transition-time) ease;
     }
-    .input-group {
-        margin-bottom: 15px;
+    .input-group:first-child {
+        margin-bottom: 10px;
     }
     label {
         display: block;
         user-select: none;
-        margin-bottom: 5px;
+        margin-top: 5px;
+        margin-bottom: 3px;
         font-weight: normal;
-        transition: all 0.5s ease;
+        color: var(--Gray-2);
     }
     input[type="text"] {
         color: var(--text);
-        border: 1px solid var(--Background-2);
+        border: 1px solid var(--Background-4);
         width: 100%;
         padding: 8px;
         box-sizing: border-box;
@@ -51,8 +59,8 @@ toc: false
         margin-top: 0px;
         padding: 10px;
         color: var(--fg);
-        background-color: light-dark(#F3EAD3, #333C43);
-        border: 1px solid var(--Background-2);
+        background-color: light-dark(#F3EAD388, #333C4388);
+        border: 1px solid var(--Background-4);
         border-radius: 10px;
         transition: all var(--transition-time) ease;
     }
@@ -68,13 +76,13 @@ toc: false
 </style>
 
 
-<div class="container">
+<div class="regex-container">
     <div class="input-group">
-        <label for="regex">正则表达式</label>
+        <!-- <label for="regex">正则表达式</label> -->
         <input type="text" id="regex" value="[0-9]+">
     </div>
     <div class="input-group">
-        <label for="testString">测试字符串</label>
+        <!-- <label for="testString">测试字符串</label> -->
         <input type="text" id="testString" value="123abc456def789GHI">
     </div>
     <div class="input-group modifiers">
