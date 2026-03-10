@@ -963,7 +963,7 @@ for word in $str; do
 done
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 [one]
 [two]
 [three]
@@ -979,7 +979,7 @@ for word in "$str"; do
 done
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 [one:two:three]
 ```
 
@@ -992,7 +992,7 @@ for word in one:two:three; do
 done
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 [one:two:three]
 ```
 
@@ -1003,7 +1003,7 @@ IFS=: read user pass shell <<< "root:secret:/bin/bash"
 echo -e "User=$user,  Passwd=$pass,  Shell=$shell"
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 User=root,  Passwd=secret,  Shell=/bin/bash
 ```
 
@@ -1015,7 +1015,7 @@ IFS=: arr=($str)
 echo "arr[0]=${arr[0]},  arr[1]=${arr[1]},  arr[2]=${arr[2]}"
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 arr[0]=apple,  arr[1]=banana,  arr[2]=orange
 ```
 
@@ -1031,7 +1031,7 @@ echo "Using \$*: $*"
 echo "Using \$@: $@"
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 Using $*: one:two:three
 Using $@: one two three
 ```

@@ -7,7 +7,7 @@ toc: false
 
 ## 内核配置
 
-```makefile
+```makefile{class="none-bg"}
 CONFIG_BT           : 启用蓝牙，必须启用
 BT_BREDR            : 经典蓝牙协议栈，必须启用
 CONFIG_BT_RFCOMM    : 模拟 RS-232 串口，纯听歌可不启用，设备控制或数据传输要启用

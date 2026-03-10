@@ -55,7 +55,7 @@ toc: true
 {{ $name }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 Alice
 ```
 
@@ -69,7 +69,7 @@ Alice
 {{ $name }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 Bob
 ```
 
@@ -157,7 +157,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 当前页面的标题：Hugo 模板语法
 当前站点的标题：King's Blog
 根上下文的标题：Hugo 模板语法
@@ -179,7 +179,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 输出：a
 输出：b
 输出：c
@@ -194,7 +194,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 第 0 个: a
 第 1 个: b
 第 2 个: c
@@ -210,7 +210,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 暂无内容
 ```
 
@@ -226,7 +226,7 @@ Bob
 <pre>|    {{ .Title }}    |</pre>
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 |    Hugo 模板语法    |
 ```
 
@@ -236,7 +236,7 @@ Bob
 <pre>|    {{- .Title }}    |</pre>
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 |Hugo 模板语法    |
 ```
 
@@ -247,7 +247,7 @@ Bob
 <pre>|    {{- .Title -}}    |</pre>
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 |Hugo 模板语法|
 ```
 
@@ -260,7 +260,7 @@ Bob
 {{ "HELLO WORLD" | lower }}    {{/* lower 函数将所有字符转化为小写 */}}
 ```
 
-```bash-session
+```bash-session{class="none-bg"}
 hello world
 ```
 

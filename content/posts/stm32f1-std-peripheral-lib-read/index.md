@@ -2244,7 +2244,7 @@ typedef struct
 #### 预定义宏
 
 
-```makefile
+```makefile{class="none-bg"}
 STM32F10X_LD         : 按启动文件后缀，选择一个
 STM32F10X_MD         : 
 STM32F10X_HD         : 
@@ -2494,7 +2494,7 @@ static void SetSysClockTo72(void){ 省略.... }
 
 #### 预定义宏
 
-```makefile
+```makefile{class="none-bg"}
 SYSCLK_FREQ_HSE    HSE_VALUE   : 使用 HSE 作为系统时钟源，不进行倍频
 SYSCLK_FREQ_24MHz  24000000    : 定义 24MHz 系统时钟频率
 SYSCLK_FREQ_36MHz  36000000    : 定义 36MHz 系统时钟频率
@@ -2866,7 +2866,7 @@ STM32 可通过配置 `BOOT0` 和 `BOOT1` 引脚，将从 `0x00000000` 地址开
 
 对于 STM32F103ZET6 ，从 SRAM 启动时，`0x00000000` 会被映射到一块内存极小的区域，大约在 `0x1FFFF000` 附近或略低，仅 16 字节，内容如下：
 
-```text
+```c{class="none-bg"}
 20005000 200001E1 20000004 20000004
 ```
 
@@ -2875,7 +2875,7 @@ STM32 可通过配置 `BOOT0` 和 `BOOT1` 引脚，将从 `0x00000000` 地址开
 第二个字：入口程序地址 `0x200001E1` ，最后一位表示 thumb ，实际是 `0x200001E0`，相对 `0x20000000` 偏移 `0x1E0` 。
 对于不同容量的产品，其偏移值也有所不同，参考 GCC 的启动文件：
 
-```asm
+```asm{class="none-bg"}
 startup_stm32f10x_ld.s:     .word  BootRAM    /*  0x108   */
 startup_stm32f10x_md.s:     .word  BootRAM    /*  0x108   */
 startup_stm32f10x_hd.s:     .word  BootRAM    /*  0x1E0   */

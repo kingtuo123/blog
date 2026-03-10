@@ -26,14 +26,14 @@ CONFIG_INTEL_RAPL=y
 
 ## Sysfs 接口
 
-```text
-/sys/class/powercap/intel-rapl/intel-rapl:0/   # 第 0 颗物理 CPU 封装
-├──name                                        # 域的名称，通常是 "package-0"
-├──energy_uj                                   # 累计能耗计数器，单位是微焦耳
-├──max_energy_range_uj                         # 能耗计数器的最大值，溢出后会归零
-├──enabled                                     # 功耗限制是否启用，默认 0 不启用
-├──power_uw                                    # 瞬时功率，单位是微瓦（不一定支持）
-└──intel-rapl:0:0/                             # 子域，例如 core，核心功耗
+```text{class="none-bg"}
+/sys/class/powercap/intel-rapl/intel-rapl:0/   -> 第 0 颗物理 CPU 封装
+├──name                                        -> 域的名称，通常是 "package-0"
+├──energy_uj                                   -> 累计能耗计数器，单位是微焦耳
+├──max_energy_range_uj                         -> 能耗计数器的最大值，溢出后会归零
+├──enabled                                     -> 功耗限制是否启用，默认 0 不启用
+├──power_uw                                    -> 瞬时功率，单位是微瓦（不一定支持）
+└──intel-rapl:0:0/                             -> 子域，例如 core，核心功耗
 ```
 
 ## Udev 配置
@@ -52,7 +52,7 @@ ATTR{max_energy_range_uj}=="65532610987"
 ATTR{name}=="package-0"
 ```
 
-普通用户对 `energy_uj` 无可读权限，通过 udev 规则设置权限
+普通用户对 `energy_uj` 无可读权限，通过 udev 规则设置权限：
 
 
 {{< bar title="/etc/udev/rules.d/99-powercap.rules" >}}

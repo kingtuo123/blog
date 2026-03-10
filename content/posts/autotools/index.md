@@ -18,9 +18,9 @@ $ make install
 
 ### Configure 作用
 
-`./configure` 会检查构建所需的编译器、系统架构、库文件和头文件等依赖，然后生成 config.h 、Makefile 等文件
+`./configure` 会检查构建所需的编译器、系统架构、库文件和头文件等依赖，然后生成 config.h 、Makefile 等文件。
 
-用户可以通过配置 `configure.ac` 文件来控制 configure 的依赖检查 / 功能启用 / 跨平台等特性
+用户可以通过配置 `configure.ac` 文件来控制 configure 的依赖检查 / 功能启用 / 跨平台等特性。
 
 
 
@@ -28,7 +28,7 @@ $ make install
 
 {{< img src="configure.svg" >}}
 
-`./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件
+`./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件。
 
 ```makefile{class="none-bg"}
 *.in            : 模板文件，可以手动编写，也可以由 autoheader、automake 工具生成
@@ -54,17 +54,17 @@ install:
 	cp hello @bindir@
 ```
 
-`@variable@` 是替换变量（占位符），它在 `./configure` 脚本执行时会被替换为实际值，详见 [Substitutions in Makefiles](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Makefile-Substitutions.html)
+`@variable@` 是替换变量（占位符），它在 `./configure` 脚本执行时会被替换为实际值，详见 [Substitutions in Makefiles](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Makefile-Substitutions.html) 。
 
-`@variable@` 的值来自 `configure.ac` 中的宏定义和 `./configure` 时自动检测或用户定义的值
+`@variable@` 的值来自 `configure.ac` 中的宏定义和 `./configure` 时自动检测或用户定义的值。
 
-`@variable@` 是 Autotools 模板系统的核心机制，它使得 Makefile 能够根据系统环境和用户配置自动适配，是实现跨平台兼容性的关键
+`@variable@` 是 Autotools 模板系统的核心机制，它使得 Makefile 能够根据系统环境和用户配置自动适配，是实现跨平台兼容性的关键。
 
-> 手动维护 `Makefile.in` 较繁琐，通常是编写 `Makefile.am`，让 `automake` 生成 `Makefile.in`
+> 手动维护 `Makefile.in` 较繁琐，通常是编写 `Makefile.am` ，让 `automake` 生成 `Makefile.in` 。
 
 ### Makefile 目标
 
-详见 [Standard Targets for Users](https://www.gnu.org/prep/standards/html_node/Standard-Targets.html)
+详见 [Standard Targets for Users](https://www.gnu.org/prep/standards/html_node/Standard-Targets.html) 。
 
 ```Makefile{class="none-bg"}
 all             : 默认目标，构建程序、库、文档等
@@ -81,7 +81,7 @@ dist            : 创建 PACKAGE-VERSION.tar.gz 压缩包
 ### 目录变量
 
 
-目录变量指定了各类文件的安装位置，详见 [Variables for Installation Directories](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html)
+目录变量指定了各类文件的安装位置，详见 [Variables for Installation Directories](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html) 。
 
 ```shell{class="none-bg"}
 # 目录变量      # 默认值
@@ -113,7 +113,7 @@ $ grep "^prefix" config.log
 prefix='/usr'
 ```
 
-其它目录变量也可以参照上面设置，执行 `./configure --help` 查看更多可配置的参数
+其它目录变量也可以参照上面设置，执行 `./configure --help` 查看更多可配置的参数。
 
 
 ### DESTDIR 参数
@@ -123,21 +123,22 @@ prefix='/usr'
 ```bash-session
 $ make install DESTDIR=/tmp/app
 ```
-把 `DESTDIR` 看作根目录，当 `prefix=/usr` ，则安装目录就是 `/tmp/app/usr`，即 `$(DESTDIR)/$(prefix)`
+把 `DESTDIR` 看作根目录，当 `prefix=/usr` ，则安装目录就是 `/tmp/app/usr` ，即 `$(DESTDIR)/$(prefix)` 。
 
 
 ### prefix 与 DESTDIR 的区别
 
-`--prefix` 会影响程序 **运行时** 的行为，一些程序构建时会把路径硬编码到二进制文件、库文件或其它文件中
+`--prefix` 会影响程序 **运行时** 的行为，一些程序构建时会把路径硬编码到二进制文件、库文件或其它文件中。
 
 ```bash-session
 $ ./configure --prefix=/usr/local
+$ make
 $ make install DESTDIR=/tmp/app
 ```
 
-上面程序的安装路径为 `/tmp/app/usr/local`
+上面程序的安装路径为 `/tmp/app/usr/local` 。
 
-当程序运行时会在 `/usr/local/lib` 查找库文件，而不是 `/tmp/app/usr/local/lib`
+当程序运行时会在 `/usr/local/lib` 查找库文件，而不是 `/tmp/app/usr/local/lib` 。
 
 
 
@@ -172,9 +173,9 @@ $ ac_cv_path_SED=/path/to/sed ./configure
 
 {{< img src="autoconf.svg" >}}
 
-- `configure.ac` 是一个包含宏的 shell 脚本
-- `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure`
-- `autoconf` 的宏以 `AC_` 开头，详见 [Autoconf Macro Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Autoconf-Macro-Index.html)
+- `configure.ac` 是一个包含宏的 shell 脚本。
+- `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure` 。
+- `autoconf` 的宏以 `AC_` 开头，详见 [Autoconf Macro Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Autoconf-Macro-Index.html) 。
 
 {{< bar title="最小化配置的 configure.ac" >}}
 
@@ -194,7 +195,7 @@ autom4te.cache  configure  configure.ac
 
 `autom4te.cache` 文件夹由 `autom4te` 创建，用于提高执行效率，
 autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
-详见 [What is autom4te.cache](https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Autom4te-Cache.html)
+详见 [What is autom4te.cache](https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Autom4te-Cache.html) 。
 
 
 
@@ -206,9 +207,9 @@ autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
 
 {{< img src="aclocal.svg" >}}
 
-- `aclocal` 是为 `autoconf` 准备 “宏库” 的预处理工具
+- `aclocal` 是为 `autoconf` 准备 “宏库” 的预处理工具。
 
-当 `configure.ac` 包含 `autoconf` 以外的第三方宏，如 `automake` 自带的宏和用户自定义的宏，`aclocal` 作用是将所有第三方宏整合到一个单一的文件 `aclocal.m4` 中，以供 `autoconf` 使用
+当 `configure.ac` 包含 `autoconf` 以外的第三方宏，如 `automake` 自带的宏和用户自定义的宏，`aclocal` 作用是将所有第三方宏整合到一个单一的文件 `aclocal.m4` 中，以供 `autoconf` 使用。
 
 {{< bar title="configure.ac" >}}
 
@@ -228,7 +229,7 @@ configure.ac:2: error: possibly undefined macro: AM_INIT_AUTOMAKE
       See the Autoconf documentation.
 ```
 
-应该先执行 `aclocal`：
+应该先执行 `aclocal` ：
 
 ```bash-session
 $ aclocal && ls
@@ -245,7 +246,7 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 {{< img src="autoheader.svg" >}}
 
-使用 `AC_DEFINE` 创建 C 语言宏定义
+使用 `AC_DEFINE` 创建 C 语言宏定义：
 
 {{< bar title="configure.ac" >}}
 
@@ -278,7 +279,7 @@ config.h        config.log   configure
 
 {{< bar title="config.h" >}}
 
-```c
+```c{hl_lines=[1,2]}
 /* This is the foobar value */
 #define FOOBAR 42
 /* Define to the address where bug reports for this package should be sent. */
@@ -296,7 +297,7 @@ config.h        config.log   configure
 ```
 
 
-`config.h` 包含了软件包的名称、版本等大量的宏定义，用户程序可以直接使用这些宏，实现条件编译、对不同平台的移植适配等
+`config.h` 包含了软件包的名称、版本等大量的宏定义，用户程序可以直接使用这些宏，实现条件编译、对不同平台的移植适配等。
 
 
 
@@ -430,13 +431,13 @@ $ /tmp/app2/bin/hello               # 运行安装的程序
 你好，世界！
 ```
 
-`automake` 的 `--add-missing --copy` 参数用来复制缺失的辅助文件（Autotools 自带的 compile，install-sh 等），configure、Makefile 等可能会需要这些脚本
+`automake` 的 `--add-missing --copy` 参数用来复制缺失的辅助文件（Autotools 自带的 compile，install-sh 等），configure、Makefile 等可能会需要这些脚本。
 
 ## Autoreconf
 
-上面的例子中，手动执行 `aclocal` → `autoconf` → `autoheader` → `automake` 十分繁琐
+上面的例子中，手动执行 `aclocal` → `autoconf` → `autoheader` → `automake` 十分繁琐。
 
-可以使用 `autoreconf` 自动完成这一过程，通常搭配 `-i` 或 `--install` 参数（复制缺失的标准辅助文件）
+可以使用 `autoreconf` 自动完成这一过程，通常搭配 `-i` 或 `--install` 参数（复制缺失的标准辅助文件）：
 
 ```bash-session
 $ make distclean
@@ -449,7 +450,7 @@ $ /tmp/app3/bin/hello
 
 ## Autoscan
 
-`configure.ac` 文件可以手动创建，也可以使用 `autoscan` 命令生成 `configure.scan` 文件，修改后再重命名为 `configure.ac` 即可
+`configure.ac` 文件可以手动创建，也可以使用 `autoscan` 命令生成 `configure.scan` 文件，修改后再重命名为 `configure.ac` 即可。
 
 ## 打包源码
 
@@ -467,14 +468,14 @@ hello-1.0.tar.gz
 AM_INIT_AUTOMAKE([foreign -Wall -Werror dist-xz])
 ```
 
-`AM_INIT_AUTOMAKE` 参数详见 [List of Automake options](https://www.gnu.org/software/automake/manual/html_node/List-of-Automake-options.html)
+`AM_INIT_AUTOMAKE` 参数详见 [List of Automake options](https://www.gnu.org/software/automake/manual/html_node/List-of-Automake-options.html) 。
 
 
 ## 发布软件
 
-当软件作为 tar 包发布时，`configure` 和 `Makefile.in` 应该包含在内，用户解压后只需执行 `./configure`、`make`、`make install`
+当软件作为 tar 包发布时，`configure` 和 `Makefile.in` 应该包含在内，用户解压后只需执行 `./configure`、`make`、`make install` 。
 
-当通过版本控制系统发布时，应该只包含 `configure.ac` 和 `Makefile.am`，不应包含 Autotools 生成的辅助文件
+当通过版本控制系统发布时，应该只包含 `configure.ac` 和 `Makefile.am`，不应包含 Autotools 生成的辅助文件。
 
 
 
