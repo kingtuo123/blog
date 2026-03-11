@@ -148,6 +148,7 @@ html, body {
         font-size: 15px;
         line-height: 35px;
         margin-bottom: -35px;
+        margin-top: 10px;
         color: light-dark(#5C6A72, #9DA9A0);
         background-color: light-dark(#F3EAD3, #333C43);
         border-radius: var(--post-border-radius) var(--post-border-radius) 0 0;
