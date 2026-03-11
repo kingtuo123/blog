@@ -314,6 +314,38 @@ hello world
 
 
 
+## 插入 HTML
+
+{{< bar block="短代码" >}}
+
+```html
+<!-- 在当前位置插入 -->
+{{</* insert src="files/test1.c" */>}}
+
+<!-- 在目标元素插入 -->
+{{</* insert id="targetDiV" src="files/test1.c"  title="插入页面一"  */>}}
+{{</* insert id="targetDiV" src="files/test1.c"  title="插入页面二"  */>}}
+<!-- 目标元素 -->
+<div id="targetDiV"></div>
+```
+
+{{< table min-width="100">}}
+|参数    |说明                                            |
+|:-------|:-----------------------------------------------|
+|`id`    |目标元素的 id，如果 id 为空则直接在当前位置插入 |
+|`src`   |源文件位置                                      |
+|`title` |按钮的标题                                      |
+{{< /table >}}
+
+
+<span>{{< insert id="targetDiV" src="files/test1.c"  title="插入页面一"  >}}</span>
+
+<span>{{< insert id="targetDiV" src="files/test2.c"  title="插入页面二"  >}}</span>
+
+<div id="targetDiV"></div>
+
+
+
 
 ## 空格
 
