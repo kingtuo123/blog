@@ -250,7 +250,7 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 {{< bar title="configure.ac" >}}
 
-```bash
+```bash{hl_lines=[2,3]}
 AC_INIT([hello], [1.0], [bug-report@address])
 # 创建 C 宏定义，参数：[宏名]，[值]，[注释]
 AC_DEFINE([FOOBAR], [42], [This is the foobar value])

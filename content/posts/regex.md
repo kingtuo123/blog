@@ -57,7 +57,7 @@ toc: false
     }
     .result {
         margin-top: 0px;
-        padding: 10px;
+        padding: 6px 8px;
         color: var(--theme-fg);
         background-color: light-dark(#F3EAD388, #333C4388);
         border: 1px solid var(--color-background-4);

@@ -6,7 +6,7 @@
 
 {{ $currentDir := .Page.File.Dir }}
 {{ $realPath   := path.Join "content" $currentDir $src }}
-{{ $baseName   := path.BaseName $src | replaceRE "[^a-zA-Z0-9]" "" }}
+{{ $baseName   := path.Base $src | replaceRE "[^a-zA-Z0-9]" "" }}
 
 
 
@@ -15,7 +15,7 @@
     {{ $htmlContent := readFile $realPath | markdownify | safeHTML }}
 
     {{ if $id }}
-        {{ $htmlPath := printf "files/%s/%s.html"  $currentDir  $baseName }}
+        {{ $htmlPath := printf "files/%s.html"  $realPath }}
 
         {{ $htmlFileObject := $htmlContent | resources.FromString  $htmlPath }}
 
@@ -23,12 +23,15 @@
 
         <button onclick="insert_{{ $baseName | safeJS }}()">{{ $title }}</button>
         <script>
+            let html_{{ $baseName | safeJS }};
             async function insert_{{ $baseName | safeJS }}() {
                 try {
-                    const response = await fetch('{{ $url }}');
-                    const html = await response.text();
+                    if (html_{{ $baseName | safeJS }} == null) {
+                        const response = await fetch('{{ $url }}');
+                        html_{{ $baseName | safeJS }} = await response.text();
+                    }
                     const container = document.getElementById('{{ $id }}');
-                    container.innerHTML = html;
+                    container.innerHTML = html_{{ $baseName | safeJS }};
                 } catch (error) {
                     console.error('{{ $url }} 加载失败:', error);
                 }
