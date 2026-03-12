@@ -13,11 +13,11 @@ toc: false
         position: sticky;
         top: 10px;
         padding: 10px;
-        box-shadow: var(--shadow);
+        box-shadow: var(--theme-box-shadow);
         background-color:light-dark(#F4F0D944, #343F4444);
         border-radius: 10px;
         backdrop-filter: blur(20px);
-        transition: background-color var(--transition-time) ease;
+        transition: background-color var(--theme-transition-time) ease;
     }
     .input-group:first-child {
         margin-bottom: 10px;
@@ -28,20 +28,20 @@ toc: false
         margin-top: 5px;
         margin-bottom: 3px;
         font-weight: normal;
-        color: var(--Gray-2);
+        color: var(--color-gray-2);
     }
     input[type="text"] {
-        color: var(--text);
-        border: 1px solid var(--Background-4);
+        color: var(--theme-fg);
+        border: 1px solid var(--color-background-4);
         width: 100%;
         padding: 8px;
         box-sizing: border-box;
         border-radius: 10px;
-        transition: all var(--transition-time) ease;
+        transition: all var(--theme-transition-time) ease;
     }
 
     input[type="text"]:focus {
-        border: 1px solid var(--Green);
+        border: 1px solid var(--color-green);
         outline: none;
     }
 
@@ -58,11 +58,11 @@ toc: false
     .result {
         margin-top: 0px;
         padding: 10px;
-        color: var(--fg);
+        color: var(--theme-fg);
         background-color: light-dark(#F3EAD388, #333C4388);
-        border: 1px solid var(--Background-4);
+        border: 1px solid var(--color-background-4);
         border-radius: 10px;
-        transition: all var(--transition-time) ease;
+        transition: all var(--theme-transition-time) ease;
     }
     .highlight-0 {
         padding: 2px;

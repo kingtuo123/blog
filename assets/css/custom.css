@@ -100,18 +100,17 @@ html, body {
         overflow-x: auto;
         width: initial !important;
         height: initial !important;
-        min-width: none !important;
         max-width: none !important;
     }
     .svg-container svg font,
     .svg-container svg path,
     .svg-container svg rect {
-        transition: all var(--transition-time) ease;
+        transition: all var(--theme-transition-time) ease;
     }
 }
 .dark .main-text .auto-dim img {
     filter: brightness(70%);
-    transition: filter var(--transition-time) ease;
+    transition: filter var(--theme-transition-time) ease;
 } 
 
 
@@ -121,19 +120,19 @@ html, body {
 /*****     短代码: notice     *****/
 .main-text{
     blockquote.red {
-        color: var(--Red);
-        background-color:  var(--Background-Red);
-        border-color: var(--Red);
+        color: var(--color-red);
+        background-color:  var(--color-background-red);
+        border-color: var(--color-red);
     }
     blockquote.yellow {
-        color: var(--Yellow);
-        background-color: var(--Background-Yellow);
-        border-color: var(--Yellow);
+        color: var(--color-yellow);
+        background-color: var(--color-background-yellow);
+        border-color: var(--color-yellow);
     }
     blockquote.blue {
-        color: var(--Blue);
-        background-color: var(--Background-Blue);
-        border-color: var(--Blue);
+        color: var(--color-blue);
+        background-color: var(--color-background-blue);
+        border-color: var(--color-blue);
     }
 }
 
@@ -151,25 +150,24 @@ html, body {
         margin-top: 10px;
         color: light-dark(#5C6A72, #9DA9A0);
         background-color: light-dark(#F3EAD3, #333C43);
-        border-radius: var(--post-border-radius) var(--post-border-radius) 0 0;
+        border-radius: var(--theme-post-border-radius) var(--theme-post-border-radius) 0 0;
         padding-left: 6px;
         overflow-x: auto;
         word-break: break-all;
         white-space: nowrap;
         position: relative;
         z-index: 99;
-        border: 0px solid var(--post-pre-border-fg);
-        transition: background-color var(--transition-time) ease, color var(--transition-time) ease, border-color var(--transition-time) ease;
+        transition: background-color var(--theme-transition-time) ease, color var(--theme-transition-time) ease, border-color var(--theme-transition-time) ease;
     }
     .code-bar span:first-child {
         color: light-dark(#F3EAD3, #333C43);
         background-color: light-dark(#5C6A72, #859289);
-        box-shadow : var(--shadow);
+        box-shadow : var(--theme-box-shadow);
         padding: 1px 5px;
         border-radius: 6px;
         margin-right: 10px;
         user-select: none;
-        transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
+        transition: background-color var(--theme-transition-time) ease, color var(--theme-transition-time) ease;
     }
     .code-bar.terminal {
         color: light-dark(#9DA9A0, #9DA9A0);
@@ -215,7 +213,7 @@ html, body {
     margin: 80px 0 0 0;
     user-select: none;
     a.button {
-        color: var(--Gray-1);
+        color: var(--color-gray-1);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -225,7 +223,7 @@ html, body {
         border: 1px dashed transparent;
         width: 100px;
         height: 70px;
-        transition: all var(--transition-time) ease;
+        transition: all var(--theme-transition-time) ease;
         svg {
             width: 32px;
             height: 32px;
@@ -235,8 +233,8 @@ html, body {
             line-height: 2.0;
         }
         &:hover {
-            border: 1px dashed var(--Red);
-            color: var(--Red);
+            border: 1px dashed var(--color-red);
+            color: var(--color-red);
         }
     }
 }

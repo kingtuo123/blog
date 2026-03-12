@@ -51,18 +51,12 @@ toc: true
 
 ```markdown
 > 这是默认样式
-```
-
-> 这是默认样式
-
-```markdown
-> 这是默认样式
-> 
+>
 > 这是换行
 ```
 
 > 这是默认样式
-> 
+>
 > 这是换行
 
 {{< bar block="短代码" >}}
@@ -91,11 +85,9 @@ toc: true
 
 ## 分割线
 
-三个及以上的 `-` 或者 `*` 都可以：
-
 ```markdown
 -----
-这是分割线
+这是分割线，三个及以上的 `-` 或者 `*` 都可以
 *****
 ```
 
@@ -324,7 +316,7 @@ hello world
 
 <!-- 在目标元素插入 -->
 {{</* insert id="targetDiV" src="files/test1.c"  title="插入页面一"  */>}}
-{{</* insert id="targetDiV" src="files/test1.c"  title="插入页面二"  */>}}
+{{</* insert id="targetDiV" src="files/test2.c"  title="插入页面二"  */>}}
 <!-- 目标元素 -->
 <div id="targetDiV"></div>
 ```
