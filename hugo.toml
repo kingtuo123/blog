@@ -8,9 +8,15 @@ disableKinds = ["taxonomy", "term", "section"]
 enableRobotsTXT = true
 
 [params]
-	defaultTheme = "dark"       # 默认主题 light 或 dark 或 auto
+    # 默认主题 light 或 dark 或 auto
+    defaultTheme = "dark"
+    # 主页头像，放在 static 目录下
+    profileAvatar = "avatar.svg"
+    # 头像下的名称
     profileName  = "King's Blog"
+    # 标语
     profileSlogan = "夜夜夜夜夜夜夜夜夜不能寐吗？"
+    # 文章纠错按钮
     articleCorrection = false
 
 [markup]
