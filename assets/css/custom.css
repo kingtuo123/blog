@@ -3,11 +3,6 @@ html, body {
 	font-family: "LXGW WenKai";
 	font-weight: normal;
 }
-/*****     字体：主页     *****/
-.post-list .title {
-	font-family: "LXGW WenKai";
-	font-weight: normal;
-}
 /*****     字体：文章     *****/
 .post-container {
     .post-title {
@@ -180,6 +175,23 @@ html, body {
     .code-bar + .highlight {
         margin-top: 0px;
         padding-top: 35px;
+    }
+}
+
+
+
+
+
+
+/*****     短代码: insert     *****/
+button[onclick] {
+    color: var(--color-aqua);
+    background-color: var(--color-background-1);
+    padding: 3px 5px;
+    border-radius: 5px;
+    transition: all var(--theme-transition-time) ease;
+    &:hover {
+        background-color: var(--color-background-2);
     }
 }
 

@@ -329,13 +329,26 @@ hello world
 |`title` |按钮的标题                                      |
 {{< /table >}}
 
+```text{class="none-bg"}
+./
+├── configure.ac
+├── {{< insert id="targetDiV" src="files/test1.c"  title=" test1.c"  >}}
+└── 󰉖 src/
+    ├── {{< insert id="targetDiV" src="files/test2.c"  title=" test2.c"  >}}
+    └── Makefile.am
+```
 
-<span>{{< insert id="targetDiV" src="files/test1.c"  title="插入页面一"  >}}</span>
 
-<span>{{< insert id="targetDiV" src="files/test2.c"  title="插入页面二"  >}}</span>
+
 
 <div id="targetDiV"></div>
 
+
+## 常用符号
+
+```text
+󰉖  󰉋  󰈤  󰈙  󰈔                  󰡨          
+```
 
 
 

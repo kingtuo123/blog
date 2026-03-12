@@ -1,28 +1,27 @@
-{{ $src := .Get "src"  }}
-{{ $id := .Get "id"  }}
-{{ $title := .Get "title" | default "iframe" }}
+{{- $src := .Get "src"  -}}
+{{- $id := .Get "id"  -}}
+{{- $title := .Get "title" | default "iframe" -}}
 
 
 
-{{ $currentDir := .Page.File.Dir }}
-{{ $realPath   := path.Join "content" $currentDir $src }}
-{{ $baseName   := path.Base $src | replaceRE "[^a-zA-Z0-9]" "" }}
+{{- $currentDir := .Page.File.Dir -}}
+{{- $realPath   := path.Join "content" $currentDir $src -}}
+{{- $baseName   := path.Base $src | replaceRE "[^a-zA-Z0-9]" "" -}}
 
 
 
-{{ if fileExists $realPath }}
+{{- if fileExists $realPath -}}
 
-    {{ $htmlContent := readFile $realPath | markdownify | safeHTML }}
+    {{- $htmlContent := readFile $realPath | markdownify | safeHTML -}}
 
-    {{ if $id }}
-        {{ $htmlPath := printf "files/%s.html"  $realPath }}
+    {{- if $id -}}
+        {{- $htmlPath := printf "files/%s.html"  $realPath -}}
 
-        {{ $htmlFileObject := $htmlContent | resources.FromString  $htmlPath }}
+        {{- $htmlFileObject := $htmlContent | resources.FromString  $htmlPath -}}
 
-        {{ $url := $htmlFileObject.Permalink }}
+        {{- $url := $htmlFileObject.Permalink -}}
 
-        <button onclick="insert_{{ $baseName | safeJS }}()">{{ $title }}</button>
-        <script>
+        <button onclick="insert_{{ $baseName | safeJS }}()">{{- $title -}}</button><script>
             let html_{{ $baseName | safeJS }};
             async function insert_{{ $baseName | safeJS }}() {
                 try {
@@ -37,10 +36,10 @@
                 }
             }
         </script>
-    {{ else }}
-        {{ $htmlContent }}
-    {{ end }}
+    {{- else -}}
+        {{- $htmlContent -}}
+    {{- end -}}
 
-{{ else }}
-    <p style="color:red">错误：找不到文件 "{{ $src }}"</p>
-{{ end }}
+{{- else -}}
+    <p style="color:red">错误：找不到文件 "{{- $src -}}"</p>
+{{- end -}}
