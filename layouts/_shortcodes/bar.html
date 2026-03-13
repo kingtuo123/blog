@@ -3,5 +3,5 @@
 {{- $type  := .Get "type"  | default ""     -}}
 
 <div class="code-bar {{ $type }}">
-	<span>{{ $block }}</span><span>{{ $title }}</span>
+	<span>{{- $block -}}</span><span>{{- $title -}}</span>
 </div>

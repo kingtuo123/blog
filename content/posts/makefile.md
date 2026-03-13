@@ -18,7 +18,7 @@ targets: prerequisites
 	command
 ```
 
-{{< table thead="false" min-width="150" >}}
+{{< table thead=false min-width="150" >}}
 
 |                |                                                              |
 |:---------------|:-------------------------------------------------------------|
@@ -147,7 +147,7 @@ test: $(obj)
 
 ### 赋值
 
-{{< table thead="false" min-width="50" >}}
+{{< table thead=false min-width="50" >}}
 
 |符号 |作用                        |
 |:----|:---------------------------|
@@ -259,7 +259,7 @@ f2.o:
 
 ## 通配符
 
-{{< table thead="false" >}}
+{{< table thead=false >}}
 
 |符号|作用                |                                                                       |
 |:---|:-------------------|:----------------------------------------------------------------------|
@@ -322,7 +322,7 @@ done
 
 > 更多自动化变量参考：[Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
 
-{{< table thead="false" min-width="50" >}}
+{{< table thead=false min-width="50" >}}
 
 |符号|描述              |
 |:---|:-----------------|
@@ -722,7 +722,7 @@ all:
 
 ## 条件语句
 
-{{< table thead="false" min-width="100" >}}
+{{< table thead=false min-width="100" >}}
 
 |关键字  |说明        |
 |:-------|:-----------|
@@ -1248,7 +1248,7 @@ $ MY_VAR=123 make -e c=123 d=123
 
 - 语法：`$(error text ...)`
 
-{{< table thead="false" min-width="100" >}}
+{{< table thead=false min-width="100" >}}
 
 |||
 |:--|:--|

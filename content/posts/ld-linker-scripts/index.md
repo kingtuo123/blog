@@ -436,7 +436,7 @@ Section Headers:
 
 **`通配符`**
 
-{{< table thead="false" min-width="100" >}}
+{{< table thead=false min-width="100" >}}
 |        |                         |
 |:-------|:------------------------|
 |`*`     |匹配任意数量的字符       |

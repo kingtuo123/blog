@@ -65,7 +65,7 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 ^? ntp.tuna.tsinghua.edu.cn      0   8     0     -     +0ns[   +0ns] +/-    0ns
 ```
 
-{{< table thead="false" >}}
+{{< table thead=false >}}
 
 |             |                                                                                               |
 |:------------|:----------------------------------------------------------------------------------------------|

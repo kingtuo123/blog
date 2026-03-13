@@ -1,6 +1,7 @@
 {{- $src := .Get "src"  -}}
 {{- $id := .Get "id"  -}}
 {{- $title := .Get "title" | default "iframe" -}}
+{{- $fg := .Get "fg" -}}
 
 
 
@@ -21,7 +22,9 @@
 
         {{- $url := $htmlFileObject.Permalink -}}
 
-        <button onclick="insert_{{ $baseName | safeJS }}()">{{- $title -}}</button><script>
+        <button onclick="insert_{{ $baseName | safeJS }}()"
+            style="{{- if $fg -}}color:var(--color-{{- $fg -}});{{- end -}}"
+        >{{- $title -}}</button><script>
             let html_{{ $baseName | safeJS }};
             async function insert_{{ $baseName | safeJS }}() {
                 try {

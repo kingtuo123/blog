@@ -197,14 +197,14 @@ toc: true
 {{< bar block="短代码" >}}
 
 ```go-template
-{{</* table thead="true" wrap="false" min-width="100,200,300"*/>}}
+{{</* table thead=true wrap=false min-width="100,200,300"*/>}}
 |选项|说明|
 |:---|:---|
 |参数|123 |
 {{</* /table */>}}
 ```
 
-{{< table thead="true" wrap="true" min-width="120">}}
+{{< table thead=true wrap="true" min-width="120">}}
 
 |参数        |说明                                                                          |
 |:-----------|:-----------------------------------------------------------------------------|
@@ -327,6 +327,7 @@ hello world
 |`id`    |目标元素的 id，如果 id 为空则直接在当前位置插入 |
 |`src`   |源文件位置                                      |
 |`title` |按钮的标题                                      |
+|`fg`    |按钮标题的前景色 foreground、 red、orange 等 core.css 中的颜色                               |
 {{< /table >}}
 
 ```text{class="none-bg"}
@@ -334,7 +335,7 @@ hello world
 ├── configure.ac
 ├── {{< insert id="targetDiV" src="files/test1.c"  title=" test1.c"  >}}
 └── 󰉖 src/
-    ├── {{< insert id="targetDiV" src="files/test2.c"  title=" test2.c"  >}}
+    ├── {{< insert id="targetDiV" src="files/test2.c"  title=" test2.c" fg="purple" >}}
     └── Makefile.am
 ```
 

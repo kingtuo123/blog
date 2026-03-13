@@ -346,7 +346,7 @@ toc: true
 
 ## 函数
 
-{{< table thead="false" >}}
+{{< table thead=false >}}
 
 |||
 |:--|:--|:--|:--|:--|
@@ -435,7 +435,7 @@ toc: true
 
 ## 方法
 
-{{< table thead="false" >}}
+{{< table thead=false >}}
 
 |||
 |:--|:--|:--|:--|:--|

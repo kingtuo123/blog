@@ -91,7 +91,7 @@ src_install() {
 
 ### 用户定义的变量
 
-{{< table thead="false" min-width="150" >}}
+{{< table thead=false min-width="150" >}}
 
 |用户定义的变量    |说明                                                                          |
 |:-----------------|:-----------------------------------------------------------------------------|
@@ -117,7 +117,7 @@ src_install() {
 
 ### 预定义的只读变量
 
-{{< table thead="false" min-width="150" >}}
+{{< table thead=false min-width="150" >}}
 
 |预定义的只读变量|说明|
 |:--|:--|
@@ -678,7 +678,7 @@ pkg_postinst() {
 
 ```
 
-{{< table thead="false" min-width="100" >}}
+{{< table thead=false min-width="100" >}}
 
 |         |                                                             |
 |:--------|:------------------------------------------------------------|

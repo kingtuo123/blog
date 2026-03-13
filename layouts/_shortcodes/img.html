@@ -8,32 +8,71 @@
 */}}
 
 
-{{ $src    := .Get "src" }}
-{{ $align  := .Get "align" | default "left" }}
-{{ $margin := .Get "margin" | default "0" }}
+{{- $src    := .Get "src" -}}
+{{- $align  := .Get "align" | default "left" -}}
+{{- $margin := .Get "margin" | default "0" -}}
 
 
-{{ $isSvg := hasSuffix $src ".svg" }}
+{{- $isSvg := hasSuffix $src ".svg" -}}
 
 
-{{ if $isSvg }}
-	{{ $zoom       := .Get "zoom"        | default "1"                 }}
-	{{ $fontFamily := .Get "font-family" | default "LXGW WenKai Mono"  }}
-	{{ $fontSize   := .Get "font-size"   | default "16px"              }}
-	{{ $scrollX    := .Get "scroll-x"    | default "false"             }}
+{{- if $isSvg -}}
+    {{- $zoom       := .Get "zoom"        | default "1"                 -}}
+    {{- $fontFamily := .Get "font-family" | default "LXGW WenKai Mono"  -}}
+    {{- $fontSize   := .Get "font-size"   | default "16px"              -}}
+    {{- $scrollX    := .Get "scroll-x"    | default false               -}}
 
-	{{ $fontSizeReplace   := printf `font-size: %s` $fontSize          }}
-	{{ $fontFamilyReplace := printf `font-family: '%s'` $fontFamily    }}
-	{{ $fontFaceReplace   := printf `face="%s"` $fontFamily            }}
-	{{ $currentDir := .Page.File.Dir }}
-	{{ $svgPath := path.Join "content" $currentDir $src }}
-	<div class="svg-container {{ if eq $scrollX "true" }}scroll-x{{ end }}" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};margin: {{ $margin }};"{{ end }}>
-		{{- readFile $svgPath | replaceRE `color-scheme:[a-z\s]+;` "" | replaceRE `font-size:\s[0-9]+?px` $fontSizeReplace | replaceRE `font-family:\s'.*?'` $fontFamilyReplace | safeHTML -}}
-	</div>
-{{ else }}
-	{{ $zoom := .Get "zoom" | default "0.5" }}
-	{{ $autoDim := .Get "auto-dim" | default "true" }}
-	<div class="img-container {{ if eq $autoDim "true" }}auto-dim{{ end }}" align="{{ $align }}" {{ if $zoom }}style="zoom: {{ $zoom }};margin: {{ $margin }};"{{ end }}>
-		<img src="{{ $src }}" draggable="false"></img>
-	</div>
-{{ end }}
+    {{- $fontSizeReplace1   := printf `font-size: %s;` $fontSize -}}
+    {{- $fontSizeReplace2   := printf `font-size="%s"` $fontSize -}}
+
+    {{- $fontFamilyReplace1 := printf `font-family: '%s';` $fontFamily -}}
+    {{- $fontFamilyReplace2 := printf `font-family="%s"`   $fontFamily -}}
+    {{- $fontFamilyReplace3 := printf `face="%s"`          $fontFamily -}}
+
+    {{- $svgPath := path.Join "content"  .Page.File.Dir  $src -}}
+
+    <div 
+        class="
+            svg-container
+            {{ if eq $scrollX true }} scroll-x {{ end }}
+        " 
+        style="
+            zoom: {{ $zoom }};
+            margin: {{ $margin }};
+            text-align: {{ $align }};
+        "
+        >
+
+        {{- $temp := readFile $svgPath | replaceRE `color-scheme:.*?;` "" -}}
+
+        {{- $temp  = $temp | replaceRE `font-size:.*?;`  $fontSizeReplace1 -}}
+        {{- $temp  = $temp | replaceRE `font-size=".*?"` $fontSizeReplace2 -}}
+
+        {{- $temp  = $temp | replaceRE `font-family:.*?;`  $fontFamilyReplace1 -}}
+        {{- $temp  = $temp | replaceRE `font-family=".*?"` $fontFamilyReplace2 -}}
+        {{- $temp  = $temp | replaceRE `face=".*?"`        $fontFamilyReplace3 -}}
+
+        {{- $temp | safeHTML -}}
+    </div>
+
+
+
+{{- else -}}
+    {{- $zoom := .Get "zoom" | default "0.5" -}}
+    {{- $autoDim := .Get "auto-dim" | default true -}}
+
+    <div 
+        class="
+            img-container
+            {{ if eq $autoDim true }} auto-dim {{ end }}
+        " 
+        style="
+            zoom: {{ $zoom }};
+            margin: {{ $margin }};
+            text-align: {{ $align }};
+        "
+        >
+        <img src="{{ $src }}" draggable="false"></img>
+    </div>
+
+{{- end -}}

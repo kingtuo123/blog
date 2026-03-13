@@ -378,7 +378,7 @@ bin_PROGRAMS = hello
 # 构建 hello 这个目标所需的源文件
 hello_SOURCES = main.c
 ```
-{{< table thead="false" min-width="200" >}}
+{{< table thead=false min-width="200" >}}
 
 |||
 |:--|:--|

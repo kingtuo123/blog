@@ -1,14 +1,14 @@
 {{/*
-@ wrap       : 表格内是否换行     : wrap="false"
+@ wrap       : 表格内是否换行     : wrap=false
 @ min-width  : 表格单元格最小宽度 : min-width="100,200,300"
-@ thead      : 是否显示表头       : thead="false"
+@ thead      : 是否显示表头       : thead=false
 */}}
 
 
-{{ $wrap     := .Get "wrap"       | default "true" }}
-{{ $minWidth := .Get "min-width"  | default ""     }}
-{{ $thead    := .Get "thead"      | default "true" }}
-{{ $mono     := .Get "mono"       | default "fasle"}}
+{{ $wrap     := .Get "wrap"       | default true  }}
+{{ $minWidth := .Get "min-width"  | default ""    }}
+{{ $thead    := .Get "thead"      | default true  }}
+{{ $mono     := .Get "mono"       | default false }}
 
 {{ $monoFont := "LXGW WenKai Mono" }}
 
@@ -18,9 +18,9 @@
 	{{ $randomId := print "id" (now.UnixNano | md5 ) }}
     <div id="{{ $randomId }}" 
 	class="
-    {{ if eq $wrap "true"   }} table-container {{ end }}
-	{{ if eq $thead "false" }} no-thead        {{ end }}
-    {{ if eq $mono "true"   }} mono            {{ end }}
+    {{ if eq $wrap  true  }} table-container {{ end }}
+	{{ if eq $thead false }} no-thead        {{ end }}
+    {{ if eq $mono  true  }} mono            {{ end }}
     ">
 	{{- .Inner | markdownify -}}
 	</div>
