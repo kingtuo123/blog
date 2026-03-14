@@ -204,7 +204,7 @@ toc: true
 {{</* /table */>}}
 ```
 
-{{< table thead=true wrap=false min-width="120">}}
+{{< table thead=true wrap=true min-width="120">}}
 
 |参数        |说明                                                                          |
 |:-----------|:-----------------------------------------------------------------------------|
