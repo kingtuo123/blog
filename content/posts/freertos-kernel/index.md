@@ -33,3 +33,7 @@ SVC_Handler:
     LDR    R1, [R0, #24]    ; R1 = *(R0 + 24) = 返回地址
     LDRB   R0, [R1, #-2]    ; 取 8 位，R0 = *(R1 - 2) = SVC 编号
 ```
+
+
+
+### PendSV 异常
