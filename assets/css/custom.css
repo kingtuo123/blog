@@ -186,13 +186,9 @@ html, body {
 /*****     短代码: insert     *****/
 button[onclick] {
     color: var(--color-aqua);
-    background-color: var(--color-background-1);
     padding: 3px 5px;
     border-radius: 5px;
     transition: all var(--theme-transition-time) ease;
-    &:hover {
-        background-color: var(--color-background-2);
-    }
 }
 
 
@@ -209,6 +205,10 @@ button[onclick] {
     .highlight.fixed-height > pre {
         overflow-y: auto;
         max-height: 60vh;
+    }
+    .highlight.hover .line:hover {
+        border-radius: 5px;
+        background-color: var(--color-background-1);
     }
 }
 
