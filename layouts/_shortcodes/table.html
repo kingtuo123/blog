@@ -9,6 +9,7 @@
 {{ $minWidth := .Get "min-width"  | default ""    }}
 {{ $thead    := .Get "thead"      | default true  }}
 {{ $mono     := .Get "mono"       | default false }}
+{{ $noBorder := .Get "no-border"  | default false }}
 
 {{ $monoFont := "LXGW WenKai Mono" }}
 
@@ -18,9 +19,10 @@
 	{{ $randomId := print "id" (now.UnixNano | md5 ) }}
     <div id="{{ $randomId }}" 
 	class="
-    {{ if eq $wrap  true  }} table-container {{ end }}
-	{{ if eq $thead false }} no-thead        {{ end }}
-    {{ if eq $mono  true  }} mono            {{ end }}
+    {{ if eq $wrap     true  }} table-container {{ end }}
+	{{ if eq $thead    false }} no-thead        {{ end }}
+    {{ if eq $mono     true  }} mono            {{ end }}
+    {{ if eq $noBorder true  }} no-border       {{ end }}
     ">
 	{{- .Inner | markdownify -}}
 	</div>
