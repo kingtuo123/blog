@@ -30,6 +30,8 @@ draft: true
 {{< /table >}}
 
 
+
+
 ## 工具链
 
 {{< table thead=false min-width="150,200" >}}
@@ -51,6 +53,7 @@ draft: true
 
 
 
+
 ## GCC 参数
 
 {{< table thead=false mono=true min-width="150,200" >}}
@@ -60,7 +63,7 @@ draft: true
 |              |`-o`                  |指定输出文件名                                                    |
 |              |`-E`                  |只运行预处理器：`gcc -E test.c -o test.i`                         |
 |              |`-S`                  |只编译成汇编代码：`gcc -S test.c -o test.s`                       |
-|              |`-x`                  |指定输入文件的语言：`c` `c++` `assembler` `assembler-with-cpp`（先调用C预处理器再汇编）|
+|              |`-x`                  |指定输入文件的语言：`c` `c++` `assembler` `assembler-with-cpp`|
 |              |`-g`                  |生成调试信息（供 GDB 使用）                                       |
 |              |`-v`                  |显示编译过程的详细信息                                            |
 |**目标架构**  |`-mcpu=`              |指定目标 CPU：`cortex-m3` `cortex-m4`                             |
@@ -88,12 +91,23 @@ draft: true
 
 
 
+
 ## AS 参数
 
-{{< table thead=false mono=true min-width="150,200,100" >}}
-||||
-|:--|:--|:--|
-|**基本选项**|||
+{{< table thead=false mono=true min-width="150,200" >}}
+|              |                      |                                             |
+|:-------------|:---------------------|:--------------------------------------------|
+|**基本选项**  |`-o`                  |指定输出文件名：`as startup.s -o startup.o`  |
+|              |`-g`                  |生成调试信息                                 |
+|              |`-I`                  |添加包含路径（用于 `.include` 指令）         |
+|              |`--defsym`            |定义符号：`as -defsym BUFFER_SIZE=1024`      |
+|**目标架构**  |`-mcpu=`              |指定目标 CPU：`cortex-m3` `cortex-m4`        |
+|              |`-mthumb`             |使用 Thumb 指令集：Cortex-M 系列             |
+|              |`-marm`               |使用 ARM 指令集：Cortex-A/R 系列             |
+|              |`-mfloat-abi=`        |浮点 ABI：`soft` `softfp` `hard`             |
+|              |`-mfpu=`              |指定 FPU 类型：`fpv4-sp-d16`                 |
+|**警告选项**  |`--warn`              |启用警告                                     |
+|              |`--fatal-warnings`    |将警告视为错误                               |
 {{< /table >}}
 
 
@@ -106,6 +120,16 @@ draft: true
 |:--|:--|:--|
 |**基本选项**|||
 {{< /table >}}
+
+
+
+
+## 我的疑问
+
+**`1.` 直接使用 `as` 汇编器和使用 `gcc -x assembler-with-cpp` 有什么区别？**
+
+- 使用 `as` 时，汇编器接收的是纯汇编代码，不经过任何预处理。支持汇编的宏 `.macro` 。
+- 使用 `gcc -x assembler-with-cpp` 时，代码会先经过 C 预处理器处理，然后再交给汇编器。支持 C 预处理器的宏 `#define` 。
 
 
 
