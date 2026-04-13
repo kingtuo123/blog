@@ -9,7 +9,7 @@
 {{ $minWidth := .Get "min-width"  | default ""    }}
 {{ $thead    := .Get "thead"      | default true  }}
 {{ $mono     := .Get "mono"       | default false }}
-{{ $noBorder := .Get "no-border"  | default false }}
+{{ $border   := .Get "border"     | default true  }}
 
 {{ $monoFont := "LXGW WenKai Mono" }}
 
@@ -22,7 +22,7 @@
     {{ if eq $wrap     true  }} table-container {{ end }}
 	{{ if eq $thead    false }} no-thead        {{ end }}
     {{ if eq $mono     true  }} mono            {{ end }}
-    {{ if eq $noBorder true  }} no-border       {{ end }}
+    {{ if eq $border   false }} no-border       {{ end }}
     ">
 	{{- .Inner | markdownify -}}
 	</div>
