@@ -33,9 +33,7 @@ draft: true
 ```
 
 {{< notice class="red" >}}
-BUG（若不配置 idmaps，普通用户执行 incus 命令报错）
-
-`Get "http://unix.socket/1.0?project=user-1000": read unix @->/var/lib/incus/unix.socket.user: read: connection reset by peer`
+若不配置 idmaps，普通用户执行 incus 命令报错：`Get "http://unix.socket/1.0?project=user-1000": read unix @->/var/lib/incus/unix.socket.user: read: connection reset by peer`。
 {{< /notice >}}
 
 OpenRC 启动 incus：
@@ -50,6 +48,13 @@ OpenRC 启动 incus：
 # rc-service incus-user start
 ```
 
+{{< notice class="red" >}}
+OpenRC 开机启动 `incus-user` 失败，开机后执行 `sudo rc-service incus-user restart` 能成功启动。
+
+解决办法：编辑 `/etc/init.d/incus-user`，在 `start()` 中添加 `sleep 2` 。
+{{< /notice >}}
+
+
 初始化 Incus（在安装 Incus 后，只需执行此操作一次即可）：
 
 ```bash-session
@@ -57,6 +62,12 @@ OpenRC 启动 incus：
 ```
 
 这将适用于大多数设置，后续可通过 `incus admin` 和 `incus profile` 重新配置。
+
+
+## 命令用法
+
+直接执行 `incus` 或其子命令如 `incus images` 即可查看该命令的用法。
+
 
 
 ## Profile 配置
@@ -97,21 +108,21 @@ Incus profile 默认有一个 default 配置文件（该文件无法被重命名
 |`create <网络名>`              |创建网络。                                                                |
 {{< /table >}}
 
-## 远程镜像服务器
+## 镜像
 
-查看镜像服务器，默认的服务器名称为 `images`：
+### 远程镜像服务器
+
+列出所有服务器：
 
 ```bash-session
 $ incus remote list
-|  NAME   |                       URL                        |   PROTOCOL    |  AUTH TYPE  | PUBLIC | STATIC | GLOBAL |
-| images  | https://images.linuxcontainers.org               | simplestreams | none        | YES    | NO     | NO     |
+|      NAME       |                URL                 |   PROTOCOL    |  AUTH TYPE  | PUBLIC | STATIC | GLOBAL |
+| images          | https://images.linuxcontainers.org | simplestreams | none        | YES    | NO     | NO     |
+| local (current) | unix://                            | incus         | file access | NO     | YES    | NO     |
 ```
 
-- `AUTH TYPE `：连接该服务器所需的认证类型。
-- `PUBLIC`：标识这个远程服务器是否允许任何人匿名访问，无需任何认证。
-- `STATIC`：用来标识这个远程服务器是否被定义为“静态”条目。
-- `GLOBAL`：指示该远程配置是否为全局的（对所有用户可见）。
-
+- `images` 为默认的公共镜像服务器，由社区或官方维护。
+- `local` 为本地的镜像服务器，包含已下载并缓存的镜像、已创建的实例等。
 
 添加 Simple Streams 镜像服务器：
 
@@ -119,23 +130,101 @@ $ incus remote list
 $ lxc remote add {{< text fg="yellow" >}}<自定义名称> <镜像站URL>{{< /text >}} --protocol=simplestreams
 ```
 
-添加清华大学镜像站：
+添加清华大学镜像服务器：
 
 ```bash-session
 $ incus remote add tuna https://mirrors.tuna.tsinghua.edu.cn/lxc-images/ --protocol=simplestreams --public
 ```
 
-查看镜像站上的所有镜像：
+{{< table thead=true border=false mono=false >}}
+| 命令 | 说明 |
+| :--- | :--- |
+| *`incus remote list`* | 列出所有远程服务器。 |
+| *`incus remote add <服务器名称> <地址>`* | 添加一个新的远程服务器。 |
+| *`incus remote remove <服务器名称>`* | 移除一个已配置的远程服务器。 |
+| *`incus remote switch <服务器名称>`* | 切换当前默认的远程服务器。 |
+| *`incus remote get-default`* | 查看当前默认的远程服务器名称。 |
+| *`incus remote set-url <服务器名称> <新地址>`* | 修改指定服务器的 URL 地址。 |
+| *`incus remote rename <旧名称> <新名称>`* | 重命名服务器。 |
+{{< /table >}}
+
+
+
+
+### 引用镜像
+
+使用 `<服务器>:<别名|指纹>`，冒号后不要加空格：
+
+```bash-session
+$ incus launch {{< text fg="yellow" >}}images:debian/13{{< /text >}} my-debian
+$ incus launch {{< text fg="yellow" >}}images:c54b95d46de6{{< /text >}} my-debian
+```
+
+### 列出镜像
+
+查看镜像服务器上的所有镜像：
 
 ```bash-session
 $ incus image list {{< text fg="yellow" >}}<服务器名称>{{< /text >}}:
+|         ALIAS          | FINGERPRINT  | PUBLIC |     DESCRIPTION      | ARCHITECTURE |      TYPE       |   SIZE    |
+| debian/13/cloud        | c54b95d46de6 | yes    | Debian trixie amd64  | x86_64       | VIRTUAL-MACHINE | 340.82MiB |
 ```
 
-按别名和属性筛选：
+镜像 `TYPE` 类型：
+
+- `CONTAINER`：与宿主机共享内核，利用 Linux 内核的命名空间和 Cgroups 进行软件隔离。
+- `VIRTUAL-MACHINE`：独立的内核，借助 QEMU 进行硬件虚拟化。
+
+筛选镜像，过滤词用于匹配 `ALIAS` 和 `FINGERPRINT` 属性中的内容（多个词用空格分隔）：
 
 ```bash-session
-$ incus image list {{< text fg="yellow" >}}<服务器名称>{{< /text >}}: debian/13 architecture=x86_64
+$ incus image list {{< text fg="yellow" >}}<服务器名称>: [过滤词]{{< /text >}}
 ```
+
+```bash-session
+$ incus image list images: debian/13
+$ incus image list images: c54b95d46de6
+$ incus image list images: debian/13 amd64
+```
+
+按其它属性筛选，使用 `<键>=<键值>` 的形式（必须小写）：
+
+```bash-session
+$ incus image list images: debian/13 architecture=x86_64 type=container
+```
+
+### 导出 / 导入镜像
+
+导出容器镜像文件，会生成 `.tar.xz` 元数据文件和 `.squashfs` 根文件系统文件：
+
+```bash-session
+$ incus image export [<服务器>:]<镜像> [<输出目录>]
+```
+
+如果要导出虚拟机镜像文件，添加 `--vm` 参数，会生成 `.tar.xz` 元数据文件和 `.qcow2` 磁盘镜像文件。
+
+导入镜像文件（如果存在指纹相同的镜像将无法导入）：
+
+```bash-session
+$ incus image import <元数据文件> <根文件系统文件> [<目标服务器>:] --alias <别名>
+```
+
+
+{{< table thead=true border=false mono=false >}}
+|命令 | 说明 |
+|:--- | :--- |
+|*`incus image list [<服务器>:] [过滤词...]`*          | 列出镜像。|
+|*`incus image info <镜像>`*                       | 显示镜像的详细元数据。|
+|*`incus image show <镜像>`*                       | 显示镜像的完整属性配置（YAML 格式）。 |
+|*`incus image get-property <镜像> <键>`*         | 获取单项属性。|
+|*`incus image set-property <镜像> <键> <键值>`* | 设置单项属性。|
+|*`incus image unset-property <镜像> <键>`*       | 删除单项属性。|
+|*`incus image edit <镜像>`*                       | 编辑完整属性。|
+|*`incus image delete <镜像>`*                     | 删除镜像。|
+|*`incus image alias create <别名> <指纹>`*    | 为指纹创建别名。|
+|*`incus image copy [<源服务器>:]<镜像> [<目标服务器>:]`*   | 在不同远程服务器之间直接复制镜像。 |
+|*`incus image refresh [<服务器>:]<镜像>`*            | 强制检查并更新本地缓存的远程镜像。 |
+{{< /table >}}
 
 
 ## 本地镜像管理
@@ -150,6 +239,8 @@ Error: Failed instance creation: Failed to start device "eth0": Failed to delete
 ```
 
 镜像类型有 coantiner 和 vm
+
+ vim /etc/init.d/incus-user 中 start() 添加 sleep 2
 
 ## 参考链接
 
