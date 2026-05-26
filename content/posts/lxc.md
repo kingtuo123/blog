@@ -54,59 +54,19 @@ OpenRC 开机启动 `incus-user` 失败，开机后执行 `sudo rc-service incus
 解决办法：编辑 `/etc/init.d/incus-user`，在 `start()` 中添加 `sleep 2` 。
 {{< /notice >}}
 
-
-初始化 Incus（在安装 Incus 后，只需执行此操作一次即可）：
+以默认设置初始化 Incus：
 
 ```bash-session
 # incus admin init --minimal
 ```
 
-这将适用于大多数设置，后续可通过 `incus admin` 和 `incus profile` 重新配置。
-
-
-## 命令用法
-
-直接执行 `incus` 或其子命令如 `incus images` 即可查看该命令的用法。
+后续可通过 `incus admin` 和 `incus profile` 重新配置。
 
 
 
-## Profile 配置
-
-Incus profile 默认有一个 default 配置文件（该文件无法被重命名或删除）。
-如果在启动容器时不指定任何配置文件，default 会被自动应用。
 
 
-{{< table thead=true border=false mono=false >}}
-|incus profile 子命令速查||
-|:--|:--|
-|**查看配置**                   |                                                                          |
-|`list`                         |列出所有可用的配置文件。                                                  |
-|`show <配置文件名>`            |查看指定配置文件的详细内容 (YAML格式) 。                                  |
-|**创建/编辑**                  |                                                                          |
-|`create <配置文件名>`          |创建一个空的配置文件。                                                    |
-|`edit <配置文件名>`            |使用默认编辑器 (如 Vim) 以 YAML 格式手动编辑整个配置文件。                |
-|`set <配置文件名> <键=值>`     |直接设置具体的配置项。                                                    |
-|`unset <配置文件名> <键>`      |删除指定的配置项。                                                        |
-|**关联容器**                   |                                                                          |
-|`add <容器名> <配置文件名>`    |将配置文件追加到指定容器的配置文件列表中，多个配置文件会合并覆盖参数。    |
-|`remove <容器名> <配置文件名>` |将配置文件从指定容器的配置文件列表中移除。                                |
-|`assign <容器名> <配置文件名>` |覆盖指定容器上的配置文件列表。                                            |
-{{< /table >}}
 
-## Config 配置
-
-
-## 网络配置
-
-
-{{< table thead=true border=false mono=false >}}
-|incus network 子命令速查||
-|:--|:--|
-|`list`                         |列出所有可用的网络。                                                      |
-|`show <网络名>`                |查看网络配置内容。                                                        |
-|`info <网络名>`                |查看网络状态。                                                            |
-|`create <网络名>`              |创建网络。                                                                |
-{{< /table >}}
 
 ## 镜像
 
@@ -225,6 +185,210 @@ $ incus image import <元数据文件> <根文件系统文件> [<目标服务器
 |*`incus image copy [<源服务器>:]<镜像> [<目标服务器>:]`*   | 在不同远程服务器之间直接复制镜像。 |
 |*`incus image refresh [<服务器>:]<镜像>`*            | 强制检查并更新本地缓存的远程镜像。 |
 {{< /table >}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 实例
+
+Incus 支持以下类型的实例：
+
+- 系统容器
+- 应用程序容器
+- 虚拟机
+
+### 管理实例
+
+#### 创建实例
+
+```bash-session
+$ incus launch|init <服务器>:<镜像> <实例名称>
+```
+
+#### 列出实例
+
+```bash-session
+$ incus list
+```
+
+#### 显示实例信息 / 日志
+
+```bash-session
+$ incus info <实例名称>
+$ incus info <实例名称> --show-log
+```
+
+#### 启动 / 停止实例
+
+```bash-session
+$ incus start <实例名称>
+$ incus stop <实例名称>
+```
+
+#### 删除实例
+
+```bash-session
+$ incus delete <实例名称>
+```
+
+#### 重建实例
+
+如果想擦除和重新初始化实例的根磁盘，但保留实例配置，可以重建实例。
+
+使用不同的镜像重建实例：
+
+```bash-session
+$ incus rebuild <镜像名称> <实例名称>
+```
+
+清空根磁盘重建实例：
+
+```bash-session
+$ incus rebuild <实例名称> --empty
+```
+
+
+### 配置实例
+
+#### 查看实例配置
+
+```bash-session
+$ incus config show <实例名称> --expanded
+architecture: x86_64                     [{{< text fg="yellow" >}}属性{{< /text >}}]
+config:
+  limits.memory: 2GiB                    [{{< text fg="green" >}}选项{{< /text >}}]
+  security.privileged: "true"            [{{< text fg="green" >}}选项{{< /text >}}]
+description: My first container          [{{< text fg="yellow" >}}属性{{< /text >}}]
+name: my-container                       [{{< text fg="yellow" >}}属性{{< /text >}}]
+```
+
+#### 配置实例选项
+
+```bash-session
+$ incus config set <实例名称> <键>=<键值>
+$ incus config unset <实例名称> <键>
+```
+
+例如：
+
+```bash-session
+$ incus config set my-container limits.memory=8GiB
+```
+
+可配置的键参考[实例选项](https://linuxcontainers.cn/incus/docs/main/reference/instance_options/#instance-options)。
+
+#### 配置实例属性
+
+```bash-session
+$ incus config set <实例名称> <键>=<键值> --property
+$ incus config unset <实例名称> <键> --property
+```
+
+参考[实例属性](https://linuxcontainers.cn/incus/docs/main/reference/instance_properties/)。
+
+#### 配置设备
+
+
+添加磁盘设备：
+
+```bash-session
+$ incus config device add <实例名称> <设备名称> disk source=<主机路径> path=<容器内路径>
+```
+
+配置磁盘设备选项（参考[设备选项](https://linuxcontainers.cn/incus/docs/main/reference/devices_disk/#device-options)）：
+
+```bash-session
+$ incus config device set <实例名称> <设备名称> <键>=<键值>
+```
+
+更多设备类型参考[设备](https://linuxcontainers.cn/incus/docs/main/reference/devices/#devices)。
+
+
+#### 编辑完整实例配置
+
+```bash-session
+$ incus config edit <实例名称>
+```
+
+
+### 备份实例
+
+```bash-session
+$ incus snapshot create <实例名称> <快照名称>
+```
+
+
+
+
+
+-------
+-------
+-------
+-------
+-------
+-------
+-------
+
+
+
+
+
+
+
+
+## 命令用法
+
+直接执行 `incus` 或其子命令如 `incus images --help` 即可查看该命令的用法。
+
+
+
+## Profile 配置
+
+Incus profile 默认有一个 default 配置文件（该文件无法被重命名或删除）。
+如果在启动容器时不指定任何配置文件，default 会被自动应用。
+
+
+{{< table thead=true border=false mono=false >}}
+|incus profile 子命令速查||
+|:--|:--|
+|**查看配置**                   |                                                                          |
+|`list`                         |列出所有可用的配置文件。                                                  |
+|`show <配置文件名>`            |查看指定配置文件的详细内容 (YAML格式) 。                                  |
+|**创建/编辑**                  |                                                                          |
+|`create <配置文件名>`          |创建一个空的配置文件。                                                    |
+|`edit <配置文件名>`            |使用默认编辑器 (如 Vim) 以 YAML 格式手动编辑整个配置文件。                |
+|`set <配置文件名> <键=值>`     |直接设置具体的配置项。                                                    |
+|`unset <配置文件名> <键>`      |删除指定的配置项。                                                        |
+|**关联容器**                   |                                                                          |
+|`add <容器名> <配置文件名>`    |将配置文件追加到指定容器的配置文件列表中，多个配置文件会合并覆盖参数。    |
+|`remove <容器名> <配置文件名>` |将配置文件从指定容器的配置文件列表中移除。                                |
+|`assign <容器名> <配置文件名>` |覆盖指定容器上的配置文件列表。                                            |
+{{< /table >}}
+
+## 容器配置
+
+
+## 网络配置
+
+
+{{< table thead=true border=false mono=false >}}
+|incus network 子命令速查||
+|:--|:--|
+|`list`                         |列出所有可用的网络。                                                      |
+|`show <网络名>`                |查看网络配置内容。                                                        |
+|`info <网络名>`                |查看网络状态。                                                            |
+|`create <网络名>`              |创建网络。                                                                |
+{{< /table >}}
+
 
 
 ## 本地镜像管理
