@@ -1,5 +1,5 @@
 ---
-title: "LXC 容器"
+title: "Incus"
 date: "2026-04-13"
 draft: true
 ---
@@ -257,7 +257,7 @@ $ incus rebuild <实例名称> --empty
 ```
 
 
-### 配置实例
+### 实例配置
 
 #### 查看实例配置
 
@@ -320,13 +320,24 @@ $ incus config edit <实例名称>
 ```
 
 
-### 备份实例
+### 配置文件
+
+#### 查看配置文件
 
 ```bash-session
-$ incus snapshot create <实例名称> <快照名称>
+$ incus profile list
+$ incus profile show <配置名称>
 ```
 
+> Profile 与 Config 的区别：Profile 是可以复用的配置模板，Config 是单个实例的专属配置。
 
+#### 将配置文件应用于实例
+
+```bash-session
+$ incus profile add <实例名称> <配置文件名称>
+```
+
+### 使用 cloud-init
 
 
 
