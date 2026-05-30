@@ -1,5 +1,5 @@
 ---
-title: "Incus"
+title: "Lxc 容器 & Incus"
 date: "2026-04-13"
 draft: true
 ---
@@ -14,7 +14,7 @@ draft: true
 # emerge --ask app-containers/lxc
 ```
 
-安装 incus 容器管理器：
+安装 incus 管理器：
 
 ```bash-session
 # emerge --ask app-containers/incus
@@ -284,7 +284,7 @@ $ incus config unset <实例名称> <键>
 $ incus config set my-container limits.memory=8GiB
 ```
 
-可配置的键参考[实例选项](https://linuxcontainers.cn/incus/docs/main/reference/instance_options/#instance-options)。
+可配置的键参考[Instance options](https://linuxcontainers.org/incus/docs/main/reference/instance_options/#)。
 
 #### 配置实例属性
 
@@ -293,10 +293,11 @@ $ incus config set <实例名称> <键>=<键值> --property
 $ incus config unset <实例名称> <键> --property
 ```
 
-参考[实例属性](https://linuxcontainers.cn/incus/docs/main/reference/instance_properties/)。
+参考[Instance properties](https://linuxcontainers.org/incus/docs/main/reference/instance_properties/)。
 
 #### 配置设备
 
+所有的设备类型参考[Devices](https://linuxcontainers.org/incus/docs/main/reference/devices/)。
 
 添加磁盘设备：
 
@@ -304,13 +305,12 @@ $ incus config unset <实例名称> <键> --property
 $ incus config device add <实例名称> <设备名称> disk source=<主机路径> path=<容器内路径>
 ```
 
-配置磁盘设备选项（参考[设备选项](https://linuxcontainers.cn/incus/docs/main/reference/devices_disk/#device-options)）：
+配置磁盘设备（参考[Disk device options](https://linuxcontainers.org/incus/docs/main/reference/devices_disk/#device-options)）：
 
 ```bash-session
 $ incus config device set <实例名称> <设备名称> <键>=<键值>
 ```
 
-更多设备类型参考[设备](https://linuxcontainers.cn/incus/docs/main/reference/devices/#devices)。
 
 
 #### 编辑完整实例配置
@@ -337,7 +337,185 @@ $ incus profile show <配置名称>
 $ incus profile add <实例名称> <配置文件名称>
 ```
 
-### 使用 cloud-init
+### 运行命令
+
+在实例内部运行命令：
+
+```bash-session
+$ incus exec <实例名称> <选项> -- <命令>
+```
+
+{{< table thead=true border=false mono=false >}}
+|选项      |说明                                                                     |
+|:---------|:------------------------------------------------------------------------|
+|`--env`   |传递环境变量，例如 `incus exec debian --env MY_VAR="hello" -- env` 。    |
+|`--cwd`   |指定工作目录，例如 `incus exec debian --cwd=/usr  -- ls -l` 。           |
+|`--user`  |指定用户 ID，&nbsp;&nbsp;例如 `incus exec debian --user=0 -- whoami` 。  |
+|`--group` |指定组 ID。                                                              |
+|`-t`      |强制分配伪终端（模拟真实登录环境），适用于交互式程序（top, vim, bash）。 |
+|`-T`      |强制非交互模式（纯文本管道模式），适用于自动化脚本、管道输入 / 输出。    |
+{{< /table >}}
+
+
+### 访问控制台
+
+```bash-session
+$ incus console <实例名称>
+To detach from the console, press: <ctrl>+a q
+{{< text fg="green" >}}root{{< /text >}}
+{{< text fg="green" >}}Password: {{< /text >}}
+...
+Linux debian 6.18.33-gentoo-r1 ...
+...
+{{< text fg="red" >}}root{{< /text >}}@{{< text fg="foreground" >}}debian{{< /text >}}:~{{< text fg="red" >}}#{{< /text >}}
+```
+
+要显示 console 日志输出，添加 `--show-log` 选项：
+
+```bash-session
+$ incus restart debian
+$ incus console debian --show-log
+Queued start job for default target graphical.target.
+[  OK  ] Created slice system-getty.slice - Slice /system/getty.
+[  OK  ] Created slice system-modprobe.slice - Slice /system/modprobe.
+[  OK  ] Created slice user.slice - User and Session Slice.
+[  OK  ] Started systemd-ask-password-console.path - Dispatch Password Requests to Console Directory Watch.
+...
+```
+
+访问图形控制台（适用于虚拟机）：
+
+```bash-session
+$ incus console <实例名称> --type vga
+```
+
+{{< notice class="yellow" >}}
+启动具有图形输出的 VGA 控制台，必须安装 SPICE 客户端。Incus 支持两个常见的客户端 remote-viewer 和 spicy。
+{{< /notice >}}
+
+
+在实例启动时立即连接到控制台：
+
+```bash-session
+$ incus start <实例名称> --console
+$ incus start <实例名称> --console=vga
+```
+
+
+
+### 访问文件
+
+
+{{< table thead=true border=false mono=false >}}
+|命令      |说明                                                                     |
+|:---------------------------------------------------------------|:--------------------------------------------------|
+|*`incus file edit <实例名称>/<实例内文件路径>`*                 |从本地机器编辑实例中的文件。                       |
+|*`incus file delete <实例名称>/<实例内文件路径>`*               |从实例中删除文件。                                 |
+|*`incus file pull <实例名称>/<实例内文件路径> <本地文件路径>`*  |从实例中拉取文件到本地机器，选项 `-r` 拉取目录。   |
+|*`incus file pull <实例名称>/<实例内文件路径> -`*               |将实例中的文件拉取到标准输出，效果等同 `cat 文件`。|
+|*`incus file push <本地文件路径> <实例名称>/<实例内文件路径>`*  |将文件从本地机器推送到实例，选项 `-r` 推送目录。   |
+|*`incus file mount <实例名称>/<实例内路径> <本地路径>`*         |将实例文件系统挂载到本地机器上的路径，依赖 `sshfs`。|
+{{< /table >}}
+
+{{< notice class="yellow" >}}
+对于虚拟机，必须在虚拟机内部运行 incus-agent 进程才能使以上命令工作。
+{{< /notice >}}
+
+
+
+
+
+
+
+## 网络
+
+创建网桥（选项参考[Bridge network / Configuration options](https://linuxcontainers.org/incus/docs/main/reference/devices_nic/#device-options)）：
+
+```bash-session
+# incus network create <网络名称> --type=bridge [选项]
+```
+
+
+设置网桥静态 IP：
+
+```bash-session
+# incus network set <网络名称> ipv4.address={{< text fg="purple" >}}192.168.20.1/24{{< /text >}} ipv4.nat=true
+```
+
+
+设置实例中的 nic 设备为静态 IP：
+
+```bash-session
+$ incus config device override <实例名称> eth0 ipv4.address={{< text fg="purple" >}}192.168.20.100{{< /text >}}
+```
+
+{{< notice class="yellow" >}}
+执行 `incus config edit <实例名称>` 查看实例设备：
+
+若 device 中不含 nic 设备，则实例的 nic 设备从 profile 继承而来，使用 `incus config device override`。
+
+若 device 中包含 nic 设备，使用 `incus config device set`。
+{{< /notice >}}
+
+
+
+
+
+
+
+
+## 项目
+
+Project 用于逻辑隔离，相当于将整个 Incus 服务器划分为多个独立的、互不干扰的 "工作区"。
+
+用户可以为不同的 Project 配置特性，参考[Project configuration](https://linuxcontainers.org/incus/docs/main/reference/projects/)。
+
+
+
+
+
+
+
+
+## 存储
+
+- 存储池：每个存储池使用一个存储驱动（如 dir、zfs、lvm）。所有卷和桶都存在于某个池中。
+- 存储卷：存储池中的结构化存储单元，例如作为实例的根磁盘，或作为额外磁盘挂载到实例上。
+- 存储桶：是一种对象存储，不附加到实例，应用通过网络和 S3 协议直接访问。
+
+### 管理存储卷
+
+- 存储卷有以下内容类型：
+  - filesystem：可以附加到容器和虚拟机，并且可以在实例之间共享。
+  - block：只能附加到虚拟机（作为 /dev 下的块设备）。不能在实例之间共享。
+  - iso：只能通过 incus import 导入 ISO 文件来创建。只能附加到虚拟机（可多台），始终只读。
+
+{{< table thead=true border=false mono=false min-width="900" >}}
+|filesystem 内容类型                                              |说明                                                                     |
+|:--|:--|
+|*`incus storage volume create <存储池> <卷名>`*                         |创建卷     |
+|*`incus storage volume attach <存储池> <卷名> <实例名称> [<实例配置内的设备名>] <实例内路径>`* |将卷附加到实例 |
+|*`incus storage volume detach <存储池> <卷名> <实例名称>`*          |将卷从实例中移除|
+{{< /table >}}
+
+
+{{< table thead=true border=false mono=false min-width="900" >}}
+|block 内容类型                                              |                                                                     |
+|:--|:--|
+|*`incus storage volume create <存储池> <卷名> --type=block`*|创建卷|
+|*`incus storage volume attach <存储池> <卷名> <实例名称>`*|将卷附加到实例|
+{{< /table >}}
+
+
+{{< table thead=true border=false mono=false min-width="900" >}}
+|iso 内容类型                                              |                                                                     |
+|:--|:--|
+|*`incus storage volume import <存储池> <iso文件路径> <卷名> --type=iso`* |创建卷|
+{{< /table >}}
+
+更多详见 [Storage](https://linuxcontainers.org/incus/docs/main/storage/)。
+
+
 
 
 
@@ -406,6 +584,8 @@ Incus profile 默认有一个 default 配置文件（该文件无法被重命名
 
 
 ## 其它
+
+禁用容器自动启动。
 
 启用内核 sch_ingress
 
