@@ -49,8 +49,6 @@ $ incus profile edit wayland
 ```yaml
 config:
     environment.WAYLAND_DISPLAY: wayland-1
-    environment.XDG_RUNTIME_DIR: /run/user/1000
-    environment.HOME: /home/king
 description: Wayland profile
 devices:
     wayland-socket:
@@ -144,13 +142,13 @@ $ incus launch images:debian/13 my-debian -p my-debian -p wayland -p pipewire -p
 $ incus exec my-debian -- bash
 
 {{< text fg="yellow" >}}[创建用户]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /bin/bash -u 1000 king{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 -g 1000 king{{< /text >}}
 
 {{< text fg="yellow" >}}[配置时区]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
 
 {{< text fg="yellow" >}}[配置软件源]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} vim /etc/apt/sources.list.d/debian.sources{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
 Types: deb
 URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
 Suites: trixie trixie-updates trixie-backports
@@ -162,23 +160,27 @@ URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian-security
 Suites: trixie-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
 
 {{< text fg="yellow" >}}[更新并安装必要软件]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt update{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install mesa-utils pipewire-audio pciutils{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install mesa-utils pipewire-audio{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install fonts-dejavu fonts-wqy-microhei{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install firefox-esr foot{{< /text >}}
 
-{{< text fg="yellow" >}}[自动登陆 console]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} mkdir -p /etc/systemd/system/console-getty.service.d/{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} vim /etc/systemd/system/console-getty.service.d/autologin.conf{{< /text >}}
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty --autologin king --noclear console
-
-{{< text fg="yellow" >}}[自动链接 wayland-1]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} vim /home/king/.bash_profile{{< /text >}}
-ln -sf /mnt/wayland-1 /run/user/1000/
+{{< text fg="yellow" >}}[环境变量]{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /home/king/.bash_profile{{< /text >}}
+export WAYLAND_DISPLAY=wayland-1
+export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
+export PULSE_SERVER=unix:/mnt/pulse-native
+export XDG_CONFIG_HOME=/home/king/.config
+export XDG_RUNTIME_DIR=/run/user/1000
+export XDG_SESSION_TYPE=wayland
+if test -e /mnt/wayland-1 && test ! -h /run/user/1000/wayland-1; then
+    ln -sf /mnt/wayland-1 /run/user/1000/
+fi
+EOF
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} chown king:king /home/king/.bash_profile{{< /text >}}
 ```
 
 
@@ -192,17 +194,8 @@ ln -sf /mnt/wayland-1 /run/user/1000/
 ## 测试
 
 ```bash-session
-{{< text fg="yellow" >}}[重启容器]{{< /text >}}
 $ incus restart my-debian
-
-{{< text fg="yellow" >}}[检查用户是否登陆]{{< /text >}}
-$ incus exec my-debian -- w
-USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU  WHAT
-king     console  -                19:27    4:18   0.00s   ?    -bash
-
-{{< text fg="yellow" >}}[运行 firefox]{{< /text >}}
-$ incus exec my-debian --user 1000 --group 1000 -- firefox
-
+$ incus exec my-debian -- su - king -c firefox
 ```
 
 

@@ -611,6 +611,7 @@ devices:
 
 ```bash-session
 $ incus profile add my-debian downloads
+$ incus restart my-debian
 ```
 
 
