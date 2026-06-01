@@ -1,7 +1,6 @@
 ---
 title: "LXC 容器运行 GUI 程序"
-date: "2026-05-31"
-draft: true
+date: "2026-06-01"
 ---
 
 
@@ -52,7 +51,7 @@ config:
     environment.WAYLAND_DISPLAY: wayland-1
     environment.XDG_RUNTIME_DIR: /run/user/1000
     environment.HOME: /home/king
-description: Wayland GUI profile
+description: Wayland profile
 devices:
     wayland-socket:
         connect: unix:/run/user/1000/wayland-1
@@ -69,13 +68,77 @@ devices:
 ```
 
 
+
+## Pipewire 配置
+
+```bash-session
+$ incus profile create pipewire
+$ incus profile edit pipewire
+```
+
+```yaml
+config:
+    environment.PIPEWIRE_REMOTE: unix:/mnt/pipewire-0
+description: Pipewire profile
+devices:
+    pipewire-0:
+        connect: unix:/run/user/1000/pipewire-0
+        listen: unix:/mnt/pipewire-0
+        type: proxy
+        bind: instance
+        mode: "0700"
+        uid: "1000"
+        gid: "1000"
+        security.gid: "1000"
+        security.uid: "1000"
+```
+
+
+
+
+
+## Pulseaudio 配置
+
+```bash-session
+$ incus profile create pulseaudio
+$ incus profile edit pulseaudio
+```
+
+```yaml
+config:
+    environment.PULSE_SERVER: unix:/mnt/pulse-native
+description: Pulseaudio profile
+devices:
+    pulse-native:
+        connect: unix:/run/user/1000/pulse/native
+        listen: unix:/mnt/pulse-native
+        type: proxy
+        bind: instance
+        mode: "0700"
+        uid: "1000"
+        gid: "1000"
+        security.gid: "1000"
+        security.uid: "1000"
+```
+
+
+
+
+
+
+
 ## 创建容器
 
 ```bash-session
-$ incus launch images:debian/13 my-debian -p my-debian -p wayland
+$ incus launch images:debian/13 my-debian -p my-debian -p wayland -p pipewire -p pulseaudio
 ```
 
-容器内配置：
+
+
+
+
+
+## 容器内配置
 
 ```bash-session
 $ incus exec my-debian -- bash
@@ -103,6 +166,7 @@ Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 {{< text fg="yellow" >}}[更新并安装必要软件]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt update{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install mesa-utils pipewire-audio pciutils{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install fonts-dejavu fonts-wqy-microhei{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install firefox-esr foot{{< /text >}}
 
 {{< text fg="yellow" >}}[自动登陆 console]{{< /text >}}
@@ -115,13 +179,13 @@ ExecStart=-/sbin/agetty --autologin king --noclear console
 {{< text fg="yellow" >}}[自动链接 wayland-1]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} vim /home/king/.bash_profile{{< /text >}}
 ln -sf /mnt/wayland-1 /run/user/1000/
-
-{{< text fg="yellow" >}}[]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} {{< /text >}}
-
-{{< text fg="yellow" >}}[]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} {{< /text >}}
 ```
+
+
+
+
+
+
 
 
 
@@ -136,8 +200,8 @@ $ incus exec my-debian -- w
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU  WHAT
 king     console  -                19:27    4:18   0.00s   ?    -bash
 
-{{< text fg="yellow" >}}[启动 firefox]{{< /text >}}
-$ incus exec my-debian --user 1000 -- firefox
+{{< text fg="yellow" >}}[运行 firefox]{{< /text >}}
+$ incus exec my-debian --user 1000 --group 1000 -- firefox
 
 ```
 
