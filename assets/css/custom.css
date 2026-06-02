@@ -129,6 +129,16 @@ html, body {
         background-color: var(--color-background-blue);
         border-color: var(--color-blue);
     }
+    blockquote .none-bg {
+        margin: 0px;
+    }
+    blockquote .none-bg pre code {
+        font-size: 15px;
+        display: grid;
+        .line {
+            padding: 0px 0px;
+        }
+    }
 }
 
 

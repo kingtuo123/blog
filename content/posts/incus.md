@@ -567,13 +567,6 @@ $ incus profile set <配置名称> boot.autostart=false
 
 ### 映射本地路径
 
-```bash-session
-$ printf "root:$(id -u):1\n" | sudo tee -a /etc/subuid
-$ printf "root:$(id -g):1\n" | sudo tee -a /etc/subgid
-```
-
-> 执行上述命令后重启系统生效。
-
 工程配置，确保下列配置项存在：
 
 ```bash-session
@@ -616,51 +609,29 @@ $ incus restart my-debian
 
 
 
-
-<!--
-
 {{< notice class="red" >}}
-到这里，重启容器报错，执行 `incus info --show-log my-debian` 报错如下：
+到这里，如果容器无法启动，且执行 `incus info --show-log my-debian` 有如下报错：
 
-`newuidmap failed to write mapping "newuidmap: uid range [1000-1001) -> [1000-1001) not allowed": newuidmap 216279 0 1000000 1000 1000 1000 1 1001 1001001 999998999`
+```bash-session
+newuidmap failed to write mapping "newuidmap: uid range [1000-1001) -> [1000-1001) not allowed": newuidmap 216279 0 1000000 1000 1000 1000 1 1001 1001001 999998999
+```
+
+添加 idmap（重启系统生效）：
+
+```bash-session
+$ printf "root:$(id -u):1\n" | sudo tee -a /etc/subuid
+$ printf "root:$(id -g):1\n" | sudo tee -a /etc/subgid
+```
+
+参考链接：
+
+- [Trouble with idmaps in restricted Incus container](https://discuss.linuxcontainers.org/t/trouble-with-idmaps-in-restricted-incus-container/21797)
+- [Incus/LXD文件系统挂载与访问](https://www.dhao2001.com/2024/08/07/incus-filesystem-mount-access/)
+- [Idmaps for user namespace](https://github.com/lxc/incus/blob/main/doc/userns-idmap.md)
+- [Custom user mappings in LXD containers](https://stgraber.org/2017/06/15/custom-user-mappings-in-lxd-containers/)
 {{< /notice >}}
 
 
-```text{ class="none-bg" }
-                  我的宿主机 /etc/subuid
-                  root:1000000:1000000000
-容器内 UID 1000 ------------------------- > 宿主机 UID {{< text fg="red" >}}1001000{{< /text >}}
-容器内 UID 1000 <------------------------- 宿主机 UID {{< text fg="red" >}}1000{{< /text >}}
-                      raw.idmap                       {{< text fg="red" >}}两个 UID 冲突{{< /text >}}
-                     uid 1000 1000                    {{< text fg="red" >}}容器内同一 UID 不能同时映射到宿主机上两个不同的 UID{{< /text >}}
-```
-
-> `root:1000000:1000000000` 
->
-> `<用户名>:<起始UID>:<可用UID数量>`
->
-> 表示允许宿主机 root 用户在自己的用户命名空间内，将容器中的 UID（从 0 开始）映射到宿主机的 UID 1000000（最多 1000000000 个 ID）。
-
-
-解决方法参考：
-
-- [Incus/LXD文件系统挂载与访问](https://www.dhao2001.com/2024/08/07/incus-filesystem-mount-access/)
-- [Idmaps for user namespace](https://github.com/lxc/incus/blob/main/doc/userns-idmap.md)
-- [Trouble with idmaps in restricted Incus container](https://discuss.linuxcontainers.org/t/trouble-with-idmaps-in-restricted-incus-container/21797)
-- [Custom user mappings in LXD containers](https://stgraber.org/2017/06/15/custom-user-mappings-in-lxd-containers/)
-
-但是并不完美，需要在容器中以 root 用户访问映射的路径（可读写），容器内普通用户映射在宿主机上的 uid 还是不存在的（只读）：
-
-```text{ class="none-bg" }
-                 /etc/subuid
-                 root:1000:1
-容器内 UID 0 ------------------ > 宿主机 UID 1000
-容器内 UID 0 <------------------ 宿主机 UID 1000
-                 raw.idmap
-                 uid 1000 0
-```
-
--->
 
 
 

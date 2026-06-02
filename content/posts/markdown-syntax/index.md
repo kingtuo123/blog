@@ -352,6 +352,50 @@ hello world
 ```
 
 
+## 插入文本
+
+{{< bar block="短代码" >}}
+
+```html
+{{</* text fg="green" */>}} hello world {{</* /text */>}}
+```
+
+{{< table min-width="100">}}
+|参数    |说明                                            |
+|:-------|:-----------------------------------------------|
+|`fg`    |文本前景色                                      |
+{{< /table >}}
+
+```text{class="none-bg"}
+{{<text fg="foreground ">}}foreground{{</text>}}
+{{<text fg="red">}}red{{</text>}}
+{{<text fg="orange">}}orange{{</text>}}
+{{<text fg="yellow">}}yellow{{</text>}}
+{{<text fg="green">}}green{{</text>}}
+{{<text fg="blue">}}blue{{</text>}}
+{{<text fg="aqua">}}aqua{{</text>}}
+{{<text fg="purple">}}purple{{</text>}}
+{{<text fg="background-dim">}}background-dim{{</text>}}
+{{<text fg="background-0">}}background-0{{</text>}}
+{{<text fg="background-1">}}background-1{{</text>}}
+{{<text fg="background-2">}}background-2{{</text>}}
+{{<text fg="background-3">}}background-3{{</text>}}
+{{<text fg="background-4">}}background-4{{</text>}}
+{{<text fg="background-5">}}background-5{{</text>}}
+{{<text fg="background-red">}}background-red{{</text>}}
+{{<text fg="background-visual">}}background-visual{{</text>}}
+{{<text fg="background-yellow">}}background-yellow{{</text>}}
+{{<text fg="background-green">}}background-green{{</text>}}
+{{<text fg="background-blue">}}background-blue{{</text>}}
+{{<text fg="gray-0">}}gray-0{{</text>}}
+{{<text fg="gray-1">}}gray-1{{</text>}}
+{{<text fg="gray-2">}}gray-2{{</text>}}
+```
+
+
+
+
+
 
 ## 空格
 

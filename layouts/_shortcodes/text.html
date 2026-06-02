@@ -2,11 +2,5 @@
 {{- $fg    := .Get "fg" -}}
 
 {{- if .Inner -}}
-<span class="{{ $class }}" 
-    style="
-           {{- if $fg -}} color: var(--color-{{ $fg }}); {{- end -}}
-    "
->
-    {{- .Inner | safeHTML -}}
-</span>
+<span class="{{ $class }}" style="{{- if $fg -}} color: var(--color-{{ $fg }}); {{- end -}}">{{- .Inner | safeHTML -}}</span>
 {{- end -}}

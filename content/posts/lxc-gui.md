@@ -1,6 +1,6 @@
 ---
 title: "LXC 容器运行 GUI 程序"
-date: "2026-06-01"
+date: "2026-06-02"
 ---
 
 
@@ -8,7 +8,6 @@ date: "2026-06-01"
 ## 项目配置
 
 ```bash-session
-# incus project set user-1000 restricted.devices.disk=allow
 # incus project set user-1000 restricted.devices.proxy=allow
 # incus project set user-1000 restricted.devices.disk.paths=/home/king,/run/user/1000
 ```
@@ -142,10 +141,20 @@ $ incus launch images:debian/13 my-debian -p my-debian -p wayland -p pipewire -p
 $ incus exec my-debian -- bash
 
 {{< text fg="yellow" >}}[创建用户]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 -g 1000 king{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
 
 {{< text fg="yellow" >}}[配置时区]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
+
+{{< text fg="yellow" >}}[环境变量]{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF | tee /root/.bash_profile /home/king/.bash_profile{{< /text >}}
+export WAYLAND_DISPLAY=wayland-1
+export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
+export PULSE_SERVER=unix:/mnt/pulse-native
+if [[ -e /mnt/wayland-1 && ! -e /run/user/\$(id -u)/wayland-1 ]]; then
+    ln -sf /mnt/wayland-1 /run/user/\$(id -u)/
+fi
+EOF
 
 {{< text fg="yellow" >}}[配置软件源]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
@@ -162,25 +171,10 @@ Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
-{{< text fg="yellow" >}}[更新并安装必要软件]{{< /text >}}
+{{< text fg="yellow" >}}[更新并安装应用]{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt update{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install mesa-utils pipewire-audio{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install fonts-dejavu fonts-wqy-microhei{{< /text >}}
+{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install pciutils mesa-utils pipewire-audio fonts-dejavu fonts-wqy-microhei{{< /text >}}
 {{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install firefox-esr foot{{< /text >}}
-
-{{< text fg="yellow" >}}[环境变量]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /home/king/.bash_profile{{< /text >}}
-export WAYLAND_DISPLAY=wayland-1
-export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
-export PULSE_SERVER=unix:/mnt/pulse-native
-export XDG_CONFIG_HOME=/home/king/.config
-export XDG_RUNTIME_DIR=/run/user/1000
-export XDG_SESSION_TYPE=wayland
-if test -e /mnt/wayland-1 && test ! -h /run/user/1000/wayland-1; then
-    ln -sf /mnt/wayland-1 /run/user/1000/
-fi
-EOF
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} chown king:king /home/king/.bash_profile{{< /text >}}
 ```
 
 
@@ -195,6 +189,7 @@ EOF
 
 ```bash-session
 $ incus restart my-debian
+$ incus exec my-debian -- su - root -c firefox
 $ incus exec my-debian -- su - king -c firefox
 ```
 
