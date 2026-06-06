@@ -1,5 +1,5 @@
 ---
-title: "Incus 运行 gui 程序"
+title: "Incus 在容器运行 gui 程序"
 date: "2026-06-02"
 ---
 
