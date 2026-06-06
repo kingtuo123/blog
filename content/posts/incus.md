@@ -8,22 +8,66 @@ toc: true
 
 ## 安装
 
-安装 lxc 容器：
+### 内核配置
+
+参考 Gentoo wiki 的 [LXC](https://wiki.gentoo.org/wiki/LXC) 和 [QEMU](https://wiki.gentoo.org/wiki/QEMU)。
+
+{{< notice class="red" >}}
+
+`CONFIG_VHOST_VSOCK` 已编译进内核（6.18.33-gentoo-r1），但创建虚拟机报错：
 
 ```bash-session
-# emerge --ask app-containers/lxc
+$ incus launch images:debian/13 --vm
+Error: Failed instance creation: Failed creating instance record: Instance type "virtual-machine" is not supported on this server: vhost_vsock kernel module not loaded
+$ ls -l /dev/{vhost-*,kvm}
+crw-rw---- 1 root kvm 10, 232 Jun  6 15:24 /dev/kvm
+crw-rw---- 1 root kvm 10, 238 Jun  6  2026 /dev/vhost-net
+crw-rw---- 1 root kvm 10, 241 Jun  6  2026 /dev/vhost-vsock
+$ ls /sys/module/vhost_vsock
+ls: cannot access '/sys/module/vhost_vsock': No such file or directory
+$ incus info | grep -i driver:
+driver: lxc
 ```
 
-安装 incus 管理器：
+解决方法有两种：
+
+1. 编译 `CONFIG_VHOST_VSOCK` 为模块。
+
+2. 编辑内核 `drivers/vhost/vsock.c` 文件，在 `MODULE_DESCRIPTION("vhost transport for vsock ");` 下方插入一行 `MODULE_VERSION("0.0.1");`。
+
+编译内核后重启，查看以下命令输出：
+
+```bash-session
+$ ls /sys/module/vhost_vsock
+version
+$ incus info | grep -i driver:
+driver: lxc | qemu
+```
+
+{{< /notice >}}
+
+
+### USE 标志
+
+参考 Gentoo wiki 的 [Incus #Launching_virtual_machines](https://wiki.gentoo.org/wiki/Incus#Launching_virtual_machines)。
+
+```text
+app-emulation/qemu      qemu_softmmu_targets_x86_64  qemu_user_targets_x86_64 vnc spice ssh usb fuse virtfs usbredir
+app-containers/incus    qemu
+```
+
+
+### 安装 Incus
+
 
 ```bash-session
 # emerge --ask app-containers/incus
 ```
 
-添加用户到 incus 组：
+添加用户到 incus 和 kvm 组：
 
 ```bash-session
-# usermod --append --groups incus king
+# usermod -aG incus,kvm king
 ```
 
 配置 idmaps：
