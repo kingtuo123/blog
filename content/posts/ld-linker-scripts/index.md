@@ -1113,7 +1113,7 @@ SECTIONS
 {{< img src="data-align.svg" >}}
 
 
-**`ATA_SEGMENT_END(exp)`**
+**`DATA_SEGMENT_END(exp)`**
 
 用于定义 `DATA_SEGMENT_ALIGN` 的结束。
 

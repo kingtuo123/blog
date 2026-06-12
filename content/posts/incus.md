@@ -10,7 +10,8 @@ toc: true
 
 ### 内核配置
 
-参考 Gentoo wiki 的 [LXC](https://wiki.gentoo.org/wiki/LXC) 和 [QEMU](https://wiki.gentoo.org/wiki/QEMU)。
+参考 Gentoo wiki 的 
+[lxc](https://wiki.gentoo.org/wiki/LXC)、[qemu](https://wiki.gentoo.org/wiki/QEMU)、[nftables](https://wiki.gentoo.org/wiki/Nftables)。
 
 {{< notice class="red" >}}
 
