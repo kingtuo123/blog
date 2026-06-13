@@ -52,13 +52,14 @@ devices:
 
 ## 安装 win10
 
+使用 “微PE” 安装 esd 格式的 win10 系统镜像。
+
 ### 准备工作
 
-工程配置，允许快照，允许使用低层级的虚拟机选项，如 raw.qemu：
+工程配置，允许快照：
 
 ```bash-session
 # incus project set user-1000 restricted.snapshots=allow
-# incus project set user-1000 restricted.virtual-machines.lowlevel=allow
 ```
 
 下载 virtio-win 驱动：
@@ -67,9 +68,16 @@ devices:
 $ wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
 ```
 
+将 esd 文件打包成 iso 格式：
+
+```bash-session
+$ mkisofs -o win10_19045_7417.esd.iso win10_19045_7417.esd
+```
+
+
 ### 创建 profile
 
-创建 win10 基础配置：
+❶  创建 win10 基础配置：
 
 ```bash-session
 $ incus profile create win10
@@ -88,9 +96,9 @@ devices:
         path: /
         pool: default
         type: disk
-        size: 50GiB
+        size: 80GiB
         io.bus: nvme
-        boot.priority: "5"
+        boot.priority: "10"
     eth0:
         name: eth0
         host_name: veth-win10
@@ -99,32 +107,44 @@ devices:
         type: nic
 ```
 
-{{< notice class="yellow" >}}
-TPM 需要另外安装 `app-crypt/swtpm` （tpm 模拟器）这个软件包。
-{{< /notice >}}
-
-
-创建 win10 镜像配置：
-
+❷  创建 WePE 启动盘：
 
 ```bash-session
-$ incus profile create iso-win10
-$ incus profile edit iso-win10
+$ incus profile create iso-wepe
+$ incus profile edit iso-wepe
 ```
 
 ```yaml
-description: win10.iso profile
 devices:
-    iso-win:
-        source: /home/king/Incus/images/win10.iso
+    wepe:
+        source: /home/king/Incus/images/WePE_64_V2.3.iso
         type: disk
         readonly: true
         io.bus: usb
-        boot.priority: "10"
+        boot.priority: "100"
 ```
 
 
-创建 virtio 驱动配置
+❸  创建 esd 配置：
+
+
+```bash-session
+$ incus profile create iso-win10-esd
+$ incus profile edit iso-win10-esd
+```
+
+```yaml
+devices:
+    win10-esd:
+        source: /home/king/Incus/images/win10_19045_7417.esd.iso
+        type: disk
+        readonly: true
+        io.bus: usb
+        boot.priority: "0"
+```
+
+
+❹  创建 virtio 配置：
 
 
 ```bash-session
@@ -133,9 +153,8 @@ $ incus profile edit iso-virtio
 ```
 
 ```yaml
-description: virtio-win.iso profile
 devices:
-    iso-virtio:
+    virtio:
         source: /home/king/Incus/images/virtio-win.iso
         type: disk
         readonly: true
@@ -145,15 +164,14 @@ devices:
 
 
 
-创建 incus-agent：
+❺  创建 incus-agent 配置：
 
 ```bash-session
-$ incus profile create incus-agent
-$ incus profile edit incus-agent
+$ incus profile create iso-incus-agent
+$ incus profile edit iso-incus-agent
 ```
 
 ```yaml
-description: incus agent
 devices:
     incus-agent:
         source: agent:config
@@ -166,50 +184,90 @@ devices:
 > `boot.priority` 是启动顺序的权重值，数值越大优先级越高，`0` 表示不将此设备纳入启动候选，仅作为数据盘挂载。
 
 
-### 创建虚拟机
+### 初始化虚拟机
 
 ```bash-session
-$ incus launch win10 --vm --empty --console=vga -p win10 -p iso-win10 -p iso-virtio -p incus-agent
+$ incus init my-win10 --vm --empty -p win10 -p iso-wepe -p iso-win10-esd -p iso-virtio -p iso-incus-agent
 ```
 
 > `--empty` 表示 Incus 不从任何远程镜像创建 VM，仅创建一块空白的虚拟磁盘。
 
-安装好后，强制停止虚拟机：
+实例配置（这一步影响后面安装 incus-agent）：
 
 ```bash-session
-$ incus stop win10 -f
+$ incus config set my-win10 image.os=windows
 ```
 
-移除 `iso-win10` 镜像：
+
+### 安装系统
+
+启动虚拟机，会进入 PE：
 
 ```bash-session
-$ incus profile remove win10 iso-win10
+$ incus start my-win10 --console=vga
 ```
 
-实例配置（这一步影响后面安装 `incus-agent`）：
+系统安装好后，关机，然后移除以下镜像：
 
 ```bash-session
-$ incus config set win10 image.os=windows
+$ incus profile remove my-win10 iso-wepe
+$ incus profile remove my-win10 iso-win10-esd
 ```
 
-启动 win10：
+再次启动虚拟机，会进入 win10 初始化：
 
 ```bash-session
-$ incus start win10 --console=vga
+$ incus start my-win10 --console=vga
 ```
 
 win10 初始化期间可能会重启，使用以下命令重连：
 
 ```bash-session
-$ incus console win10 --type=vga
+$ incus console my-win10 --type=vga
 ```
 
-### 创建快照
+关机，创建快照（可选）：
+
+```bash-session
+$ incus snapshot create my-win10 first-installation
+```
 
 ### 安装 virtio 驱动
 
-打开我的电脑，可以看到 CD 驱动器 `virtio-win` 和 `incus-agent`，分别安装 `virtio-win-guest-tools.exe` 和 `incus-agent.exe`。
+打开 CD 驱动器 `virtio-win`
 
+1. 安装 `virtio-win-guest-tools.exe`。
+2. 找到 `viosock\w10\amd64\viosock.inf` 文件（默认不安装 vsock 驱动），右键菜单**安装**。
+
+### 安装 incus-agent
+
+打开 CD 驱动器 `incus-agent`，找到 `install.psl` 文件，右键菜单**使用 powershell 运行**。
+
+{{< notice class="red" >}}
+
+不要移除 iso-incus-agent 的 profile。
+
+{{< /notice >}}
+
+测试文件传输：
+
+```bash-session
+$ incus file push <本地文件>  my-win10/Users/Administrator/Desktop
+```
+
+Incus >= 7.0.0 版本的可能需要盘符：
+
+```bash-session
+$ incus file push <本地文件>  my-win10/c:/Users/Administrator/Desktop
+```
+
+
+
+
+
+
+
+<!--
 
 {{< notice class="red" >}}
 `virtio-win-guest-tools.exe` 安装报错：`0x80070643` 。
@@ -227,31 +285,6 @@ $ incus console win10 --type=vga
 {{< notice class="red" >}}
 virtio 安装程序默认不会安装 vsock 驱动。
 {{< /notice >}}
-
-关机后，移除 `iso-virtio` 镜像：
-
-```bash-session
-$ incus profile remove win10 iso-virtio
-```
-
-{{< notice class="red" >}}
-另外，virtio 驱动安装好后能自适应分辨率，不要再设置桌面分辨率，可能有 bug，!!!
-{{< /notice >}}
-
-### 安装 incus-agent
-
-打开 CD 驱动器 `incus-agent`，找到 `install.psl` 文件，右键菜单 “在 powershell 中运行”。
-
-```bash-session
-$ incus file push <本地文件>  win10/c:/
-```
-
-
-
-
-
-
-### 结束
 
 
 
@@ -309,3 +342,6 @@ devices:
     tpm:
         type: tpm
 ```
+
+-->
+
