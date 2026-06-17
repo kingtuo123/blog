@@ -1,6 +1,7 @@
 ---
 title: "Incus 运行虚拟机"
 date: "2026-06-03"
+toc: true
 draft: true
 ---
 
@@ -20,33 +21,66 @@ restricted.snapshots
 ```
 
 
-## 从官方镜像运行
+## 安装 debian13（官方镜像源）
 
 
-### 配置
-
+### 创建 profile
 
 ```bash-session
-$ incus profile create vm-debian
-$ incus profile edit vm-debian
+$ incus profile create debian13vm
+$ incus profile edit debian13vm
 ```
 
 ```yaml
 config:
     boot.autostart: "false"
-description: vm-debian base profile
+    limits.cpu: "4"
+    limits.memory: 2GiB
+    security.secureboot: "false"
+description: my-debian13vm base profile
 devices:
-    eth0:
-        host_name: vm-debian-eth0
-        ipv4.address: 192.168.20.110
-        name: eth0
-        network: incusbr-1000
-        type: nic
     root:
         path: /
         pool: default
         type: disk
+        size: 50GiB
+    eth0:
+        name: eth0
+        host_name: veth-debian13vm
+        ipv4.address: 192.168.20.13
+        network: incusbr-1000
+        type: nic
 ```
+
+```bash-session
+$ incus profile create iso-incus-agent
+$ incus profile edit iso-incus-agent
+```
+
+```yaml
+devices:
+    incus-agent:
+        source: agent:config
+        type: disk
+        readonly: true
+        io.bus: usb
+        boot.priority: "0"
+```
+
+### 创建虚拟机
+
+```bash-session
+$ incus init my-debian13vm --vm --empty -p debian13vm -p iso-incus-agent
+```
+
+
+
+
+
+
+
+
+
 
 
 
@@ -184,13 +218,13 @@ devices:
 > `boot.priority` 是启动顺序的权重值，数值越大优先级越高，`0` 表示不将此设备纳入启动候选，仅作为数据盘挂载。
 
 
-### 初始化虚拟机
+### 创建虚拟机
 
 ```bash-session
 $ incus init my-win10 --vm --empty -p win10 -p iso-wepe -p iso-win10-esd -p iso-virtio -p iso-incus-agent
 ```
 
-> `--empty` 表示 Incus 不从任何远程镜像创建 VM，仅创建一块空白的虚拟磁盘。
+> `--empty` 表示不拉取远程镜像，仅创建一个空白实例。
 
 实例配置（这一步影响后面安装 incus-agent）：
 
@@ -234,18 +268,20 @@ $ incus snapshot create my-win10 first-installation
 
 ### 安装 virtio 驱动
 
-打开 CD 驱动器 `virtio-win`
+打开 virtio-win CD 驱动器 ：
 
 1. 安装 `virtio-win-guest-tools.exe`。
-2. 找到 `viosock\w10\amd64\viosock.inf` 文件（默认不安装 vsock 驱动），右键菜单**安装**。
+2. 找到 `viosock\w10\amd64\viosock.inf` 文件，右键菜单 “安装”。
+
+> incus-agent 依赖 vsock 驱动，virtio 安装程序默认不安装 vsock 驱动。
 
 ### 安装 incus-agent
 
-打开 CD 驱动器 `incus-agent`，找到 `install.psl` 文件，右键菜单**使用 powershell 运行**。
+打开 incus-agent CD 驱动器，找到 `install.psl` 文件，右键菜单 “使用 powershell 运行”。
 
 {{< notice class="red" >}}
 
-不要移除 iso-incus-agent 的 profile。
+安装后不要移除 iso-incus-agent 的 profile。
 
 {{< /notice >}}
 
