@@ -1,28 +1,14 @@
 ---
 title: "Incus 运行虚拟机"
-date: "2026-06-03"
+date: "2026-06-18"
 toc: true
-draft: true
 ---
 
 
-```
-app-emulation/virt-viewer
-qemu
-```
 
-工程配置，快照使能 = allow
+## 安装 debian13
 
-```
-是否阻止使用底层 VM 选项
-restricted.virtual-machines.lowlevel
-是否阻止创建实例或卷快照
-restricted.snapshots
-```
-
-
-## 安装 debian13（官方镜像源）
-
+从官方镜像源创建 debian13 虚拟机。
 
 ### 创建 profile
 
@@ -37,7 +23,6 @@ config:
     limits.cpu: "4"
     limits.memory: 2GiB
     security.secureboot: "false"
-description: my-debian13vm base profile
 devices:
     root:
         path: /
@@ -47,34 +32,66 @@ devices:
     eth0:
         name: eth0
         host_name: veth-debian13vm
-        ipv4.address: 192.168.20.13
         network: incusbr-1000
         type: nic
 ```
 
-```bash-session
-$ incus profile create iso-incus-agent
-$ incus profile edit iso-incus-agent
-```
-
-```yaml
-devices:
-    incus-agent:
-        source: agent:config
-        type: disk
-        readonly: true
-        io.bus: usb
-        boot.priority: "0"
-```
 
 ### 创建虚拟机
 
 ```bash-session
-$ incus init my-debian13vm --vm --empty -p debian13vm -p iso-incus-agent
+$ incus launch images:debian/13 my-debian13vm --vm -p debian13vm
 ```
 
+### 系统配置
 
+```bash-session
+$ incus exec my-debian13vm -- bash
 
+{{< text fg="yellow" >}}[创建用户]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
+
+{{< text fg="yellow" >}}[配置密码]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}passwd root{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}passwd king{{< /text >}}
+
+{{< text fg="yellow" >}}[配置时区]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
+
+{{< text fg="yellow" >}}[配置软件源]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
+Types: deb
+URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
+Suites: trixie trixie-updates trixie-backports
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian-security
+Suites: trixie-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+
+{{< text fg="yellow" >}}[更新列表]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}apt update{{< /text >}}
+```
+
+### 安装 incus-agent
+
+```bash-session
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}mount -t 9p config /mnt{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}cd /mnt{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}./install.sh{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}reboot{{< /text >}}
+```
+
+文件传输测试：
+
+```bash-session
+$ incus file push hello.txt my-debian13vm/tmp/
+$ incus file pull my-debian13vm/tmp/hello.txt .
+```
 
 
 
@@ -90,7 +107,7 @@ $ incus init my-debian13vm --vm --empty -p debian13vm -p iso-incus-agent
 
 ### 准备工作
 
-工程配置，允许快照：
+项目配置，允许快照：
 
 ```bash-session
 # incus project set user-1000 restricted.snapshots=allow
@@ -124,7 +141,6 @@ config:
     limits.cpu: "4"
     limits.memory: 4GiB
     security.secureboot: "false"
-description: Win10 system base profile
 devices:
     root:
         path: /
@@ -226,11 +242,15 @@ $ incus init my-win10 --vm --empty -p win10 -p iso-wepe -p iso-win10-esd -p iso-
 
 > `--empty` 表示不拉取远程镜像，仅创建一个空白实例。
 
-实例配置（这一步影响后面安装 incus-agent）：
+实例配置：
 
 ```bash-session
 $ incus config set my-win10 image.os=windows
 ```
+
+{{< notice class="yellow" >}}
+`image.os=windows` 只能应用于实例配置，不能应用于 profile 配置；如果不配置 `image.os=windows`，incus-agent CD 驱动器中默认会是 Linux 的安装文件。
+{{< /notice >}}
 
 
 ### 安装系统
@@ -273,7 +293,9 @@ $ incus snapshot create my-win10 first-installation
 1. 安装 `virtio-win-guest-tools.exe`。
 2. 找到 `viosock\w10\amd64\viosock.inf` 文件，右键菜单 “安装”。
 
-> incus-agent 依赖 vsock 驱动，virtio 安装程序默认不安装 vsock 驱动。
+{{< notice class="yellow" >}}
+incus-agent 依赖 vsock 驱动，virtio 安装程序默认不安装 vsock 驱动。
+{{< /notice >}}
 
 ### 安装 incus-agent
 
@@ -285,7 +307,7 @@ $ incus snapshot create my-win10 first-installation
 
 {{< /notice >}}
 
-测试文件传输：
+文件传输测试：
 
 ```bash-session
 $ incus file push <本地文件>  my-win10/Users/Administrator/Desktop
@@ -296,88 +318,4 @@ Incus >= 7.0.0 版本的可能需要盘符：
 ```bash-session
 $ incus file push <本地文件>  my-win10/c:/Users/Administrator/Desktop
 ```
-
-
-
-
-
-
-
-<!--
-
-{{< notice class="red" >}}
-`virtio-win-guest-tools.exe` 安装报错：`0x80070643` 。
-
-解决办法：先重启系统，在 Windows 搜索栏输入 cmd，右键点击“命令提示符”，选择以管理员身份运行，执行以下命令：
-
-```bash-session
-> msdtc -uninstall
-> msdtc -install
-```
-{{< /notice >}}
-
-打开 CD 驱动器 `virtio-win`，找到 `viosock\w11\amd64\viosock.inf` 文件，右键菜单 “安装”。
-
-{{< notice class="red" >}}
-virtio 安装程序默认不会安装 vsock 驱动。
-{{< /notice >}}
-
-
-
-### 共享目录
-
-```bash-session
-$ incus profile create shared-win10
-$ incus profile edit shared-win10
-```
-
-```yaml
-description: "VirtIO-FS shared directory for win10"
-devices:
-    shared:
-        type: disk
-        source: /home/king/Downloads
-        path: Downloads
-```
-
-关机后，添加：
-
-```bash-session
-$ incus profile add win10 shared-win10 
-```
-
-
-## 安装 win11
-
-```bash-session
-$ incus profile create win10
-$ incus profile edit win10
-```
-
-```yaml
-config:
-    boot.autostart: "false"
-    limits.cpu: "4"
-    limits.memory: 4GiB
-    security.secureboot: "false"
-description: Win10 system base profile
-devices:
-    root:
-        path: /
-        pool: default
-        type: disk
-        size: 50GiB
-        io.bus: virtio-scsi
-        boot.priority: "5"
-    eth0:
-        name: eth0
-        host_name: veth-win10
-        ipv4.address: 192.168.20.10
-        network: incusbr-1000
-        type: nic
-    tpm:
-        type: tpm
-```
-
--->
 

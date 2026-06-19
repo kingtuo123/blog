@@ -1,5 +1,5 @@
 ---
-title: "Incus 在容器中运行 gui 程序"
+title: "Incus 容器运行图形程序"
 date: "2026-06-02"
 ---
 
@@ -16,18 +16,17 @@ date: "2026-06-02"
 ## 基础配置
 
 ```bash-session
-$ incus profile create my-debian
-$ incus profile edit my-debian
+$ incus profile create debian13
+$ incus profile edit debian13
 ```
 
 ```yaml
 config:
     boot.autostart: "false"
-description: my-debian base profile
 devices:
     eth0:
         name: eth0
-        host_name: my-debian-eth0
+        host_name: veth-debian13
         ipv4.address: 192.168.20.100
         network: incusbr-1000
         type: nic
@@ -35,6 +34,8 @@ devices:
         path: /
         pool: default
         type: disk
+    gpu:
+        type: gpu
 ```
 
 
@@ -48,7 +49,6 @@ $ incus profile edit wayland
 ```yaml
 config:
     environment.WAYLAND_DISPLAY: wayland-1
-description: Wayland profile
 devices:
     wayland-socket:
         connect: unix:/run/user/1000/wayland-1
@@ -60,8 +60,6 @@ devices:
         gid: "1000"
         security.gid: "1000"
         security.uid: "1000"
-    gpu:
-        type: gpu
 ```
 
 
@@ -76,7 +74,6 @@ $ incus profile edit pipewire
 ```yaml
 config:
     environment.PIPEWIRE_REMOTE: unix:/mnt/pipewire-0
-description: Pipewire profile
 devices:
     pipewire-0:
         connect: unix:/run/user/1000/pipewire-0
@@ -104,7 +101,6 @@ $ incus profile edit pulseaudio
 ```yaml
 config:
     environment.PULSE_SERVER: unix:/mnt/pulse-native
-description: Pulseaudio profile
 devices:
     pulse-native:
         connect: unix:/run/user/1000/pulse/native
@@ -127,7 +123,7 @@ devices:
 ## 创建容器
 
 ```bash-session
-$ incus launch images:debian/13 my-debian -p my-debian -p wayland -p pipewire -p pulseaudio
+$ incus launch images:debian/13 my-debian13 -p debian13 -p wayland -p pipewire -p pulseaudio
 ```
 
 
@@ -138,16 +134,16 @@ $ incus launch images:debian/13 my-debian -p my-debian -p wayland -p pipewire -p
 ## 容器内配置
 
 ```bash-session
-$ incus exec my-debian -- bash
+$ incus exec my-debian13 -- bash
 
 {{< text fg="yellow" >}}[创建用户]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
 
 {{< text fg="yellow" >}}[配置时区]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
 
 {{< text fg="yellow" >}}[环境变量]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF | tee /root/.bash_profile /home/king/.bash_profile{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF | tee /root/.bash_profile /home/king/.bash_profile{{< /text >}}
 export WAYLAND_DISPLAY=wayland-1
 export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
 export PULSE_SERVER=unix:/mnt/pulse-native
@@ -157,7 +153,7 @@ fi
 EOF
 
 {{< text fg="yellow" >}}[配置软件源]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
 Types: deb
 URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
 Suites: trixie trixie-updates trixie-backports
@@ -172,9 +168,9 @@ Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
 {{< text fg="yellow" >}}[更新并安装应用]{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt update{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install pciutils mesa-utils pipewire-audio fonts-dejavu fonts-wqy-microhei{{< /text >}}
-{{< text fg="red" >}}root@my-debian:/#{{< /text >}}{{< text fg="foreground" >}} apt install firefox-esr foot{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} apt update{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} apt install pciutils mesa-utils pipewire-audio fonts-dejavu fonts-wqy-microhei{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} apt install firefox-esr foot{{< /text >}}
 ```
 
 
@@ -188,9 +184,9 @@ EOF
 ## 测试
 
 ```bash-session
-$ incus restart my-debian
-$ incus exec my-debian -- su - root -c firefox
-$ incus exec my-debian -- su - king -c firefox
+$ incus restart my-debian13
+$ incus exec my-debian13 -- su - root -c firefox
+$ incus exec my-debian13 -- su - king -c firefox
 ```
 
 

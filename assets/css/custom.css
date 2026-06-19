@@ -211,6 +211,9 @@ button[onclick] {
         background-color: transparent;
         box-shadow: none;
         border: 0;
+        .line {
+            padding: 0px 0px;
+        }
     }
     .highlight.fixed-height > pre {
         overflow-y: auto;
