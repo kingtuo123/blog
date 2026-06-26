@@ -215,13 +215,17 @@ button[onclick] {
             padding: 0px 0px;
         }
     }
+    .highlight.hover .line:hover {
+        border-radius: 5px;
+        background-color: var(--color-background-1);
+    }
     .highlight.fixed-height > pre {
         overflow-y: auto;
         max-height: 60vh;
     }
-    .highlight.hover .line:hover {
-        border-radius: 5px;
-        background-color: var(--color-background-1);
+    .highlight.fixed-height-30 > pre {
+        overflow-y: auto;
+        max-height: 30vh;
     }
 }
 
