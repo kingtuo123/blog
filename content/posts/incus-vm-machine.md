@@ -6,7 +6,7 @@ toc: true
 
 
 
-## 安装 debian13
+## Debian13
 
 从官方镜像源创建 debian13 虚拟机。
 
@@ -101,16 +101,17 @@ $ incus file pull my-debian13vm/tmp/hello.txt .
 
 
 
-## 安装 win10
+## Windows10
 
 使用 “微PE” 安装 esd 格式的 win10 系统镜像。
 
 ### 准备工作
 
-项目配置，允许快照：
+项目配置，允许快照和 USB 设备：
 
 ```bash-session
 # incus project set user-1000 restricted.snapshots=allow
+# incus project set user-1000 restricted.devices.usb=allow
 ```
 
 下载 virtio-win 驱动：
@@ -268,12 +269,9 @@ $ incus profile remove my-win10 iso-wepe
 $ incus profile remove my-win10 iso-win10-esd
 ```
 
-再次启动虚拟机，会进入 win10 初始化：
+再次启动虚拟机，会进入 win10 初始化。
 
-```bash-session
-$ incus start my-win10 --console=vga
-```
-
+{{< notice class="green" >}}
 win10 初始化期间可能会重启，使用以下命令重连：
 
 ```bash-session
@@ -285,6 +283,7 @@ $ incus console my-win10 --type=vga
 ```bash-session
 $ incus snapshot create my-win10 first-installation
 ```
+{{< /notice >}}
 
 ### 安装 virtio 驱动
 
@@ -319,3 +318,36 @@ Incus >= 7.0.0 版本的可能需要盘符：
 $ incus file push <本地文件>  my-win10/c:/Users/Administrator/Desktop
 ```
 
+
+### USB 透传
+
+查找对应设备：
+
+```bash-session
+$ lsusb
+Bus 001 Device 006: ID {{< text fg="orange">}}3554{{< /text>}}:{{< text fg="green">}}f58a{{< /text>}} Compx VXE NordicMouse 1K Dongle
+                  {{< text fg="orange">}}Vendor ID{{< /text>}}:{{< text fg="green">}}Product ID{{< /text>}} 
+```
+
+创建 profile：
+
+```bash-session
+$ incus profile create usb-mouse
+$ incus profile edit usb-mouse
+```
+
+```yaml
+devices:
+  mouse:
+    vendorid: 3554
+    productid: f58a
+    required: false
+    type: usb
+```
+
+添加 / 移除设备命令（支持热插拔）：
+
+```bash-session
+$ incus profile add my-win10 usb-mouse
+$ incus profile remove my-win10 usb-mouse
+```
