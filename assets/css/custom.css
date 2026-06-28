@@ -205,6 +205,61 @@ button[onclick] {
 
 
 
+/*****     短代码: notice     *****/
+.main-text {
+    .cmd-container {
+        user-select: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        .cmd-card {
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: left;
+            padding: 5px 10px;
+            background-color: var(--color-background-1);
+            border-radius: var(--theme-post-border-radius);
+            border: 1px solid var(--theme-post-border-fg);
+            outline: 0px solid transparent;
+            transition: all var(--theme-transition-time) ease;
+            @media screen and (min-width: 900px) {
+                &:hover {
+                    background-color: var(--color-background-2);
+                    transform: translateY(-5px);
+                    outline: 5px solid var(--theme-icon-fg);
+                }
+            }
+            .card-title-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .card-title {
+                    font-family: "LXGW WenKai Medium";
+                    font-size: 1rem;
+                    font-weight: bold;
+                }
+                .draft {
+                    font-size: 0.85rem;
+                    color: var(--color-yellow);
+                }
+            }
+            .card-description {
+                font-size: 0.85rem;
+                color: var(--color-gray-2);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
+
+
+
+
 /*****     其它     *****/
 .main-text{
     .highlight.none-bg {

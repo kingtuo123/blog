@@ -1,0 +1,24 @@
+{{- $sort := .Get "sort" -}}
+
+{{- $tmp := trim (replace .Inner "\n" " ") " " | replaceRE ` +` " " -}}
+{{- $cmd := slice -}}
+
+{{- if $sort -}}
+    {{- $cmd = split $tmp " " | sort -}}
+{{- else -}}
+    {{- $cmd = split $tmp " " -}}
+{{- end -}}
+
+<div class="cmd-container">
+{{- range $cmd }}
+    {{- $path  := printf "/posts/linux-cmd/%s" . -}}
+    <a class="cmd-card" draggable="false" {{ with site.GetPage $path }}href="{{- $path -}}"{{ end }}>
+        <div class="card-title-container"><span class="card-title">{{- . -}}</span>{{- with site.GetPage $path -}}{{- if .Params.draft -}}<span class="draft">[草稿]</span>{{- end -}}{{- end -}}</div>
+        {{- with site.GetPage $path -}}
+            <span class="card-description">{{- .Params.description | default "--" -}}</span>
+        {{- else -}}
+            <span class="card-description">文章不存在</span>
+        {{- end -}}
+    </a>
+{{- end -}}
+</div>
