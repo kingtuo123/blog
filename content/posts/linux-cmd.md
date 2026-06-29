@@ -12,7 +12,6 @@ draft: true
 {{< linux-cmd sort=true >}}
 sed
 awk
-grep
 cut
 tr
 tee
@@ -20,5 +19,14 @@ sort
 uniq
 wc
 tac
+rg
+grep
+fgrep
+egrep
 {{< /linux-cmd >}}
 
+## 进程管理
+
+{{< linux-cmd sort=true >}}
+pgrep
+{{< /linux-cmd >}}

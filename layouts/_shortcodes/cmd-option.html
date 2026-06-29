@@ -1,0 +1,8 @@
+{{- if .Inner -}}
+{{- $parts := split .Inner "," -}}
+<div class="cmd-option-container">
+{{- range $parts -}}
+<span class="cmd-option">{{- trim . " " | safeHTML -}}</span>
+{{- end -}}
+</div>
+{{- end -}}

@@ -205,13 +205,14 @@ button[onclick] {
 
 
 
-/*****     短代码: notice     *****/
+/*****     短代码: linux-cmd     *****/
 .main-text {
     .cmd-container {
         user-select: none;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 10px;
+        margin: 10px 0px;
         .cmd-card {
             flex: 1 1 200px;
             display: flex;
@@ -255,6 +256,34 @@ button[onclick] {
         }
     }
 }
+
+
+
+
+
+
+/*****     短代码: cmd-option     *****/
+.main-text {
+    .cmd-option-container {
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+    .cmd-option {
+        color: var(--color-aqua);
+        background-color: var(--color-background-1);
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow : var(--theme-post-code-shadow);
+        transition: background-color var(--theme-transition-time) ease;
+        font-weight: bold;
+        margin: 10px 0px;
+        font-family: "LXGW WenKai Mono Medium";
+    }
+    .cmd-option + .cmd-option {
+        margin-left: 10px;
+    }
+}
+
 
 
 
