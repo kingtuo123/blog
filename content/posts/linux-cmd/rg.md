@@ -4,7 +4,6 @@ date: "2026-06-29"
 description: "替代 grep 的高性能搜索工具"
 build:
   list: never
-draft: true
 ---
 
 
@@ -235,6 +234,12 @@ glob 是一种使用通配符匹配文件名的模式语言，常用通配符如
 
 -----
 
+{{< cmd-option >}} -L {{< /cmd-option >}}
+
+进入符号链接。
+
+-----
+
 {{< cmd-option >}} --max-filesize SIZE {{< /cmd-option >}}
 
 跳过大于指定大小的文件，单位支持 `无后缀的数字（字节）`、`K`、`M`、`G`。
@@ -249,12 +254,13 @@ $ rg --files --max-filesize 0       # 列出空文件
 
 ### 忽略规则
 
-- `rg` 默认会跳过几类文件：
-  - `.git` 目录。
-  - 隐藏文件 / 目录。
-  - 二进制文件。
-  - 符号链接。
-  - 规则文件 `.gitignore`、`.rgignore`、`.ignore` 中的文件。
+`rg` 默认会跳过几类文件：
+
+- `.git` 目录。
+- 隐藏文件 / 目录。
+- 二进制文件。
+- 符号链接。
+- `.gitignore`、`.rgignore`、`.ignore` 中的文件。
 
 -----
 
@@ -276,62 +282,6 @@ $ rg --ignore-file my-ignore -e 'hello'
 
 {{< cmd-option >}} --no-ignore {{< /cmd-option >}}
 
-忽略所有忽略规则，包括 `.gitignore`, `.ignore` 等默认的规则文件。
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
-
------
-
-{{< cmd-option >}} {{< /cmd-option >}}
+忽略所有忽略规则，包括 `.gitignore`、`.rgignore`、`.ignore`。
 
 -----

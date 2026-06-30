@@ -120,6 +120,18 @@ $ grep -e 'error' -e 'warning' -e 'fatal' app.log
 
 -----
 
+{{< cmd-option >}} -l {{< /cmd-option >}}
+
+只列出包含匹配的文件名。
+
+-----
+
+{{< cmd-option >}} -L {{< /cmd-option >}}
+
+只列出不包含匹配的文件名。
+
+-----
+
 {{< cmd-option >}} -q {{< /cmd-option >}}
 
 静默模式，不输出，用于脚本判断。
@@ -147,14 +159,20 @@ $ grep -e 'error' -e 'warning' -e 'fatal' app.log
 
 -----
 
-{{< cmd-option >}} -l {{< /cmd-option >}}
+{{< cmd-option >}} --include '*.txt' {{< /cmd-option >}}
 
-只列出包含匹配的文件名。
+只搜索匹配的文件。
 
 -----
 
-{{< cmd-option >}} -L {{< /cmd-option >}}
+{{< cmd-option >}} --exclude '*.txt' {{< /cmd-option >}}
 
-只列出不包含匹配的文件名。
+不搜索匹配的文件。
+
+-----
+
+{{< cmd-option >}} --exclude-dir '.cache' {{< /cmd-option >}}
+
+不搜索匹配的目录。
 
 -----

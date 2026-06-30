@@ -29,4 +29,6 @@ egrep
 
 {{< linux-cmd sort=true >}}
 pgrep
+pstree
+pkill
 {{< /linux-cmd >}}
