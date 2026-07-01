@@ -10,14 +10,17 @@ toc: false
 
 <style>
     .regex-container {
-        position: sticky;
-        top: 10px;
-        padding: 10px;
-        box-shadow: var(--theme-box-shadow);
-        background-color:light-dark(#F4F0D944, #343F4444);
-        border-radius: 10px;
-        backdrop-filter: blur(20px);
+        background-color:transparent;
         transition: background-color var(--theme-transition-time) ease;
+        @media (min-width: 900px) {
+            border-radius: 10px;
+            position: sticky;
+            top: 10px;
+            box-shadow: 0.5px 0.5px 3px -1px light-dark(#000000AA, #000);
+            background-color:light-dark(#F4F0D944, #343F4444);
+            padding: 10px;
+            backdrop-filter: blur(20px);
+        }
     }
     .input-group:first-child {
         margin-bottom: 10px;

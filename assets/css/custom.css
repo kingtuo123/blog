@@ -38,8 +38,16 @@ html, body {
             font-family: "LXGW WenKai Mono";
             font-weight: normal;
         }
+        .code-bar {
+            font-family: 'Maple Mono NF CN Light';
+            font-weight: normal;
+        }
         pre code {
             font-family: "Maple Mono NF CN Light";
+            font-weight: normal;
+        }
+        button.copy {
+            font-family: 'Maple Mono NF CN Light';
             font-weight: normal;
         }
         strong {
@@ -145,53 +153,6 @@ html, body {
 
 
 
-/*****     短代码: bar     *****/
-.main-text{
-    .code-bar {
-        font-family: 'Maple Mono NF CN Light';
-        font-size: 15px;
-        line-height: 35px;
-        margin-bottom: -35px;
-        margin-top: 10px;
-        color: light-dark(#5C6A72, #9DA9A0);
-        background-color: light-dark(#F3EAD3, #333C43);
-        border-radius: var(--theme-post-border-radius) var(--theme-post-border-radius) 0 0;
-        padding-left: 6px;
-        overflow-x: auto;
-        word-break: break-all;
-        white-space: nowrap;
-        position: relative;
-        z-index: 99;
-        transition: background-color var(--theme-transition-time) ease, color var(--theme-transition-time) ease, border-color var(--theme-transition-time) ease;
-    }
-    .code-bar span:first-child {
-        color: light-dark(#F3EAD3, #333C43);
-        background-color: light-dark(#5C6A72, #859289);
-        box-shadow : var(--theme-box-shadow);
-        padding: 1px 5px;
-        border-radius: 6px;
-        margin-right: 10px;
-        user-select: none;
-        transition: background-color var(--theme-transition-time) ease, color var(--theme-transition-time) ease;
-    }
-    .code-bar.terminal {
-        color: light-dark(#9DA9A0, #9DA9A0);
-        background-color: light-dark(#333C43, #272E33);
-    }
-    .code-bar.terminal span:first-child {
-        color: light-dark(#333C43, #272E33);
-        background-color: light-dark(#9DA9A0, #859289);
-    }
-    .code-bar + .highlight {
-        margin-top: 0px;
-        padding-top: 35px;
-    }
-}
-
-
-
-
-
 
 /*****     短代码: insert     *****/
 button[onclick] {
@@ -280,7 +241,7 @@ button[onclick] {
         font-family: "LXGW WenKai Mono Medium";
     }
     .cmd-option + .cmd-option {
-        margin-left: 10px;
+        margin-left: 20px;
     }
 }
 

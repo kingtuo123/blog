@@ -2,5 +2,5 @@
 
 
 <blockquote class="{{ $class }}">
-{{- .Inner | markdownify -}}
+{{- .Inner | markdownify | safeHTML -}}
 </blockquote>
