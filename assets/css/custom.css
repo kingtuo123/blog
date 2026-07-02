@@ -46,7 +46,7 @@ html, body {
             font-family: "Maple Mono NF CN Light";
             font-weight: normal;
         }
-        button.copy {
+        button.copy, button.expand {
             font-family: 'Maple Mono NF CN Light';
             font-weight: normal;
         }
@@ -132,20 +132,15 @@ html, body {
         background-color: var(--color-background-yellow);
         border-color: var(--color-yellow);
     }
+    blockquote.green {
+        color: var(--color-green);
+        background-color:  var(--color-background-green);
+        border-color: var(--color-green);
+    }
     blockquote.blue {
         color: var(--color-blue);
         background-color: var(--color-background-blue);
         border-color: var(--color-blue);
-    }
-    blockquote .none-bg {
-        margin: 0px;
-    }
-    blockquote .none-bg pre code {
-        font-size: 15px;
-        display: grid;
-        .line {
-            padding: 0px 0px;
-        }
     }
 }
 
@@ -252,18 +247,6 @@ button[onclick] {
 
 /*****     其它     *****/
 .main-text{
-    .highlight.none-bg {
-        background-color: transparent;
-        box-shadow: none;
-        border: 0;
-        .line {
-            padding: 0px 0px;
-        }
-    }
-    .highlight.hover .line:hover {
-        border-radius: 5px;
-        background-color: var(--color-background-1);
-    }
     .highlight.fixed-height > pre {
         overflow-y: auto;
         max-height: 60vh;

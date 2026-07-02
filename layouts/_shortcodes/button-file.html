@@ -1,0 +1,48 @@
+{{- $src    := .Get "src"  -}}
+{{- $target := .Get "target"  -}}
+{{- $title  := .Get "title" | default "iframe" -}}
+{{- $fg     := .Get "fg" -}}
+
+
+
+{{- $currentDir := .Page.File.Dir -}}
+{{- $realPath   := path.Join "content" $currentDir $src -}}
+{{- $baseName   := path.Base $src | replaceRE "[^a-zA-Z0-9]" "" -}}
+
+
+
+{{- if fileExists $realPath -}}
+
+    {{- $htmlContent := readFile $realPath | markdownify | safeHTML -}}
+
+    {{- if $target -}}
+        {{- $htmlPath := printf "files/%s.html"  $realPath -}}
+
+        {{- $htmlFileObject := $htmlContent | resources.FromString  $htmlPath -}}
+
+        {{- $url := $htmlFileObject.Permalink -}}
+
+        <button onclick="insert_{{ $baseName | safeJS }}()"
+            style="{{- if $fg -}}color:var(--color-{{- $fg -}});{{- end -}}"
+        >{{- $title -}}</button><script>
+            let html_{{ $baseName | safeJS }};
+            async function insert_{{ $baseName | safeJS }}() {
+                try {
+                    if (html_{{ $baseName | safeJS }} == null) {
+                        const response = await fetch('{{ $url }}');
+                        html_{{ $baseName | safeJS }} = await response.text();
+                    }
+                    const container = document.getElementById('{{ $target }}');
+                    container.innerHTML = html_{{ $baseName | safeJS }};
+                } catch (error) {
+                    console.error('{{ $url }} 加载失败:', error);
+                }
+            }
+        </script>
+    {{- else -}}
+        {{- $htmlContent -}}
+    {{- end -}}
+
+{{- else -}}
+    <p style="color:red">错误：找不到文件 "{{- $src -}}"</p>
+{{- end -}}

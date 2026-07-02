@@ -5,6 +5,8 @@ toc: true
 ---
 
 
+
+
 ## 标题
 
 ```markdown
@@ -48,7 +50,6 @@ toc: true
 
 ## 引用
 
-
 ```markdown
 > 这是默认样式
 >
@@ -59,25 +60,6 @@ toc: true
 >
 > 这是换行
 
-{{< bar block="短代码" >}}
-
-```go-template
-{{</* notice class="blue" */>}}
-这是 blue 样式
-{{</* /notice */>}}
-```
-
-{{< notice class="blue" >}}
-这是 blue 样式
-{{< /notice >}}
-
-{{< notice class="yellow" >}}
-这是 yellow 样式
-{{< /notice >}}
-
-{{< notice class="red" >}}
-这是 red 样式
-{{< /notice >}}
 
 
 
@@ -92,8 +74,15 @@ toc: true
 ```
 
 -----
+
 这是分割线
+
 *****
+
+这是分割线
+
+-----
+
 
 
 
@@ -105,25 +94,6 @@ toc: true
 ![ ](图片url)
 ```
 
-{{< bar block="短代码" >}}
-
-```go-template
-{{</* img src="example.png" align="left" */>}}
-```
-
-{{< table min-width="150">}}
-
-|参数           |说明                                               |
-|:--------------|:--------------------------------------------------|
-|`align`        |对齐 `left` `center` `right`                       |
-|`zoom`         |缩放，默认 `0.5`，svg 图片默认 `1`                 |
-|`auto-dim`     |深色模式图片是否变暗，默认 `true`，对 svg 图片无效 |
-|`font-family`  |字体，只对 svg 图片有效，默认 `LXGW WenKai Mono`   |
-|`font-size`    |字体大小，只对 svg 图片有效，默认 `16px`           |
-|`scroll-x`     |图片溢出后左右滚动，默认 `false`，只对 svg 图片有效|
-|`margin`       |图片边距，格式：`margin="10px 0 15px 0"`           |
-
-{{< /table >}}
 
 
 
@@ -194,78 +164,11 @@ toc: true
 |内容      |内容      |内容      |
 |内容      |内容      |内容      |
 
-{{< bar block="短代码" >}}
-
-```go-template
-{{</* table thead=true wrap=false min-width="100,200,300"*/>}}
-|选项|说明|
-|:---|:---|
-|参数|123 |
-{{</* /table */>}}
-```
-
-{{< table thead=true wrap=true min-width="120">}}
-
-|参数        |说明                                                                          |
-|:-----------|:-----------------------------------------------------------------------------|
-|`thead`     |是否显示表头，默认 `true`                                                     |
-|`warp`      |是否换行，默认 `false`                                                        |
-|`mono`      |使用等宽字体，默认 `false`                                                    |
-|`min-width` |单元格最小宽度                                                                |
-|            |`min-width="100,200,300"` 表示第一列最小宽 100px , 第二列 200px ，第三列 300px|
-|            |`min-width="100,,300"` 表示第一列最小宽 100px ，第三列 300px                  |
-
-{{< /table >}}
 
 
 
 
 
-## 代码块顶部样式
-
-代码文件样式：
-
-{{< highlight go-template >}}
-
-{{</* bar title="hello.txt" */>}}
-```text
-hello world 
-```
-
-{{< /highlight >}}
-
-{{< bar title="hello.txt" >}}
-```text
-hello world 
-```
-
-终端样式：
-
-{{< highlight go-template >}}
-
-{{</* bar block="终端" title="打印 hello world" type="terminal" */>}}
-```bash-session
-$ echo hello world
-hello world 
-```
-
-{{< /highlight >}}
-
-{{<bar block="终端" title="打印 hello world" type="terminal" >}}
-```bash-session
-$ echo hello world
-hello world 
-```
-
-{{< table min-width="80">}}
-
-|参数    |说明                      |
-|:-------|:-------------------------|
-|`block` |方块内的文字，默认 `文件` |
-|`title` |标题                      |
-|`type`  |目前只有 `terminal`       |
-
-{{< /table >}}
 
 
 
@@ -306,91 +209,19 @@ hello world
 
 
 
-## 插入 HTML 按钮
-
-{{< bar block="短代码" >}}
-
-```html
-<!-- 在当前位置插入 -->
-{{</* insert src="files/test1.c" */>}}
-
-<!-- 在目标元素插入 -->
-{{</* insert id="targetDiV" src="files/test1.c"  title="插入页面一"  */>}}
-{{</* insert id="targetDiV" src="files/test2.c"  title="插入页面二"  */>}}
-<!-- 目标元素 -->
-<div id="targetDiV"></div>
-```
-
-{{< table min-width="100">}}
-|参数    |说明                                            |
-|:-------|:-----------------------------------------------|
-|`id`    |目标元素的 id，如果 id 为空则直接在当前位置插入 |
-|`src`   |源文件位置                                      |
-|`title` |按钮的标题                                      |
-|`fg`    |按钮标题的前景色 foreground、 red、orange 等 core.css 中的颜色                               |
-{{< /table >}}
-
-```text{class="none-bg"}
-./
-├── configure.ac
-├── {{< insert id="targetDiV" src="files/test1.c"  title=" test1.c"  >}}
-└── 󰉖 src/
-    ├── {{< insert id="targetDiV" src="files/test2.c"  title=" test2.c" fg="purple" >}}
-    └── Makefile.am
-```
 
 
-
-
-<div id="targetDiV"></div>
-
-
-## 常用符号
+## 特殊符号
 
 ```text
 󰉖  󰉋  󰈤  󰈙  󰈔                  󰡨          
+① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳
+⓿ ❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿ ⓫ ⓬ ⓭ ⓮ ⓯ ⓰ ⓱ ⓲ ⓳ ⓴
+㊀ ㊁ ㊂ ㊃ ㊄ ㊅ ㊆ ㊇ ㊈ ㊉
+㈠ ㈡ ㈢ ㈣ ㈤ ㈥ ㈦ ㈧ ㈨ ㈩
+← ↑ → ↓ ↙ ↘ ↖ ↗ ↰ ↱ ↲ ↳ ↴ ↵ ↶ ↺ ↻ ↷ ➝ ⇄ ⇅ ⇆ ⇇ ⇈ ⇉ ⇊ ⇋ ⇌ ⇍ ⇎ ⇏ ⇐ ⇑ ⇒ ⇓ ⇔ ⇕ ⇖ ⇗ ⇘ ⇙
 ```
 
-
-## 插入文本
-
-{{< bar block="短代码" >}}
-
-```html
-{{</* text fg="green" */>}} hello world {{</* /text */>}}
-```
-
-{{< table min-width="100">}}
-|参数    |说明                                            |
-|:-------|:-----------------------------------------------|
-|`fg`    |文本前景色                                      |
-{{< /table >}}
-
-```text{class="none-bg"}
-{{<text fg="foreground ">}}foreground{{</text>}}
-{{<text fg="red">}}red{{</text>}}
-{{<text fg="orange">}}orange{{</text>}}
-{{<text fg="yellow">}}yellow{{</text>}}
-{{<text fg="green">}}green{{</text>}}
-{{<text fg="blue">}}blue{{</text>}}
-{{<text fg="aqua">}}aqua{{</text>}}
-{{<text fg="purple">}}purple{{</text>}}
-{{<text fg="background-dim">}}background-dim{{</text>}}
-{{<text fg="background-0">}}background-0{{</text>}}
-{{<text fg="background-1">}}background-1{{</text>}}
-{{<text fg="background-2">}}background-2{{</text>}}
-{{<text fg="background-3">}}background-3{{</text>}}
-{{<text fg="background-4">}}background-4{{</text>}}
-{{<text fg="background-5">}}background-5{{</text>}}
-{{<text fg="background-red">}}background-red{{</text>}}
-{{<text fg="background-visual">}}background-visual{{</text>}}
-{{<text fg="background-yellow">}}background-yellow{{</text>}}
-{{<text fg="background-green">}}background-green{{</text>}}
-{{<text fg="background-blue">}}background-blue{{</text>}}
-{{<text fg="gray-0">}}gray-0{{</text>}}
-{{<text fg="gray-1">}}gray-1{{</text>}}
-{{<text fg="gray-2">}}gray-2{{</text>}}
-```
 
 
 
