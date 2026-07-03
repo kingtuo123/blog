@@ -887,8 +887,8 @@ bar123
 ```
 
 
-```bash-session{ bar="示例二: 使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" }
-$ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)
+```bash-session{ bar="示例二: 使用重定向发送数据到进程替换" }
+$ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)    # 可以看作 echo "foobar" > 文件"
 $ cat foobar.txt
 FOOBAR
 ```
