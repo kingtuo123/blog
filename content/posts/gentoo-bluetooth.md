@@ -7,7 +7,7 @@ toc: false
 
 ## 内核配置
 
-```makefile{class="none-bg"}
+```makefile{nonebg=true}
 CONFIG_BT           : 启用蓝牙，必须启用
 BT_BREDR            : 经典蓝牙协议栈，必须启用
 CONFIG_BT_RFCOMM    : 模拟 RS-232 串口，纯听歌可不启用，设备控制或数据传输要启用
@@ -115,9 +115,8 @@ looking at device '/devices/pci0000:00/0000:00:08.1/0000:c6:00.3/usb1/1-5/1-5:1.
 
 由于没有能标识设备唯一性的 ATTR 属性，所以只能对所有蓝牙设备应用以下规则：
 
-{{< bar title="/etc/udev/rules.d/88-bluetooth.rules" >}}
 
-```bash
+```bash{ bar="/etc/udev/rules.d/88-bluetooth.rules" }
 # 当蓝牙设备连接时触发
 ACTION=="add", SUBSYSTEM=="bluetooth", RUN+="/usr/bin/su king /home/king/.config/sway/scripts/bluetooth-connected.sh"
 # 当蓝牙设备断开时触发

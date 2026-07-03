@@ -55,7 +55,7 @@ toc: true
 {{ $name }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 Alice
 ```
 
@@ -69,7 +69,7 @@ Alice
 {{ $name }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 Bob
 ```
 
@@ -157,7 +157,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 当前页面的标题：Hugo 模板语法
 当前站点的标题：King's Blog
 根上下文的标题：Hugo 模板语法
@@ -179,7 +179,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 输出：a
 输出：b
 输出：c
@@ -194,7 +194,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 第 0 个: a
 第 1 个: b
 第 2 个: c
@@ -210,7 +210,7 @@ Bob
 {{ end }}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 暂无内容
 ```
 
@@ -226,7 +226,7 @@ Bob
 <pre>|    {{ .Title }}    |</pre>
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 |    Hugo 模板语法    |
 ```
 
@@ -236,7 +236,7 @@ Bob
 <pre>|    {{- .Title }}    |</pre>
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 |Hugo 模板语法    |
 ```
 
@@ -247,7 +247,7 @@ Bob
 <pre>|    {{- .Title -}}    |</pre>
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 |Hugo 模板语法|
 ```
 
@@ -260,7 +260,7 @@ Bob
 {{ "HELLO WORLD" | lower }}    {{/* lower 函数将所有字符转化为小写 */}}
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 hello world
 ```
 
@@ -293,9 +293,8 @@ This is line two.`
 
 ## 访问站点配置
 
-{{< bar block="站点配置" title="hugo.toml" >}}
 
-```toml
+```toml{ bar="站点配置:hugo.toml"  }
 [params]
 	headerTitle = "夜不能寐"
 ```
@@ -317,9 +316,7 @@ This is line two.`
 
 ## 访问前置元数据
 
-{{< bar block="前置元数据" title="content/posts/hugo-template-syntax.md" >}}
-
-```yaml
+```yaml{ bar="前置元数据:content/posts/hugo-template-syntax.md" }
 ---
 title: "Hugo 模板语法"
 date: "2025-12-26"

@@ -6,9 +6,8 @@ date: "2024-06-04"
 
 ## Docker pull
 
-{{< bar title="/etc/docker/daemon.json" >}}
 
-```json
+```json{ bar="/etc/docker/daemon.json" }
 {
     "proxies": {
         "http-proxy": "http://127.0.0.1:7897",
@@ -28,9 +27,8 @@ date: "2024-06-04"
 
 ## Docker build
 
-{{< bar title="dockerfile" >}}
 
-```dockerfile
+```dockerfile{ bar="dockerfile" }
 ARG http_proxy="http://127.0.0.1:7897"
 ARG https_proxy="http://127.0.0.1:7897"
 ```

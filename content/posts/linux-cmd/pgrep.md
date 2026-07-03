@@ -11,7 +11,7 @@ build:
 
 ## 语法
 
-```bash{class="none-bg"}
+```bash{nonebg=true}
 pgrep [选项] '模式'
 ```
 

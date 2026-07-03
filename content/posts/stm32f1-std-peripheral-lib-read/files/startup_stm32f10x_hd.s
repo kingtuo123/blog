@@ -1,6 +1,5 @@
-{{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/startup_stm32f10x_hd.s" >}}
 
-```asm { class="fixed-height" lineNos=inline }
+```asm { height=30 lineNos=inline bar="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/startup_stm32f10x_hd.s" }
 .syntax unified            // 使用统一汇编语言（Unified Assembly Language, UAL）
 .cpu cortex-m3             // 指定架构 Cortex-M3
 .fpu softvfp               // 使用软件浮点运算，CM3 没有硬件浮点单元

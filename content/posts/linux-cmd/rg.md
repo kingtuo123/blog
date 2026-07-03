@@ -9,7 +9,7 @@ build:
 
 ## 语法
 
-```bash{class="none-bg"}
+```bash{nonebg=true}
 rg [选项] '匹配模式' [路径...]
 ```
 
@@ -272,8 +272,7 @@ $ rg --files --max-filesize 0       # 列出空文件
 
 规则文件作用与 `.gitignore` 相同。
 
-{{< bar title="my-ignore" >}}
-```bash
+```bash{ bar="my-ignore" }
 *.log
 temp/
 ```

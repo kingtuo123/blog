@@ -1,6 +1,7 @@
 ---
 title: "Shortcodes 样式测试"
 date: "2021-05-01"
+toc: true
 ---
 
 
@@ -90,49 +91,6 @@ date: "2021-05-01"
 
 
 
-## 代码块样式
-
-> 该功能不是 Shortcodes，是 [Code block render hooks](https://gohugo.io/render-hooks/code-blocks/)。
-
-文件标题栏：
-
-{{< highlight text >}}
-```text{ bar="hello.txt" }
-hello world
-```
-{{< /highlight >}}
-
-```text{ bar="hello.txt" }
-hello world
-```
-
-自定义标题栏：
-
-{{< highlight text >}}
-```bash-session{ bar="终端:打印 hello world" }
-$ echo hello world
-```
-{{< /highlight >}}
-
-
-```bash-session{ bar="终端:打印 hello world" }
-$ echo hello world
-```
-
-
-
-{{< table min-width="150">}}
-
-|属性     |说明                                                       |
-|:--------|:----------------------------------------------------------|
-|`bar`    |格式 `类型:标题`，若不指定 `类型`，默认为 `文件`。         |
-|`copy`   |显示 `复制` 按钮，默认 `false`。                           |
-|`height` |最大高度（占视窗高度的百分比），范围 `1-100`，默认为 `空`。|
-|`nonebg` |背景透明，默认 `false`。                                   |
-|`hover`  |鼠标 hover 时高亮当前行，默认 `false`。                    |
-
-{{< /table >}}
-
 
 
 
@@ -149,6 +107,7 @@ $ echo hello world
 |参数    |说明                                            |
 |:-------|:-----------------------------------------------|
 |`fg`    |文本前景色。                                    |
+|`bold`  |粗体，默认 `false`。                            |
 {{< /table >}}
 
 ```text{ nonebg=true }
@@ -191,7 +150,8 @@ $ echo hello world
 ├── {{</* button-file target="targetDiV" src="files/test1.c"  title=" test1.c"  */>}}
 └── 󰉖 src/
     ├── {{</* button-file target="targetDiV" src="files/test2.c"  title=" test2.c" fg="purple" */>}}
-    └── Makefile.am
+    └── 󰉖 subdir/
+        └── {{</* button-file target="targetDiV" src="files/subdir/test2.c"  title=" test2.c" fg="purple" */>}}
 ```
 
 <div id="targetDiV"></div>
@@ -206,7 +166,8 @@ $ echo hello world
 ├── {{< button-file target="targetDiV" src="files/test1.c"  title=" test1.c"  >}}
 └── 󰉖 src/
     ├── {{< button-file target="targetDiV" src="files/test2.c"  title=" test2.c" fg="purple" >}}
-    └── Makefile.am
+    └── 󰉖 subdir/
+        └── {{< button-file target="targetDiV" src="files/subdir/test2.c"  title=" test2.c" fg="purple" >}}
 ```
 
 <div id="targetDiV"></div>
@@ -226,4 +187,70 @@ $ echo hello world
 
 
 
+
+
+
+
+## insert-file
+
+```go-template
+{{</* insert-file src="file/test.md" */>}}
+```
+
+{{< table min-width="150">}}
+|参数    |说明                                                             |
+|:-------|:----------------------------------------------------------------|
+|`src`   |文件位置                                                         |
+{{< /table >}}
+
+
+
+
+
+
+
+
+
+## 代码块样式
+
+> 该功能不是 Shortcodes，是 [Code block render hooks](https://gohugo.io/render-hooks/code-blocks/)。
+
+文件标题栏：
+
+{{< highlight text >}}
+```text{ bar="hello.txt" }
+hello world
+```
+{{< /highlight >}}
+
+```text{ bar="hello.txt" }
+hello world
+```
+
+自定义标题栏：
+
+{{< highlight text >}}
+```bash-session{ bar="终端:打印 hello world" }
+$ echo hello world
+```
+{{< /highlight >}}
+
+
+```bash-session{ bar="终端:打印 hello world" }
+$ echo hello world
+```
+
+
+
+{{< table min-width="150">}}
+
+|属性     |说明                                                       |
+|:--------|:----------------------------------------------------------|
+|`bar`    |格式 `类型:标题`，若不指定 `类型`，默认为 `文件`。         |
+|`copy`   |显示 `复制` 按钮，默认 `false`。                           |
+|`height` |最大高度（占视窗高度的百分比），范围 `1-100`，默认为 `空`。|
+|`nonebg` |背景透明，默认 `false`。                                   |
+|`hover`  |鼠标 hover 时高亮当前行，默认 `false`。                    |
+
+{{< /table >}}
 

@@ -14,9 +14,8 @@ net-misc/chrony    -* caps rtc cmdmon readline seccomp
 
 ## 配置
 
-{{< bar title="/etc/chrony/chrony.conf" >}}
 
-```bash
+```bash{ bar="/etc/chrony/chrony.conf" }
 # NTP 源，chrony 会自动选择最优服务器，无须排序
 # 上海交大
 server ntp.sjtu.edu.cn           iburst

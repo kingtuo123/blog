@@ -13,7 +13,7 @@ draft: true
 
 ## 语法
 
-```bash{ class="none-bg" }
+```bash{ nonebg=true }
 pkill [选项] '匹配模式'
 ```
 

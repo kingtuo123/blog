@@ -1,0 +1,10 @@
+{{- $src := .Get "src" -}}
+
+{{- $currentDir := .Page.File.Dir -}}
+{{- $realPath   := path.Join "content" $currentDir $src -}}
+
+{{- if fileExists $realPath -}}
+    {{- readFile $realPath | markdownify | safeHTML -}}
+{{- else -}}
+    <p style="color:#F00;">错误：找不到文件 "{{- $src -}}"</p>
+{{- end -}}

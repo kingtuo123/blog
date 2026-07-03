@@ -30,7 +30,7 @@ $ make install
 
 `./configure` 先生成 `config.status`，再运行 `config.status` 将模版文件输出为对应的文件。
 
-```makefile{class="none-bg"}
+```makefile{nonebg=true}
 *.in            : 模板文件，可以手动编写，也可以由 autoheader、automake 工具生成
 config.log      : 记录了 ./configure 和 config.status 执行过程中的日志及各种变量，用于调试
 config.cache    : 由 ./configure -C 参数生成的缓存文件，提升重复 ./configure 的速度
@@ -66,7 +66,7 @@ install:
 
 详见 [Standard Targets for Users](https://www.gnu.org/prep/standards/html_node/Standard-Targets.html) 。
 
-```Makefile{class="none-bg"}
+```Makefile{nonebg=true}
 all             : 默认目标，构建程序、库、文档等
 install         : 安装需要安装的内容
 uninstall       : 删除安装的内容
@@ -83,7 +83,7 @@ dist            : 创建 PACKAGE-VERSION.tar.gz 压缩包
 
 目录变量指定了各类文件的安装位置，详见 [Variables for Installation Directories](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html) 。
 
-```shell{class="none-bg"}
+```shell{nonebg=true}
 # 目录变量      # 默认值
 prefix          = /usr/local
 exec_prefix     = ${prefix}
@@ -177,9 +177,8 @@ $ ac_cv_path_SED=/path/to/sed ./configure
 - `autoconf` 的工作就是将 `configure.ac` 中的宏展开，转换为完整的 shell 脚本，即 `configure` 。
 - `autoconf` 的宏以 `AC_` 开头，详见 [Autoconf Macro Index](https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Autoconf-Macro-Index.html) 。
 
-{{< bar title="最小化配置的 configure.ac" >}}
 
-```bash
+```bash{ bar="最小化配置的 configure.ac" }
 # 初始化 autoconf，指定软件包名称、版本号和错误报告地址
 AC_INIT([hello], [1.0], [bug-report@address])
 # 输出文件
@@ -211,9 +210,8 @@ autoconf、autoheader、automake 等工具都会调用 `autom4te` 处理宏，
 
 当 `configure.ac` 包含 `autoconf` 以外的第三方宏，如 `automake` 自带的宏和用户自定义的宏，`aclocal` 作用是将所有第三方宏整合到一个单一的文件 `aclocal.m4` 中，以供 `autoconf` 使用。
 
-{{< bar title="configure.ac" >}}
 
-```bash
+```bash{ bar="configure.ac" }
 AC_INIT([hello], [1.0], [bug-report@address])
 # automake 自带的宏，用于初始化 automake
 AM_INIT_AUTOMAKE
@@ -248,9 +246,8 @@ aclocal.m4  autom4te.cache  configure  configure.ac
 
 使用 `AC_DEFINE` 创建 C 语言宏定义：
 
-{{< bar title="configure.ac" >}}
 
-```bash{hl_lines=[2,3]}
+```bash{ bar="configure.ac" hl_lines=[2,3] }
 AC_INIT([hello], [1.0], [bug-report@address])
 # 创建 C 宏定义，参数：[宏名]，[值]，[注释]
 AC_DEFINE([FOOBAR], [42], [This is the foobar value])
@@ -277,9 +274,8 @@ config.h        config.log   configure
 
 最终生成的头文件：
 
-{{< bar title="config.h" >}}
 
-```c{hl_lines=[1,2]}
+```c{ bar="config.h" hl_lines=[1,2] }
 /* This is the foobar value */
 #define FOOBAR 42
 /* Define to the address where bug reports for this package should be sent. */
@@ -309,7 +305,7 @@ config.h        config.log   configure
 
 创建下列文件：
 
-```text{class="none-bg"}
+```text{nonebg=true}
 ./
 ├── configure.ac
 ├── Makefile.am
@@ -318,9 +314,8 @@ config.h        config.log   configure
     └── Makefile.am
 ```
 
-{{< bar title="src/main.c" >}}
 
-```c
+```c{ bar="src/main.c" }
 #include "../config.h"
 #include <stdio.h>
 
@@ -335,9 +330,8 @@ int main(void){
 ```
 
 
-{{< bar title="configure.ac" >}}
 
-```bash
+```bash{ bar="configure.ac" }
 AC_INIT([hello], [1.0], [bug-report@address])
 # 通过一个独一无二的文件来标识源码目录，让 configure 脚本能够确定它正在正确的源代码目录中运行
 AC_CONFIG_SRCDIR([src/main.c])
@@ -361,18 +355,16 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
 ```
 
-{{< bar title="Makefile.am" >}}
 
-```makefile
+```makefile{ bar="Makefile.am" }
 # SUBDIRS 表示需递归构建的子目录
 SUBDIRS = src
 ```
 
 
 
-{{< bar title="src/Makefile.am" >}}
 
-```makefile
+```makefile{ bar="src/Makefile.am" }
 # 构建 hello 这个可执行文件
 bin_PROGRAMS = hello
 # 构建 hello 这个目标所需的源文件
@@ -391,7 +383,7 @@ hello_SOURCES = main.c
 
 `bin_PROGRAMS` 命名规则如下，详见 [The Uniform Naming Scheme](https://www.gnu.org/software/automake/manual/html_node/Uniform.html)：
 
-```text{class="none-bg"}
+```text{nonebg=true}
 bin_PROGRAMS  ==>  prefix_PRIMARY  ==>  由 prefix 和 PRIMARY 两部分组成
 
 prefix   :  匹配 *dir 的目录变量，例如 bindir，libdir，datadir 等

@@ -1,70 +1,3 @@
-/*****     字体：全局     *****/
-html, body {
-	font-family: "LXGW WenKai";
-	font-weight: normal;
-}
-/*****     字体：文章     *****/
-.post-container {
-    .post-title {
-        h1{
-            font-family: "LXGW WenKai Medium";
-            font-weight: normal;
-        }
-    }
-    .toc {
-        #toc-toggle{
-            font-family: "LXGW WenKai Medium";
-            font-weight: normal;
-        }
-        #TableOfContents {
-            font-family: "LXGW WenKai";
-            font-weight: normal;
-        }
-    }
-    .main-text {
-        table th {
-            font-family: "LXGW WenKai Medium";
-            font-weight:normal;
-        }
-        h2,h3,h4,h5,h6 {
-            font-family: "LXGW WenKai Medium";
-            font-weight: normal;
-        }
-        code {
-            font-family: "LXGW WenKai Mono";
-            font-weight: normal;
-        }
-        blockquote code{
-            font-family: "LXGW WenKai Mono";
-            font-weight: normal;
-        }
-        .code-bar {
-            font-family: 'Maple Mono NF CN Light';
-            font-weight: normal;
-        }
-        pre code {
-            font-family: "Maple Mono NF CN Light";
-            font-weight: normal;
-        }
-        button.copy, button.expand {
-            font-family: 'Maple Mono NF CN Light';
-            font-weight: normal;
-        }
-        strong {
-            font-family: "LXGW WenKai Medium";
-            font-weight: normal;
-        }
-        strong code {
-            font-family: "LXGW WenKai Mono Medium";
-            font-weight: normal;
-        }
-    }
-}
-
-
-
-
-
 /*****     短代码: table     *****/
 .main-text{
     .table-container {
@@ -149,12 +82,14 @@ html, body {
 
 
 
-/*****     短代码: insert     *****/
-button[onclick] {
-    color: var(--color-aqua);
-    padding: 3px 5px;
-    border-radius: 5px;
-    transition: all var(--theme-transition-time) ease;
+/*****     短代码: button-file     *****/
+.main-text{
+    button.button-file[onclick] {
+        color: var(--color-aqua);
+        padding: 3px 5px;
+        border-radius: 5px;
+        transition: all var(--theme-transition-time) ease;
+    }
 }
 
 
@@ -245,22 +180,6 @@ button[onclick] {
 
 
 
-/*****     其它     *****/
-.main-text{
-    .highlight.fixed-height > pre {
-        overflow-y: auto;
-        max-height: 60vh;
-    }
-    .highlight.fixed-height-30 > pre {
-        overflow-y: auto;
-        max-height: 30vh;
-    }
-}
-
-
-
-
-
 /*****     文章纠错      *****/
 .correction-container {
     display: flex;
@@ -286,7 +205,7 @@ button[onclick] {
             height: 32px;
         }
         .title {
-            font-size: 14px;
+            font-size: 0.8235rem;
             line-height: 2.0;
         }
         &:hover {

@@ -69,8 +69,7 @@ date: "2026-06-26"
 
 Debian13 中 `cloud-init/stable 25.1.4` 的默认配置文件：
 
-{{< bar title="/etc/cloud/cloud.cfg">}}
-```cfg{ class="fixed-height-30"}
+```cfg{ bar="/etc/cloud/cloud.cfg" height=30 }
 # The top level settings are used as module
 # and system configuration.
 # A set of users which may be applied and/or used by various modules

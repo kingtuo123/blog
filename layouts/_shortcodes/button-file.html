@@ -7,7 +7,7 @@
 
 {{- $currentDir := .Page.File.Dir -}}
 {{- $realPath   := path.Join "content" $currentDir $src -}}
-{{- $baseName   := path.Base $src | replaceRE "[^a-zA-Z0-9]" "" -}}
+{{- $baseName   := $src | replaceRE "[^a-zA-Z0-9]" "" -}}
 
 
 
@@ -22,7 +22,7 @@
 
         {{- $url := $htmlFileObject.Permalink -}}
 
-        <button onclick="insert_{{ $baseName | safeJS }}()"
+        <button class="button-file" onclick="insert_{{ $baseName | safeJS }}()"
             style="{{- if $fg -}}color:var(--color-{{- $fg -}});{{- end -}}"
         >{{- $title -}}</button><script>
             let html_{{ $baseName | safeJS }};

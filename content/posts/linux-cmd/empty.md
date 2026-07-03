@@ -13,7 +13,7 @@ draft: true
 
 ## 语法
 
-```bash{ class="none-bg" }
+```bash{ nonebg=true }
 
 ```
 

@@ -26,7 +26,7 @@ CONFIG_INTEL_RAPL=y
 
 ## Sysfs 接口
 
-```text{class="none-bg"}
+```text{nonebg=true}
 /sys/class/powercap/intel-rapl/intel-rapl:0/   -> 第 0 颗物理 CPU 封装
 ├──name                                        -> 域的名称，通常是 "package-0"
 ├──energy_uj                                   -> 累计能耗计数器，单位是微焦耳
@@ -55,9 +55,7 @@ ATTR{name}=="package-0"
 普通用户对 `energy_uj` 无可读权限，通过 udev 规则设置权限：
 
 
-{{< bar title="/etc/udev/rules.d/99-powercap.rules" >}}
-
-```bash
+```bash{ bar="/etc/udev/rules.d/99-powercap.rules" }
 SUBSYSTEM=="powercap", KERNEL=="intel-rapl:0", RUN+="/usr/bin/chmod a+r /sys/class/powercap/%k/energy_uj"
 ```
 

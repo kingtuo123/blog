@@ -1,6 +1,5 @@
-{{< bar title="Libraries/CMSIS/CM3/CoreSupport/core_cm3.c" >}}
 
-```c { class="fixed-height" lineNos=inline }
+```c { height=30 lineNos=inline bar="Libraries/CMSIS/CM3/CoreSupport/core_cm3.c" }
 // 该头文件定义了一系列固定位宽的整数类型，如 int8_t 、uint8_t 、int16_t 等
 #include <stdint.h>
 

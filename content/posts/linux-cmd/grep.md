@@ -11,7 +11,7 @@ build:
 ## 语法
 
 
-```bash{class="none-bg"}
+```bash{nonebg=true}
 grep [选项] '搜索模式' [文件...]
 ```
 

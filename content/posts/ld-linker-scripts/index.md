@@ -160,9 +160,8 @@ SECTIONS
 
 与 `SECTIONS` 命令搭配使用，插入额外的内容，不覆盖默认的链接脚本。`AFTER` 表示在指定段之后插入，`BEFORE` 表示在指定段之前插入。
 
-{{< bar title="insert_special.ld" >}}
 
-```c
+```c{ bar="insert_special.ld" }
 SECTIONS
 {
     .text_special : {
@@ -207,7 +206,7 @@ $ ld main.o special.o -T my_script.ld -T insert_special.ld -o program
 
 支持 C 语言的赋值运算符：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 symbol   = expression ;
 symbol  += expression ;
 symbol  -= expression ;
@@ -301,7 +300,7 @@ ldr  r0, =_sdata    /* r0 = 0x20000000 */
 
 `SECTIONS` 命令告知链接器如何将输入段映射到输出段，以及如何在内存中放置输出段。
 
-```text{class="none-bg"}
+```text{nonebg=true}
 SECTIONS
 {
     段名  [VMA地址]  [(段类型)]  :  [AT(LMA地址)]  [ALIGN(段对齐)|ALIGN_WITH_INPUT]  [SUBALIGN(子段对齐)]  [约束]
@@ -568,7 +567,7 @@ Section Headers:                                                    ↓
 
 排序前：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 .text.a    (align=4)
 .text.b    (align=16)
 .text.c    (align=8)
@@ -576,7 +575,7 @@ Section Headers:                                                    ↓
 
 排序后：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 .text.b    (align=16)
 .text.c    (align=8)
 .text.a    (align=4)
@@ -594,7 +593,7 @@ Section Headers:                                                    ↓
 
 排序前：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 .init_array.200
 .init_array.65535
 .init_array.101
@@ -602,7 +601,7 @@ Section Headers:                                                    ↓
 
 排序后：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 .init_array.101
 .init_array.200
 .init_array.65535
@@ -710,7 +709,7 @@ Section Headers:                                                    ↓
 }
 ```
 
-```text{class="none-bg"}
+```text{nonebg=true}
 低地址   ----------->   高地址
 00  00  00  90  00  00  00  90
 00  00  16  17  00  00  16  17
@@ -726,7 +725,7 @@ Section Headers:                                                    ↓
 }
 ```
 
-```text{class="none-bg"}
+```text{nonebg=true}
 低地址   ------------------->   高地址
 90  90  90  90  90  90  90  90  90  90
 00  90  00  90  00  90  00  90  00  90
@@ -788,7 +787,7 @@ SECTIONS {
 
 ## OVERLAY 命令
 
-```text{class="none-bg"}
+```text{nonebg=true}
 SECTIONS
 {
     OVERLAY  [VMA地址]  :  [NOCROSSREFS]  [AT (LMA地址)]
@@ -858,7 +857,7 @@ SECTIONS
 
 ## MEMORY 命令
 
-```c{class="none-bg"}
+```c{nonebg=true}
 MEMORY
 {
     区域名  [(属性)]  :  ORIGIN = 起始地址,  LENGTH = 长度
@@ -868,7 +867,7 @@ MEMORY
 
 **[ (属性) ]**
 
-```makefile{class="none-bg"}
+```makefile{nonebg=true}
 R  : 只读
 W  : 读写
 X  : 可执行
@@ -898,7 +897,7 @@ MEMORY
 
 `PHDRS` 用于手动定义 ELF 文件中的程序头（Program Headers）。使用 `objdump -p` 命令打印程序头。
 
-```c{class="none-bg"}
+```c{nonebg=true}
 PHDRS
 {
     名称  类型  [FILEHDR]  [PHDRS]  [AT ( 地址 )]  [FLAGS ( 标志 )] ;
@@ -913,7 +912,7 @@ PHDRS
 
 程序头的类型。该类型可能是以下之一。数字表示关键字的值。
 
-```makefile{class="none-bg"}
+```makefile{nonebg=true}
 PT_NULL (0)    : 表示未使用的程序头。
 PT_LOAD (1)    : 表示此程序头描述了一个需要从文件中加载的段。
 PT_DYNAMIC (2) : 表示一个可以找到动态链接信息的段。
@@ -1079,7 +1078,7 @@ SECTIONS
 该命令只能在 `SECTIONS` 命令中使用，不能用于任何输出段命令内部，且只能使用一次。
 `maxpagesize` 为最大页面大小，`commonpagesize` 为默认页面大小。该命令等价于以下任一情况（哪个计算结果占用的页面数量少就用哪个）：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 (ALIGN(maxpagesize) + (. & (maxpagesize - 1)))
 (ALIGN(maxpagesize) + ((. + commonpagesize - 1) & (maxpagesize - commonpagesize)))
 ```
@@ -1105,7 +1104,7 @@ SECTIONS
 
 计算结果采用 `0x7000` ，只使用了一个 4K 页：
 
-```c{class="none-bg"}
+```c{nonebg=true}
 0x4000 + (0x2800 & (0x4000 - 1)) = 0x6800
 0x4000 + ((0x2800 + 0x1000 - 1) & (0x4000 - 0x1000)) = 0x7000
 ```

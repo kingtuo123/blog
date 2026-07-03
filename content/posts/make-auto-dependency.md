@@ -7,9 +7,8 @@ toc: false
 
 ## 文件
 
-{{< bar title="hello.c" >}}
 
-```c
+```c{ bar="hello.c" }
 #include <stdio.h>
 #include "hello.h"
 
@@ -19,9 +18,7 @@ int main(void){
 }
 ```
 
-{{< bar title="hello.h" >}}
-
-```c
+```c{ bar="hello.h" }
 #define MESSAGE "hello world"
 ```
 

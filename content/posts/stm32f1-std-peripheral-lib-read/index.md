@@ -9,7 +9,7 @@ toc: true
 
 ### core_cm3.h
 
-{{< insert src="files/core_cm3.h" >}}
+{{< insert-file src="files/core_cm3.h" >}}
 
 内核头文件主要定义了以下内容：
 
@@ -23,7 +23,7 @@ toc: true
 ### core_cm3.c
 
 
-{{< insert src="files/core_cm3.c" >}}
+{{< insert-file src="files/core_cm3.c" >}}
 
 
 
@@ -36,7 +36,7 @@ toc: true
 ### GCC 启动文件
 
 
-{{< insert src="files/startup_stm32f10x_hd.s" >}}
+{{< insert-file src="files/startup_stm32f10x_hd.s" >}}
 
 
 #### STM32 芯片命名规则
@@ -56,24 +56,24 @@ toc: true
 
 `stm32f10x.h` 文件很长，以下截取部分关键代码：
 
-{{< insert src="files/stm32f10x.h" >}}
+{{< insert-file src="files/stm32f10x.h" >}}
 
 #### 预定义宏
 
 
-```makefile{class="none-bg"}
-STM32F10X_LD         : 按启动文件后缀，选择一个
-STM32F10X_MD         : 
-STM32F10X_HD         : 
-STM32F10X_XL         : 
-STM32F10X_CL         : 
-STM32F10X_LD_VL      : 
-STM32F10X_MD_VL      : 
-STM32F10X_HD_VL      :
-USE_STDPERIPH_DRIVER : 使用标准库外设驱动
-HSE_VALUE            : 外部晶振频率
-HSE_STARTUP_TIMEOUT  : 外部晶振启动的等待时间
-HSI_VALUE            : 内部晶振频率
+```text{ nonebg=true }
+STM32F10X_LD            : 按启动文件后缀，选择一个
+STM32F10X_MD            : 
+STM32F10X_HD            : 
+STM32F10X_XL            : 
+STM32F10X_CL            : 
+STM32F10X_LD_VL         : 
+STM32F10X_MD_VL         : 
+STM32F10X_HD_VL         :
+USE_STDPERIPH_DRIVER    : 使用标准库外设驱动
+HSE_VALUE               : 外部晶振频率
+HSE_STARTUP_TIMEOUT     : 外部晶振启动的等待时间
+HSI_VALUE               : 内部晶振频率
 ```
 一般不直接在 `stm32f10x.h` 中设置上述宏，而是通过编译器参数传递：
 
@@ -98,9 +98,8 @@ $ arm-none-eabi-gcc -D STM32F10X_HD  -D USE_STDPERIPH_DRIVER  -D HSE_VALUE=80000
 
 ### system_stm32f10x.h
 
-{{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.h" >}}
 
-```c { lineNos=inline }
+```c { lineNos=inline bar="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.h" }
 
 #ifndef __SYSTEM_STM32F10X_H
 #define __SYSTEM_STM32F10X_H
@@ -123,9 +122,7 @@ extern void SystemCoreClockUpdate(void);     // 更新 SystemCoreClock 变量，
 
 ### system_stm32f10x.c
 
-{{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" >}}
-
-```c { class="fixed-height" lineNos=inline }
+```c { height=30 lineNos=inline bar="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" }
 #include "stm32f10x.h"
 
 
@@ -311,16 +308,16 @@ static void SetSysClockTo72(void){ 省略.... }
 
 #### 预定义宏
 
-```makefile{class="none-bg"}
-SYSCLK_FREQ_HSE    HSE_VALUE   : 使用 HSE 作为系统时钟源，不进行倍频
-SYSCLK_FREQ_24MHz  24000000    : 定义 24MHz 系统时钟频率
-SYSCLK_FREQ_36MHz  36000000    : 定义 36MHz 系统时钟频率
-SYSCLK_FREQ_48MHz  48000000    : 定义 48MHz 系统时钟频率
-SYSCLK_FREQ_56MHz  56000000    : 定义 56MHz 系统时钟频率
-SYSCLK_FREQ_72MHz  72000000    : 定义 72MHz 系统时钟频率
-VECT_TAB_SRAM                  : 定义向量表在 SRAM 中
-VECT_TAB_OFFSET  0x0           : 向量表基址偏移量字段，此值必须是 0x200 的倍数
-DATA_IN_ExtSRAM                : 定义使用外部 SRAM
+```text{ nonebg=true }
+SYSCLK_FREQ_HSE    HSE_VALUE    : 使用 HSE 作为系统时钟源，不进行倍频
+SYSCLK_FREQ_24MHz  24000000     : 定义 24MHz 系统时钟频率
+SYSCLK_FREQ_36MHz  36000000     : 定义 36MHz 系统时钟频率
+SYSCLK_FREQ_48MHz  48000000     : 定义 48MHz 系统时钟频率
+SYSCLK_FREQ_56MHz  56000000     : 定义 56MHz 系统时钟频率
+SYSCLK_FREQ_72MHz  72000000     : 定义 72MHz 系统时钟频率
+VECT_TAB_SRAM                   : 定义向量表在 SRAM 中
+VECT_TAB_OFFSET    0x0          : 向量表基址偏移量字段，此值必须是 0x200 的倍数
+DATA_IN_ExtSRAM                 : 定义使用外部 SRAM
 ```
 
 通过编译器参数配置时钟频率：
@@ -341,9 +338,7 @@ $ arm-none-eabi-gcc -D HSE_VALUE=8000000 -D SYSCLK_FREQ_48MHz=48000000
 
 `stm32f10x.h` 中包含这个头文件。
 
-{{< bar title="Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h" >}}
-
-```c { class="fixed-height" lineNos=inline }
+```c { height=30 lineNos=inline bar="Project/STM32F10x_StdPeriph_Template/stm32f10x_conf.h" }
 #ifndef __STM32F10x_CONF_H
 #define __STM32F10x_CONF_H
 
@@ -388,9 +383,7 @@ $ arm-none-eabi-gcc -D HSE_VALUE=8000000 -D SYSCLK_FREQ_48MHz=48000000
 
 这会覆盖启动文件中的中断函数。
 
-{{< bar title="Project/STM32F10x_StdPeriph_Template/stm32f10x_it.h" >}}
-
-```c { class="fixed-height" lineNos=inline }
+```c { height=30 lineNos=inline bar="Project/STM32F10x_StdPeriph_Template/stm32f10x_it.h" }
 #ifndef __STM32F10x_IT_H
 #define __STM32F10x_IT_H
 
@@ -420,9 +413,7 @@ void SysTick_Handler(void);
 ### 中断函数源文件
 
 
-{{< bar title="Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c" >}}
-
-```c { class="fixed-height" lineNos=inline }
+```c { height=30 lineNos=inline bar="Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c" }
 #include "stm32f10x_it.h"
 
 void NMI_Handler(void)
@@ -497,7 +488,7 @@ void SysTick_Handler(void)
 
 
 
-```c { class="fixed-height" lineNos=inline }
+```c { height=40 lineNos=inline }
 /* 入口点 - 程序启动后执行的第一条指令地址 */
 ENTRY(Reset_Handler)
 
@@ -683,7 +674,7 @@ STM32 可通过配置 `BOOT0` 和 `BOOT1` 引脚，将从 `0x00000000` 地址开
 
 对于 STM32F103ZET6 ，从 SRAM 启动时，`0x00000000` 会被映射到一块内存极小的区域，大约在 `0x1FFFF000` 附近或略低，仅 16 字节，内容如下：
 
-```c{class="none-bg"}
+```c{ nonebg=true }
 20005000 200001E1 20000004 20000004
 ```
 
@@ -692,7 +683,7 @@ STM32 可通过配置 `BOOT0` 和 `BOOT1` 引脚，将从 `0x00000000` 地址开
 第二个字：入口程序地址 `0x200001E1` ，最后一位表示 thumb ，实际是 `0x200001E0`，相对 `0x20000000` 偏移 `0x1E0` 。
 对于不同容量的产品，其偏移值也有所不同，参考 GCC 的启动文件：
 
-```asm{class="none-bg"}
+```asm{ nonebg=true }
 startup_stm32f10x_ld.s:     .word  BootRAM    /*  0x108   */
 startup_stm32f10x_md.s:     .word  BootRAM    /*  0x108   */
 startup_stm32f10x_hd.s:     .word  BootRAM    /*  0x1E0   */
@@ -721,8 +712,7 @@ startup_stm32f10x_hd_vl.s:  .word  BootRAM    /*  0x1E0   */
 所以用户需要在 main 函数调用前设置 SP ，可以使用 [core_cm3.c](#core_cm3c) 中的 `__set_MSP` 函数。
 5. 设置向量表偏移寄存器 `SCB->VTOR` 的值，可使用 [system_stm32f10x.c](#system_stm32f10xc) 中的 `VECT_TAB_SRAM` 宏，如下：
 
-{{< bar title="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" >}}
-```c
+```c{ bar="Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c" }
 // 如果需要将向量表重定位到内部SRAM中，请取消注释以下行
 // #define VECT_TAB_SRAM                     // 定义向量表在SRAM中
 #define VECT_TAB_OFFSET  0x0                 // 向量表基址偏移量字段，此值必须是0x200的倍数

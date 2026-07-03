@@ -12,7 +12,7 @@ build:
 
 ## 语法
 
-```bash{ class="none-bg" }
+```bash{ nonebg=true }
 pstree [选项] [pid|用户名]
 ```
 

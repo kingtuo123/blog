@@ -528,49 +528,42 @@ Your selected: Banana
 
 #### for 循环
 
-{{< bar block="遍历简单列表" >}}
-
-```bash
+```bash{ bar="遍历简单列表:" }
 for i in 1 2 3 4 5; do
     echo "Number $i"
 done
 ```
 
-{{< bar block="遍历字符串列表" >}}
 
-```bash
+```bash{ bar="遍历字符串列表:" }
 for color in red green blue; do
     echo "Color is $color"
 done
 ```
 
-{{< bar block="使用大括号展开" >}}
 
-```bash
+```bash{ bar="使用大括号展开:" }
 for i in {1..5}; do
     echo "Counting $i"
 done
 ```
 
-{{< bar block="指定步长" >}}
 
-```bash
+```bash{ bar="指定步长:" }
 for i in {1..10..2}; do
     echo "Step $i"
 done
 ```
 
-{{< bar block="遍历命令输出" >}}
 
-```bash
+```bash{ bar="遍历命令输出:" }
 for file in "$(ls)"; do
     echo "File: $file"
 done
 ```
 
-{{< bar block="C 语言风格的 for 循环" >}}
 
-```bash
+```bash{ bar="C 语言风格的 for 循环:" }
 for ((i=0; i<5; i++)); do
     echo "C-style loop: $i"
 done
@@ -578,9 +571,7 @@ done
 
 #### while 循环
 
-{{< bar block="基本计数器" >}}
-
-```bash
+```bash{ bar="基本计数器:" }
 count=1
 while [ $count -le 5 ]; do
     echo "Count: $count"
@@ -588,26 +579,23 @@ while [ $count -le 5 ]; do
 done
 ```
 
-{{< bar block="读取文件内容" >}}
 
-```bash
+```bash{ bar="读取文件内容:"}
 while read line; do
     echo "Line: $line"
 done < filename.txt
 ```
 
-{{< bar block="无限循环" >}}
 
-```bash
+```bash{ bar="无限循环:" }
 while true; do
     echo "Press Ctrl+C to stop"
     sleep 1
 done
 ```
 
-{{< bar block="使用算术表达式" >}}
 
-```bash
+```bash{ bar="使用算术表达式:" }
 count=0
 while ((count < 5)); do
     echo "Count: $count"
@@ -617,9 +605,8 @@ done
 
 #### until 循环
 
-{{< bar block="基本计数器" >}}
 
-```bash
+```bash{ bar="基本计数器:" }
 count=1
 until [ $count -gt 5 ]; do
     echo "Count: $count"
@@ -627,9 +614,8 @@ until [ $count -gt 5 ]; do
 done
 ```
 
-{{< bar block="等待某个条件满足" >}}
 
-```bash
+```bash{ bar="等待某个条件满足:" }
 until ping -c1 example.com &>/dev/null; do
     echo "Waiting for example.com to be reachable..."
     sleep 5
@@ -652,26 +638,22 @@ echo "example.com is now reachable!"
 
 ### 函数
 
-{{< bar block="语法" title="不加 function 也可以" >}}
-
-```bash
+```bash{ bar="语法:不加 function 也可以"}
 function func_name() {
     commands
 }
 ```
 
-{{< bar block="函数参数" title="使用位置参数变量 $1 $2 ..." >}}
 
-```bash
+```bash{ bar="函数参数: 使用位置参数变量 $1 $2 ..." }
 greet() {
     echo "Hello, $1!"
 }
 greet "Alice"
 ```
 
-{{< bar block="返回值" title="使用 echo 返回一个数组" >}}
 
-```bash
+```bash{ bar="返回值: 使用 echo 返回一个数组" }
 create_array() {
     local arr=(1 2 3 4 5)
     echo "${arr[@]}"
@@ -680,27 +662,24 @@ my_array=($(create_array))
 echo "Array elements: ${my_array[@]}"
 ```
 
-{{< bar block="返回状态" title="使用 return（0-255），0 表示成功，大于 1 表示失败" >}}
 
-```bash
+```bash{ bar="返回状态: 使用 return（0-255），0 表示成功，大于 1 表示失败"  }
 is_number() {
     [[ "$1" =~ ^[0-9]+$ ]] && return 0 || return 1
 }
 is_number "123" && echo "Valid number"
 ```
 
-{{< bar block="作用域" title="使用 local 创建局部变量，默认是全局变量" >}}
 
-```bash
+```bash{ bar="作用域: 使用 local 创建局部变量，默认是全局变量" }
 demo() {
     local var1="local"  # 局部变量
     var2="global"       # 全局变量
 }
 ```
 
-{{< bar block="递归" >}}
 
-```bash
+```bash{ bar="递归:" }
 factorial() {
     if (( $1 <= 1 )); then
         echo 1
@@ -712,15 +691,13 @@ factorial() {
 echo "计算阶乘： 5! = $(factorial 5)"
 ```
 
-{{< bar block="调用外部函数" >}}
 
-```bash
+```bash{ bar="调用外部函数:" }
 source functions.sh
 ```
 
-{{< bar block="重定向" title="调用 log_to_file 函数，输出会写入 output.log" >}}
 
-```bash
+```bash{ bar="重定向: 调用 log_to_file 函数，输出会写入 output.log" }
 log_to_file() {
     echo "This is a log message"
 } > output.log
@@ -896,9 +873,8 @@ l-wx------ 1 king king 64 Apr 12 22:02 /dev/fd/63 -> 'pipe:[525267]'
 
 把 `<(cmd)` 和 `>(cmd)` 看作文件，主命令可以从 `<(cmd)` 文件读取数据，向 `>(cmd)` 文件写入数据
 
-{{< bar block="示例一" type="terminal" title="tee 命令能将标准输入的数据同时向多个文件及标准输出传送" >}}
 
-```bash-session
+```bash-session{ bar="示例一: tee 命令能将标准输入的数据同时向多个文件及标准输出传送" }
 $ cat 0<<eof 1>file
 foo123
 bar123
@@ -910,27 +886,23 @@ $ cat bar.txt
 bar123
 ```
 
-{{< bar block="示例二" type="terminal" title="使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" >}}
 
-```bash-session
+```bash-session{ bar="示例二: 使用重定向发送数据到进程替换，可以看作 echo \"foobar\" > 文件" }
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt)
 $ cat foobar.txt
 FOOBAR
 ```
 
 
-{{< bar block="错误示例" type="terminal" title="后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" >}}
-
-```bash-session
+```bash-session{ bar="错误示例: 后面的重定向会覆盖前面的重定向，应该使用 tee 命令（见示例一）" }
 $ echo "foobar" 1> >(tr 'a-z' 'A-Z' >foobar.txt) 1> >(sed s/$/BAD/ >bad.txt)
 $ cat foobar.txt
 $ cat bad.txt
 foobarBAD
 ```
 
-{{< bar block="示例三" type="terminal" title="可以看作 sed 参数 文件1 文件2" >}}
 
-```bash-session
+```bash-session{ bar="示例三: 可以看作 sed 参数 文件1 文件2" }
 $ sed -e 's/foo/FOO/' -e 's/bar/BAR/' <(echo foo) <(echo bar)
 FOO
 BAR
@@ -963,7 +935,7 @@ for word in $str; do
 done
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 [one]
 [two]
 [three]
@@ -979,7 +951,7 @@ for word in "$str"; do
 done
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 [one:two:three]
 ```
 
@@ -992,7 +964,7 @@ for word in one:two:three; do
 done
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 [one:two:three]
 ```
 
@@ -1003,7 +975,7 @@ IFS=: read user pass shell <<< "root:secret:/bin/bash"
 echo -e "User=$user,  Passwd=$pass,  Shell=$shell"
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 User=root,  Passwd=secret,  Shell=/bin/bash
 ```
 
@@ -1015,7 +987,7 @@ IFS=: arr=($str)
 echo "arr[0]=${arr[0]},  arr[1]=${arr[1]},  arr[2]=${arr[2]}"
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 arr[0]=apple,  arr[1]=banana,  arr[2]=orange
 ```
 
@@ -1031,7 +1003,7 @@ echo "Using \$*: $*"
 echo "Using \$@: $@"
 ```
 
-```bash-session{class="none-bg"}
+```bash-session{nonebg=true}
 Using $*: one:two:three
 Using $@: one two three
 ```

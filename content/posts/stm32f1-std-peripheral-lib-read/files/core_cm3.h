@@ -1,6 +1,5 @@
-{{< bar title="Libraries/CMSIS/CM3/CoreSupport/core_cm3.h" >}}
 
-```c { class="fixed-height" lineNos=inline }
+```c{ lineNos=inline height=30 bar="Libraries/CMSIS/CM3/CoreSupport/core_cm3.h" }
 #ifndef __CM3_CORE_H__
 #define __CM3_CORE_H__
 
