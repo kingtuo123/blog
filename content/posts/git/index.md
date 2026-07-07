@@ -137,36 +137,113 @@ second commit
 {{< img src="second-commit.svg" >}}
 
 
-#### blob 对象复用
+### blob 对象复用
 
-当两个文件内容完全一样时，其 blob 对象是复用的：
+当两个文件内容完全一样时，其 blob 对象是复用的（哈希值相同）：
 
 ```bash-session
-$ git init test && cd test
-$ echo 123 | tee 1.txt 2.txt
+$ git init test && cd test && echo 123 | tee 1.txt 2.txt
 $ git add -A
-$ git commit -m "first commit"
-$ tree .git/objects
+$ git ls-files -s
+100644 190a18037c64c43e6b11489df4bf0b9eb6d2c9bf 0	1.txt
+100644 190a18037c64c43e6b11489df4bf0b9eb6d2c9bf 0	2.txt
+```
+
+
+### index 暂存区
+
+```bash-session
+$ git init test && cd test && echo 123 | tee 1.txt 2.txt
+
+{{< text fg="yellow" >}}[此时 .git/index 还不存在]{{< /text >}}
+$ rm .git/index
+rm: cannot remove '.git/index': No such file or directory
+$ git ls-files -s
+无输出
+$ git status
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	{{< text fg="red" >}}1.txt{{< /text >}}
+	{{< text fg="red" >}}2.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[添加文件到暂存区，也就是更新 .git/index]{{< /text >}}
+$ git add -A
+$ git ls-files -s
+100644 190a18037c64c43e6b11489df4bf0b9eb6d2c9bf 0	1.txt
+100644 190a18037c64c43e6b11489df4bf0b9eb6d2c9bf 0	2.txt
+$ git status
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	{{< text fg="green" >}}new file:   1.txt{{< /text >}}
+	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[删除 .git/index 后，会恢复到最初的状态]{{< /text >}}
+$ rm .git/index
+$ git ls-files -s
+无输出
+$ git status
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	{{< text fg="red" >}}1.txt{{< /text >}}
+	{{< text fg="red" >}}2.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[blob 对象仍存在，也就是说暂存区不包含文件内容，暂存区包含的是已跟踪文件的列表（记录了文件的哈希值、文件模式等信息）]{{< /text >}}
+$ git ls-files -s
+无输出
+$ tree .git/objects -A
 .git/objects
-├── 14
-│   └── 8922302de3ea7c41efb9597f6d64f36a30eb37
-├── {{< text fg="red" >}}19{{< /text >}}
-│   └── {{< text fg="red" >}}0a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}
-├── 8e
-│   └── c76af43da31ed0f5450c3a853a7fc95aecf139
+├── 19
+│   └── 0a18037c64c43e6b11489df4bf0b9eb6d2c9bf
 ├── info
 └── pack
-$ git cat-file -t {{< text >}}1489{{< /text >}} && git cat-file -p {{< text >}}1489{{< /text >}}
-tree
-100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	1.txt
-100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	2.txt
 $ git cat-file -t 190a && git cat-file -p 190a
 blob
 123
 ```
 
+小结：
+
+1. index 就是下一次 git commit 将要创建的树（Tree）的 “预演”。
+2. 以 index 作为参照，可以查看工作区有哪些已修改但未暂存的变化。
+3. 以 HEAD（当前分支最新提交）作为参照，可以查看 index 中有哪些已暂存但未提交的变化。
 
 
+
+### HEAD 指针
+
+
+```bash-session
+$ git init test && cd test && echo 1 > 1.txt && git add -A && git commit -m "1st commit"
+
+{{< text fg="yellow" >}}[HEAD 指向当前分支的最新一次 commit]{{< /text >}}
+$ grep --color '' .git/HEAD .git/refs/heads/*
+{{< text fg="purple" >}}.git/HEAD{{< /text >}}:ref: refs/heads/master
+{{< text fg="purple" >}}.git/refs/heads/master{{< /text >}}:f287aea16d69f4758c4f0c71333b3b183280ae6d
+$ git cat-file -t f287 && git cat-file -p f287
+commit
+tree 38fd29697b220f7e4ca15b044c3222eefe5afdc1
+author kingtuo123 <kingtuo123@foxmail.com> 1783417990 +0800
+committer kingtuo123 <kingtuo123@foxmail.com> 1783417990 +0800
+
+1st commit
+
+{{< text fg="yellow" >}}[创建并切换新分支后，HEAD 指向 new-branch，但 commit 的哈希值不变因为没有新的提交]{{< /text >}}
+$ git switch -c "new-branch"
+Switched to a new branch 'new-branch'
+$ grep --color '' .git/HEAD .git/refs/heads/*
+{{< text fg="purple" >}}.git/HEAD{{< /text >}}:ref: refs/heads/new-branch
+{{< text fg="purple" >}}.git/refs/heads/master{{< /text >}}:f287aea16d69f4758c4f0c71333b3b183280ae6d
+{{< text fg="purple" >}}.git/refs/heads/new-branch{{< /text >}}:f287aea16d69f4758c4f0c71333b3b183280ae6d
+
+{{< text fg="yellow" >}}[在新分支创建一个新提交，new-branch 的 commit 哈希值变化]{{< /text >}}
+$ echo 2 > 2.txt && git add -A && git commit -m "2nd commit"
+$ grep --color '' .git/HEAD .git/refs/heads/*
+{{< text fg="purple" >}}.git/HEAD{{< /text >}}:ref: refs/heads/new-branch
+{{< text fg="purple" >}}.git/refs/heads/master{{< /text >}}:f287aea16d69f4758c4f0c71333b3b183280ae6d
+{{< text fg="purple" >}}.git/refs/heads/new-branch{{< /text >}}:b074ad5d461edb24c45123c1029e61a5c641529b
+```
+
+HEAD 指向当前活动分支或某个 commit。
 
 
 
@@ -336,5 +413,29 @@ git restore --worktree 从 statge 恢复文件到工作树
 ## 暂存区（索引 / index）
 
 
+
+```bash-session
+$ git init test && cd test
+$ echo 123 | tee 1.txt 2.txt
+$ git add -A
+$ git commit -m "first commit"
+$ tree .git/objects
+.git/objects
+├── 14
+│   └── 8922302de3ea7c41efb9597f6d64f36a30eb37
+├── {{< text fg="red" >}}19{{< /text >}}
+│   └── {{< text fg="red" >}}0a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}
+├── 8e
+│   └── c76af43da31ed0f5450c3a853a7fc95aecf139
+├── info
+└── pack
+$ git cat-file -t {{< text >}}1489{{< /text >}} && git cat-file -p {{< text >}}1489{{< /text >}}
+tree
+100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	1.txt
+100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	2.txt
+$ git cat-file -t 190a && git cat-file -p 190a
+blob
+123
+```
 -->
 
