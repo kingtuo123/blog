@@ -243,8 +243,52 @@ $ grep --color '' .git/HEAD .git/refs/heads/*
 {{< text fg="purple" >}}.git/refs/heads/new-branch{{< /text >}}:b074ad5d461edb24c45123c1029e61a5c641529b
 ```
 
-HEAD 指向当前活动分支或某个 commit。
+{{< img src="head.svg" >}}
 
+
+
+### tag 标签对象
+
+
+```bash-session
+$ git init test && cd test && echo 1 > 1.txt && git add -A && git commit -m "1st commit"
+
+{{< text fg="yellow" >}}[在当前 HEAD 创建标签]{{< /text >}}
+$ git tag -a v1.0.0 -m "Release version 1.0.0"
+$ tree .git/objects/ .git/refs/tags/
+.git/objects/
+├── 38
+│   └── fd29697b220f7e4ca15b044c3222eefe5afdc1
+├── {{< text fg="purple" >}}76{{< /text >}}
+│   └── {{< text fg="purple" >}}5ab40617481a637a1f84ceb6d760991b2dc720{{< /text >}}
+├── {{< text fg="green" >}}c3{{< /text >}}
+│   └── {{< text fg="green" >}}88239670a54d55963ed2b432df9fe6b7e63cff{{< /text >}}
+├── d0
+│   └── 0491fd7e5bb6fa28c517a0bb32b8b506539d4d
+├── info
+└── pack
+.git/refs/tags/
+└── {{< text fg="purple" >}}v1.0.0{{< /text >}}
+$ cat .git/refs/tags/v1.0.0 
+{{< text fg="purple" >}}765ab40617481a637a1f84ceb6d760991b2dc720{{< /text >}}
+$ git cat-file -t 765a && git cat-file -p 765a
+tag
+object {{< text fg="green" >}}c388239670a54d55963ed2b432df9fe6b7e63cff{{< /text >}}
+type commit
+tag v1.0.0
+tagger kingtuo123 <kingtuo123@foxmail.com> 1783484010 +0800
+
+Release version 1.0.0
+$ git cat-file -t c388 && git cat-file -p c388 
+commit
+tree 38fd29697b220f7e4ca15b044c3222eefe5afdc1
+author kingtuo123 <kingtuo123@foxmail.com> 1783483874 +0800
+committer kingtuo123 <kingtuo123@foxmail.com> 1783483874 +0800
+
+1st commit
+```
+
+{{< img src="tag.svg" >}}
 
 
 
