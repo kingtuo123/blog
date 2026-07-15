@@ -346,7 +346,7 @@ $ grep --color '' .git/refs/heads/*
 
 {{< img src="branch-merge-1.svg" >}}
 
-> 可以使用 `--no-ff` 参数强制创建一个新的合并 commit，从而保留分支合并的记录。
+> `git merge` 可以使用 `--no-ff` 参数强制创建一个新的合并 commit，从而保留分支合并的记录。
 
 
 
