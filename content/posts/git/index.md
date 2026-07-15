@@ -260,25 +260,31 @@ $ tree .git/objects/ .git/refs/tags/
 ├── 38
 │   └── fd29697b220f7e4ca15b044c3222eefe5afdc1
 ├── {{< text fg="purple" >}}76{{< /text >}}
-│   └── {{< text fg="purple" >}}5ab40617481a637a1f84ceb6d760991b2dc720{{< /text >}}
+│   └── {{< text fg="purple" >}}5ab40617481a637a1f84ceb6d760991b2dc720{{< /text >}}     {{< text fg="yellow" >}}[tag 对象]{{< /text >}}
 ├── {{< text fg="green" >}}c3{{< /text >}}
-│   └── {{< text fg="green" >}}88239670a54d55963ed2b432df9fe6b7e63cff{{< /text >}}
+│   └── {{< text fg="green" >}}88239670a54d55963ed2b432df9fe6b7e63cff{{< /text >}}     {{< text fg="yellow" >}}[commit 对象]{{< /text >}}
 ├── d0
 │   └── 0491fd7e5bb6fa28c517a0bb32b8b506539d4d
 ├── info
 └── pack
 .git/refs/tags/
 └── {{< text fg="purple" >}}v1.0.0{{< /text >}}
-$ cat .git/refs/tags/v1.0.0 
-{{< text fg="purple" >}}765ab40617481a637a1f84ceb6d760991b2dc720{{< /text >}}
+
+{{< text fg="yellow" >}}[查看 v1.0.0 标签指针]{{< /text >}}
+$ cat .git/refs/tags/v1.0.0
+765ab40617481a637a1f84ceb6d760991b2dc720           {{< text fg="yellow" >}}[指向 tag 对象]{{< /text >}}
+
+{{< text fg="yellow" >}}[查看 765ab... 类型及内容]{{< /text >}}
 $ git cat-file -t 765a && git cat-file -p 765a
 tag
-object {{< text fg="green" >}}c388239670a54d55963ed2b432df9fe6b7e63cff{{< /text >}}
+object c388239670a54d55963ed2b432df9fe6b7e63cff    {{< text fg="yellow" >}}[指向 commit 对象]{{< /text >}}
 type commit
 tag v1.0.0
 tagger kingtuo123 <kingtuo123@foxmail.com> 1783484010 +0800
 
 Release version 1.0.0
+
+{{< text fg="yellow" >}}[查看 c3882... 类型及内容]{{< /text >}}
 $ git cat-file -t c388 && git cat-file -p c388 
 commit
 tree 38fd29697b220f7e4ca15b044c3222eefe5afdc1
@@ -297,13 +303,100 @@ committer kingtuo123 <kingtuo123@foxmail.com> 1783483874 +0800
 
 
 
+## 分支
+
+### 快速合并
+
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "commit 1.txt"
+$ git switch -c "feature-1"
+$ echo 2 > 2.txt && git add -A && git commit -m "commit 2.txt"
+$ echo 3 > 3.txt && git add -A && git commit -m "commit 3.txt"
+$ ls
+1.txt  2.txt  3.txt
+
+{{< text fg="yellow" >}}[合并前]{{< /text >}}
+$ git switch master
+$ ls
+1.txt
+$ git log --all --graph --oneline --decorate
+* 320e2ee (feature-1) commit 3.txt
+* c191532 commit 2.txt
+* a4d197d (HEAD -> master) commit 1.txt
+$ grep --color '' .git/refs/heads/*
+{{< text fg="purple" >}}.git/refs/heads/feature-1{{< /text >}}:320e2ee045cedcbec1f5770e3937c88d0cce2312
+{{< text fg="purple" >}}.git/refs/heads/master{{< /text >}}:a4d197dfad3d82071f28fa86f6b9b6f40314cfa9
+
+{{< text fg="yellow" >}}[合并后]{{< /text >}}
+$ git merge feature-1 -m "merge feature-1 to master"
+$ ls
+1.txt  2.txt  3.txt
+$ git log --all --graph --oneline --decorate
+* 320e2ee (HEAD -> master, feature-1) commit 3.txt
+* c191532 commit 2.txt
+* a4d197d commit 1.txt
+$ grep --color '' .git/refs/heads/*
+{{< text fg="purple" >}}.git/refs/heads/feature-1{{< /text >}}:320e2ee045cedcbec1f5770e3937c88d0cce2312
+{{< text fg="purple" >}}.git/refs/heads/master{{< /text >}}:320e2ee045cedcbec1f5770e3937c88d0cce2312
+```
+
+当 master 分支没有新 commit，feature-1 合并到 master 后并不会创建新的 commit，而是修改 master 指针。
+
+
+{{< img src="branch-merge-1.svg" >}}
+
+> 可以使用 `--no-ff` 参数强制创建一个新的合并 commit，从而保留分支合并的记录。
 
 
 
+### 普通合并
+
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "commit 1.txt"
+$ git branch "feature-1"
+$ echo 2 > 2.txt && git add -A && git commit -m "commit 2.txt"
+$ git switch "feature-1"
+$ echo 3 > 3.txt && git add -A && git commit -m "commit 3.txt"
+$ ls
+1.txt  3.txt
+
+{{< text fg="yellow" >}}[合并前]{{< /text >}}
+$ git switch master
+$ ls
+1.txt  2.txt
+$ git log --all --graph --oneline --decorate
+* f6c832f (feature-1) commit 3.txt
+| * f1a9a1f (HEAD -> master) commit 2.txt
+|/
+* 1795e59 commit 1.txt
+
+{{< text fg="yellow" >}}[合并后]{{< /text >}}
+$ git merge feature-1 -m "merge feature-1 to master"
+$ ls
+1.txt  2.txt  3.txt
+$ git log --all --graph --oneline --decorate
+*   8c14c2b (HEAD -> master) merge feature-1 to master
+|\
+| * f6c832f (feature-1) commit 3.txt
+* | f1a9a1f commit 2.txt
+|/
+* 1795e59 commit 1.txt
+$ git cat-file -p 8c14c2b
+tree 7eab585dfd08ca9f7524e71369236c074c9e4d93
+{{< text fg="red" >}}parent{{< /text >}} f1a9a1fb436b5afdf5fcda85ac65cf8e9742d882
+{{< text fg="red" >}}parent{{< /text >}} f6c832fafaed888114e05bcc134b249b96469b15
+author kingtuo123 <kingtuo123@foxmail.com> 1784126376 +0800
+committer kingtuo123 <kingtuo123@foxmail.com> 1784126376 +0800
+
+merge feature-1 to master
+```
+
+当 master 和 feature-1 分支都有新 commit 时，分支合并后的新 commit 有两个 parent 指针。
 
 
-
-
+{{< img src="branch-merge-2.svg" >}}
 
 
 
