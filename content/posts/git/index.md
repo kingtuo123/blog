@@ -401,6 +401,101 @@ merge feature-1 to master
 
 
 
+### 合并冲突
+
+```bash-session
+$ git init test && cd test
+$ echo "标题：合并冲突" > 1.txt && git add -A && git commit -m "first commit 1.txt"
+$ git branch "feature-1"
+
+{{< text fg="yellow" >}}[master 分支]{{< /text >}}
+$ echo "正文：master 分支提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ cat 1.txt
+标题：合并冲突
+正文：master 分支提交的内容
+
+{{< text fg="yellow" >}}[feature-1 分支]{{< /text >}}
+$ git switch "feature-1"
+$ echo "正文：feature-1 分支提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ cat 1.txt
+标题：合并冲突
+正文：feature-1 分支提交的内容
+
+{{< text fg="yellow" >}}[合并前 | master 暂存区文件]{{< /text >}}
+$ git switch master
+$ git ls-files --stage
+100644 baa89ed3dcde695109f9809cd2ee4b115c14f5f0 0	1.txt
+$ git cat-file -p baa89ed3dcde695109f9809cd2ee4b115c14f5f0
+标题：合并冲突
+正文：master 分支提交的内容
+
+{{< text fg="yellow" >}}[合并冲突 | master 暂存区文件]{{< /text >}}
+$ git merge feature-1 --no-ff -m "merge 1.txt from feature-1 to master"
+Auto-merging 1.txt
+CONFLICT (content): {{< text fg="red" >}}Merge conflict in 1.txt{{< /text >}}
+Automatic merge failed; fix conflicts and then commit the result.
+$ git ls-files --stage
+100644 b61ed4fb22945e8fbae9d4b865494d9da09160f3 1	1.txt    {{< text fg="yellow" >}}[共同祖先]{{< /text >}} 
+100644 baa89ed3dcde695109f9809cd2ee4b115c14f5f0 2	1.txt    {{< text fg="yellow" >}}[当前分支]{{< /text >}} 
+100644 583fb4cfc87c7610bb84b4b11b8f082ad1eedf32 3	1.txt    {{< text fg="yellow" >}}[被合并分支]{{< /text >}} 
+$ git cat-file -p b61ed
+标题：合并冲突
+$ git cat-file -p baa89
+标题：合并冲突
+正文：master 分支提交的内容
+$ git cat-file -p 583fb
+标题：合并冲突
+正文：feature-1 分支提交的内容
+
+{{< text fg="yellow" >}}[可以看到分支尚未合并]{{< /text >}}
+$ git log --all --graph --oneline --decorate
+* 3bdae2b (feature-1) update 1.txt
+| * 0994f55 (HEAD -> master) update 1.txt
+|/
+* 7f7bf32 first commit 1.txt
+```
+
+{{< notice class="green" >}}
+`git ls-files --stage` 命令输出格式说明：
+
+第 1 列：权限模式。
+
+第 2 列：Blob 对象哈希值。
+
+第 3 列：stage 编号（0 = 正常，1 = 共同祖先，2 = 当前分支，3 = 被合并分支）。
+
+第 4 列：文件名。
+{{< /notice >}}
+
+
+#### Git 目录变化
+
+当发生合并冲突时，`.git` 目录有以下变化：
+
+```bash-session
+$ ls -1 .git/{MERGE_HEAD,MERGE_MODE,MERGE_MSG,ORIG_HEAD,index}
+.git/MERGE_HEAD    → {{< text fg="yellow" >}}存放被合并分支 feature-1 顶端 commit 的哈希值，{{< /text >}}{{< text fg="red" >}}存在该文件就表示当前仓库处于合并冲突状态。{{< /text >}}
+.git/MERGE_MODE    → {{< text fg="yellow" >}}存放合并选项（如 --no-ff、--squash 等），供后续 git commit 完成合并时使用。{{< /text >}}
+.git/MERGE_MSG     → {{< text fg="yellow" >}}存放合并提交消息（git merge -m 选项的消息）。{{< /text >}}
+.git/ORIG_HEAD     → {{< text fg="yellow" >}}存放合并前 HEAD 指向的 commit 哈希值。用于 git merge --abort 回退或 git reset --merge ORIG_HEAD 恢复。{{< /text >}}
+.git/index         → {{< text fg="yellow" >}}暂存区：未冲突的文件仍以 stage 0 记录，{{< /text >}}{{< text fg="red" >}}发生冲突的文件则拆分成三个 stage 条目。{{< /text >}}
+
+$ for i in .git/{MERGE_HEAD,MERGE_MODE,MERGE_MSG,ORIG_HEAD}; do echo -e "\e[35m$i:\e[0m\n$(cat $i)\n"; done
+{{< text fg="purple" >}}.git/MERGE_HEAD:{{< /text >}}
+3bdae2b2b3f0317824758730734661dbdfda6d60
+
+{{< text fg="purple" >}}.git/MERGE_MODE:{{< /text >}}
+no-ff
+
+{{< text fg="purple" >}}.git/MERGE_MSG:{{< /text >}}
+merge 1.txt from feature-1 to master
+
+{{< text >}}# Conflicts:{{< /text >}}
+{{< text >}}#	1.txt{{< /text >}}
+
+{{< text fg="purple" >}}.git/ORIG_HEAD:{{< /text >}}
+0994f559d7ee216188310397c4752a643ed8a8fe
+```
 
 
 
@@ -408,11 +503,60 @@ merge feature-1 to master
 
 
 
+#### 解决冲突
+
+`<<<<<<<` 和 `>>>>>>>` 之间就是冲突的内容，手动编辑 `1.txt`，最后删除 `<<<<<<<`、`=======`、`>>>>>>>` 这些行：
+
+```text{ bar="1.txt" }
+标题：合并冲突
+<<<<<<< HEAD
+正文：master 分支提交的内容
+=======
+正文：feature-1 分支提交的内容
+>>>>>>> feature-1
+```
+
+编辑后如下：
+
+```text{ bar="1.txt" }
+标题：合并冲突
+正文：master + feature-1 合并冲突，手动编辑后的内容
+```
+
+最后再手动 commit：
+```bash-session
+$ git add 1.txt
+$ git commit -m "merge 1.txt from feature-1 to master"
+$ git log --all --graph --oneline --decorate
+*   9bf5dca (HEAD -> master) merge 1.txt from feature-1 to master
+|\
+| * 3bdae2b (feature-1) update 1.txt
+* | 0994f55 update 1.txt
+|/
+* 7f7bf32 first commit 1.txt
+```
 
 
 
 
+#### 撤销合并
 
+若合并冲突，回到合并前的状态：
+
+```bash-session
+$ git merge --abort
+```
+
+若合并完成，回到合并前的状态：
+
+```bash-session
+$ git reset --hard ORIG_HEAD
+```
+
+
+
+
+git merge --abort —— 等同于 git reset --merge ORIG_HEAD
 
 
 
