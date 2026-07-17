@@ -473,14 +473,14 @@ $ git log --all --graph --oneline --decorate
 当发生合并冲突时，`.git` 目录有以下变化：
 
 ```bash-session
-$ ls -1 .git/{MERGE_HEAD,MERGE_MODE,MERGE_MSG,ORIG_HEAD,index}
+$ ls -1 .git/{MERGE_*,ORIG_HEAD,index}
 .git/MERGE_HEAD    → {{< text fg="yellow" >}}存放被合并分支 feature-1 顶端 commit 的哈希值，{{< /text >}}{{< text fg="red" >}}存在该文件就表示当前仓库处于合并冲突状态。{{< /text >}}
 .git/MERGE_MODE    → {{< text fg="yellow" >}}存放合并选项（如 --no-ff、--squash 等），供后续 git commit 完成合并时使用。{{< /text >}}
 .git/MERGE_MSG     → {{< text fg="yellow" >}}存放合并提交消息（git merge -m 选项的消息）。{{< /text >}}
 .git/ORIG_HEAD     → {{< text fg="yellow" >}}存放合并前 HEAD 指向的 commit 哈希值。用于 git merge --abort 回退或 git reset --merge ORIG_HEAD 恢复。{{< /text >}}
 .git/index         → {{< text fg="yellow" >}}暂存区：未冲突的文件仍以 stage 0 记录，{{< /text >}}{{< text fg="red" >}}发生冲突的文件则拆分成三个 stage 条目。{{< /text >}}
 
-$ for i in .git/{MERGE_HEAD,MERGE_MODE,MERGE_MSG,ORIG_HEAD}; do echo -e "\e[35m$i:\e[0m\n$(cat $i)\n"; done
+$ for i in .git/{MERGE_*,ORIG_HEAD}; do echo -e "\e[35m$i:\e[0m\n$(<$i)\n"; done
 {{< text fg="purple" >}}.git/MERGE_HEAD:{{< /text >}}
 3bdae2b2b3f0317824758730734661dbdfda6d60
 
@@ -564,15 +564,262 @@ git merge --abort —— 等同于 git reset --merge ORIG_HEAD
 
 
 
+## 回退提交
+
+**`--soft`**
+
+更新 HEAD、分支指针。
+
+-----
+
+**`--mixed`**
+
+更新 HEAD、分支指针 + 重置暂存区。
+
+-----
+
+**`--hard`**
+
+更新 HEAD、分支指针 + 重置暂存区  + 重置工作目录（彻底重置，不保留任何修改）。
+
+-----
+
+**`--merge`**
+
+更新 HEAD、分支指针 + 重置暂存区  + 重置工作目录（保留未跟踪文件，若已跟踪文件有未暂存的更改 → 中止操作）。
+
+-----
+
+**`--keep`**
+
+更新 HEAD、分支指针 + 重置暂存区 + 重置工作目录（保留未跟踪文件、与被丢弃提交无关的修改，若包含与被丢弃提交有关的修改 → 中止操作）。
+
+-----
+
+### soft
+
+```bash-session
+$ git init test && cd test
+$ echo "第一次提交的内容" >  1.txt && git add -A && git commit -m "first commit 1.txt"
+$ echo "第二次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第三次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第四次提交的内容" >  2.txt && git add -A && git commit -m "first commit 2.txt"
+
+{{< text fg="yellow" >}}[重置前]{{< /text >}}
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+第四次提交的内容
+$ git ls-files --stage
+100644 99cf674e063a2805a2595c910af41d0dc90bb7f5 0	1.txt
+100644 bb2df640b55c1e18a8c6af5aa36f90459a1217b5 0	2.txt
+$ git log --all --graph --oneline --decorate
+* f469712 (HEAD -> master) first commit 2.txt
+* 2712469 update 1.txt
+* 28a8c20 update 1.txt
+* 9e810e1 first commit 1.txt
+
+{{< text fg="yellow" >}}[重置后 | 暂存区不变 | 工作目录不变]{{< /text >}}
+$ git reset --soft 9e810e1
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+第四次提交的内容
+$ git ls-files --stage
+100644 99cf674e063a2805a2595c910af41d0dc90bb7f5 0	1.txt
+100644 bb2df640b55c1e18a8c6af5aa36f90459a1217b5 0	2.txt
+$ git log --all --graph --oneline --decorate
+* 9e810e1 (HEAD -> master) first commit 1.txt
+$ git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	{{< text fg="green" >}}modified:   1.txt{{< /text >}}
+	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[暂存区没变，所以可以直接提交，相当于将几次提交 “压缩” 成一次]{{< /text >}}
+$ git commit -m "update 1.txt 2.txt"
+$ git log --all --graph --oneline --decorate
+* a22f8b4 (HEAD -> master) update 1.txt 2.txt
+* 9e810e1 first commit 1.txt
+```
+
+
+### mixed
+
+```bash-session
+$ git init test && cd test
+$ echo "第一次提交的内容" >  1.txt && git add -A && git commit -m "first commit 1.txt"
+$ echo "第二次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第三次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第四次提交的内容" >  2.txt && git add -A && git commit -m "first commit 2.txt"
+
+{{< text fg="yellow" >}}[重置前]{{< /text >}}
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+第四次提交的内容
+$ git ls-files --stage
+100644 99cf674e063a2805a2595c910af41d0dc90bb7f5 0	1.txt
+100644 bb2df640b55c1e18a8c6af5aa36f90459a1217b5 0	2.txt
+$ git log --all --graph --oneline --decorate
+* 7e8095d (HEAD -> master) first commit 2.txt
+* a628d7d update 1.txt
+* 6330fa9 update 1.txt
+* 2c589a9 first commit 1.txt
+
+{{< text fg="yellow" >}}[重置后 | 工作目录不变 | 暂存区改变]{{< /text >}}
+$ git reset --mixed 2c589a9
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+第四次提交的内容
+$ git ls-files --stage
+100644 7e40a79316ae0753d11ae20a0c3458c040fd0ada 0	1.txt
+$ git cat-file -p 7e40a
+第一次提交的内容
+$ git log --all --graph --oneline --decorate
+* 2c589a9 (HEAD -> master) first commit 1.txt
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	{{< text fg="red" >}}2.txt{{< /text >}}
+```
 
 
 
+### merge
+
+**`git reset --merge <commit>`**
+
+重置索引和工作目录
+
+已跟踪文件有未暂存的更改，中止操作
+
+未跟踪文件，保留文件
+
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
+$ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
+$ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
+$ git log --all --graph --oneline --decorate
+$ git ls-files --stage
+```
+
+-----
+
+```bash-session
+$ git init test && cd test
+$ echo "第一次提交的内容" >  1.txt && git add -A && git commit -m "first commit 1.txt"
+$ echo "第二次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第三次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
+$ echo "第四次提交的内容" >  2.txt && git add -A && git commit -m "first commit 2.txt"
+
+{{< text fg="yellow" >}}[重置前]{{< /text >}}
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+第四次提交的内容
+$ git ls-files --stage
+100644 99cf674e063a2805a2595c910af41d0dc90bb7f5 0	1.txt
+100644 bb2df640b55c1e18a8c6af5aa36f90459a1217b5 0	2.txt
+$ git log --all --graph --oneline --decorate
+* 7e8095d (HEAD -> master) first commit 2.txt
+* a628d7d update 1.txt
+* 6330fa9 update 1.txt
+* 2c589a9 first commit 1.txt
+
+{{< text fg="yellow" >}}[修改文件]{{< /text >}}
+$ echo "重置前新增的内容" >> 1.txt
+$ echo "重置前新增的文件" >> 3.txt
+
+{{< text fg="yellow" >}}[重置后 | 暂存区改变 | 工作目录改变]{{< /text >}}
+$ git reset --merge 2257563
+$ cat 1.txt
+第一次提交的内容
+第二次提交的内容
+第三次提交的内容
+$ cat 2.txt
+cat: 2.txt: No such file or directory
+$ git ls-files --stage
+100644 7e40a79316ae0753d11ae20a0c3458c040fd0ada 0	1.txt
+$ git cat-file -p 7e40a
+第一次提交的内容
+$ git log --all --graph --oneline --decorate
+* 2257563 (HEAD -> master) first commit 1.txt
+$ git status
+On branch master
+nothing to commit, working tree clean
+```
 
 
+### keep
 
+适用场景：你想丢弃几个最近的提交，但要保留工作区里还有不想丢失的、与这些提交无关的修改。
 
+git ls-tree -r HEAD^^
 
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
+$ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
+$ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
+$ git log --all --graph --oneline --decorate
+* f60a562 (HEAD -> master) C3: add 3.txt
+* 6d4184a C2: add 2.txt
+* 9db5aa5 C1: add 1.txt
+$ git ls-files --stage
+{{< text fg="red" >}}100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 0	1.txt{{< /text >}}
+100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
 
+{{< text fg="yellow" >}}[修改 1.txt]{{< /text >}}
+$ echo "文件 1.txt 与 C2 和 C3 提交无关" >> 1.txt
+$ git status
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[回退到 C1 提交 | 如果修改的是 2.txt 或 3.txt 这一步会报错]{{< /text >}}
+$ git reset --keep HEAD^^
+$ git log --all --graph --oneline --decorate
+* 6276ba9 (HEAD -> master) C1: add 1.txt
+
+{{< text fg="yellow" >}}[暂存区被重置 | 工作区被重置（但 1.txt 中已修改的内容仍保留）]{{< /text >}}
+$ git ls-files --stage
+{{< text fg="red" >}}100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 0	1.txt{{< /text >}}
+$ ls
+1.txt
+$ cat 1.txt
+1
+文件 1.txt 与 C2 和 C3 提交无关
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
+```
+
+再写一个报错的例子。
 
 
 
