@@ -800,6 +800,12 @@ Changes not staged for commit:
   (use "git restore <file>..." to discard changes in working directory)
 	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
 
+{{< text fg="yellow" >}}[回退后的索引]{{< /text >}}
+$ git ls-files --stage
+100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+
 {{< text fg="yellow" >}}[3.txt 的更改被保留，1.txt 和 4.txt 均回退，2.txt 被删除]{{< /text >}}
 $ grep --color '' *.txt
 {{< text fg="purple" >}}1.txt:{{< /text >}} world
@@ -807,7 +813,80 @@ $ grep --color '' *.txt
 {{< text fg="purple" >}}4.txt:{{< /text >}} 4
 ```
 
+Git 解析 `ORIG_HEAD`，遍历其树对象中的文件：
+
+```text{ nonebg=false }
+100644 blob cc628ccd10742baea8241c5924df992b5c019f71	1.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad	4.txt
+```
+
+暂存区（索引）中的文件：
+
+```text{ nonebg=false }
+100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 1	1.txt
+100644 cc628ccd10742baea8241c5924df992b5c019f71 2	1.txt
+100644 ce013625030ba8dba906f756967f9e9ca394464a 3	1.txt
+100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+```
+
+更新索引
+
+冲突文件 `1.txt`
+
+`ORIG_HEAD` 中存在 `blob cc628... 1.txt`，Git 会删除索引中 `1.txt` 的所有 stage 1/2/3 冲突记录，并添加 `cc628... 1.txt` stage 0 记录。
+
+```text
+100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
+100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+```
+
 -----
+
+文件 `2.txt`
+
+`ORIG_HEAD` 中不存在 `2.txt` 的记录，Git 会删除索引中 `2.txt` 的记录。
+
+-----
+
+文件 `3.txt`
+
+`ORIG_HEAD` 中的 `blob 00750... 3.txt` 与索引中 `3.txt` 的哈希值相同，无需修改。
+
+-----
+
+文件 `4.txt`
+
+`ORIG_HEAD` 中的 `blob b8626... 4.txt` 与索引中 `4.txt` 的哈希值相同，无需修改。
+
+-----
+
+更新后的索引
+
+```text
+100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+```
+
+更新工作区
+
+`--merge` 合并策略：
+
+工作区中 `1.txt` 与新索引存在差异，读取对应的 blob 重写工作区中的 `1.txt`
+
+`2.txt` 不存在，删除
+
+`3.txt` 与 索引有差异，不更改
+
+`4.txt` 与索引无差异，退回
+
+
+
 
 
 ### keep
