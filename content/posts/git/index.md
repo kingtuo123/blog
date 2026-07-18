@@ -706,17 +706,32 @@ Untracked files:
 
 **`git reset --merge <commit>`**
 
-重置索引和工作目录
+- 移动 `HEAD` 与分支指针 → 
+- 重置暂存区 → 
+- 将 `<commit>` 与 `HEAD` 之间有差异的文件更新到工作区，保留暂存区和工作区之间存在差异的文件（未暂存的更改）。
 
-已跟踪文件有未暂存的更改，中止操作
-
-未跟踪文件，保留文件
+{{< notice class="yellow">}}
+如果 `<commit>` 和暂存区之间存在差异的文件有未暂存的更改，重置操作将中止。 *`工作区 ≠ 暂存区`*，则中止回退。
+{{< /notice >}}
 
 ```bash-session
 $ git init test && cd test
 $ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
+$ git branch feature-1
+
+$ echo "hello" >> 1.txt
 $ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
+
+$ git switch feature-1
+$ echo "world" >> 1.txt
 $ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
+
+
+$ git switch master
+$ git merge feature-1 -m "merge feature-1 to master"
+
+
+
 $ git log --all --graph --oneline --decorate
 $ git ls-files --stage
 ```
@@ -772,45 +787,44 @@ nothing to commit, working tree clean
 
 ### keep
 
-适用场景：你想丢弃几个最近的提交，但要保留工作区里还有不想丢失的、与这些提交无关的修改。
+**`git reset --keep <commit>`**
 
-git ls-tree -r HEAD^^
+- 效果：移动 `HEAD` 与分支指针 → 重置暂存区 → 将 `<commit>` 与 `HEAD` 之间有差异的文件更新到工作区，保留无差异文件（不更新）。
+- 效果：移动 HEAD 与分支指针 → 重置暂存区 → 重置工作区（保留 *`<commit>`* 与 *`HEAD`* 之间无差异文件的本地修改）。
+- 适用场景：你想丢弃几个最近的提交，但要保留工作区里还有不想丢失的、与这些提交无关的修改。
+
+{{< notice class="yellow">}}
+如果在 *`<commit>`* 和 *`HEAD`* 之间存在差异的文件有本地修改，则中止回退。
+{{< /notice >}}
 
 ```bash-session
 $ git init test && cd test
 $ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
 $ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
 $ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
-$ git log --all --graph --oneline --decorate
-* f60a562 (HEAD -> master) C3: add 3.txt
-* 6d4184a C2: add 2.txt
-* 9db5aa5 C1: add 1.txt
-$ git ls-files --stage
-{{< text fg="red" >}}100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 0	1.txt{{< /text >}}
-100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
 
-{{< text fg="yellow" >}}[修改 1.txt]{{< /text >}}
-$ echo "文件 1.txt 与 C2 和 C3 提交无关" >> 1.txt
+{{< text fg="yellow" >}}[文件 1.txt 在 C1 和 C3 的提交中没有差异，因此回退 C3 -> C1 时 1.txt 在工作区的修改可以被保留]{{< /text >}}
+$ git ls-tree -r HEAD
+{{< text fg="red" >}}100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d	1.txt{{< /text >}}
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f	2.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
+$ git ls-tree -r HEAD^^
+{{< text fg="red" >}}100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d	1.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[C1 和 C3 提交中有差异的文件是 2.txt 和 3.txt，所以这两个文件不能有本地修改，否则会报错]{{< /text >}}
+$ echo "文件 1.txt 修改后的内容" > 1.txt
 $ git status
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
 	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
 
-{{< text fg="yellow" >}}[回退到 C1 提交 | 如果修改的是 2.txt 或 3.txt 这一步会报错]{{< /text >}}
+{{< text fg="yellow" >}}[回退到 C1 提交]{{< /text >}}
 $ git reset --keep HEAD^^
-$ git log --all --graph --oneline --decorate
-* 6276ba9 (HEAD -> master) C1: add 1.txt
 
-{{< text fg="yellow" >}}[暂存区被重置 | 工作区被重置（但 1.txt 中已修改的内容仍保留）]{{< /text >}}
-$ git ls-files --stage
-{{< text fg="red" >}}100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 0	1.txt{{< /text >}}
-$ ls
-1.txt
+{{< text fg="yellow" >}}[文件 1.txt 中的修改被保留]{{< /text >}}
 $ cat 1.txt
-1
-文件 1.txt 与 C2 和 C3 提交无关
+文件 1.txt 修改后的内容
 $ git status
 On branch master
 Changes not staged for commit:
@@ -818,11 +832,6 @@ Changes not staged for commit:
   (use "git restore <file>..." to discard changes in working directory)
 	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
 ```
-
-再写一个报错的例子。
-
-
-
 
 
 
