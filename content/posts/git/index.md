@@ -716,73 +716,98 @@ Untracked files:
 
 ```bash-session
 $ git init test && cd test
-$ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
-$ git branch feature-1
+$ echo 1 > 1.txt && git add -A && git commit -m "add 1.txt"
 
-$ echo "hello" >> 1.txt
-$ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
-
-$ git switch feature-1
-$ echo "world" >> 1.txt
-$ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
-
+$ git switch -c feature-1
+$ echo "hello" > 1.txt
+$ echo 2 > 2.txt && git add -A && git commit -m "update 1.txt & add 2.txt"
 
 $ git switch master
-$ git merge feature-1 -m "merge feature-1 to master"
-
-
+$ echo "world" > 1.txt
+$ echo 3 > 3.txt && echo 4 > 4.txt && git add -A && git commit -m "update 1.txt & add 3.txt & add 4.txt"
 
 $ git log --all --graph --oneline --decorate
+* d9f0f72 (HEAD -> master) update 1.txt & add 3.txt & add 4.txt
+| * 02181ef (feature-1) update 1.txt & add 2.txt
+|/
+* a9c378d add 1.txt
+
+{{< text fg="yellow" >}}[合并 feature-1 到 master，文件 1.txt 冲突]{{< /text >}}
+$ git merge feature-1 -m "merge feature-1 to master"
+Auto-merging 1.txt
+CONFLICT (content): Merge conflict in 1.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+{{< text fg="yellow" >}}[ORIG_HEAD 和 HEAD 相同]{{< /text >}}
+$ grep --color '' .git/{HEAD,refs/heads/master,ORIG_HEAD}
+{{< text fg="purple" >}}.git/HEAD:{{< /text >}} ref: refs/heads/master
+{{< text fg="purple" >}}.git/refs/heads/master:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
+{{< text fg="purple" >}}.git/ORIG_HEAD:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
+
+{{< text fg="yellow" >}}[ORIG_HEAD 中的 blob ]{{< /text >}}
+$ git ls-tree -r ORIG_HEAD
+100644 blob cc628ccd10742baea8241c5924df992b5c019f71	1.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad	4.txt
+
+{{< text fg="yellow" >}}[暂存区（索引）]{{< /text >}}
 $ git ls-files --stage
+100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 1	1.txt
+100644 cc628ccd10742baea8241c5924df992b5c019f71 2	1.txt
+100644 ce013625030ba8dba906f756967f9e9ca394464a 3	1.txt
+100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+
+{{< text fg="yellow" >}}[修改 3.txt 和 4.txt]{{< /text >}}
+$ echo "保留的更改" > 3.txt
+$ echo "不保留的更改" > 4.txt && git add 4.txt
+$ git status
+On branch master
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
+	{{< text fg="green" >}}modified:   4.txt{{< /text >}}
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	{{< text fg="red" >}}both modified:   1.txt{{< /text >}}
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
+$ grep --color '' *.txt
+{{< text fg="purple" >}}1.txt:{{< /text >}} <<<<<<< HEAD
+{{< text fg="purple" >}}1.txt:{{< /text >}} world
+{{< text fg="purple" >}}1.txt:{{< /text >}} =======
+{{< text fg="purple" >}}1.txt:{{< /text >}} hello
+{{< text fg="purple" >}}1.txt:{{< /text >}} >>>>>>> feature-1
+{{< text fg="purple" >}}1.txt:{{< /text >}} world
+{{< text fg="purple" >}}2.txt:{{< /text >}} 2
+{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
+{{< text fg="purple" >}}4.txt:{{< /text >}} 不保留的更改
+
+{{< text fg="yellow" >}}[回退合并]{{< /text >}}
+$ git reset --merge ORIG_HEAD
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[3.txt 的更改被保留，1.txt 和 4.txt 均回退，2.txt 被删除]{{< /text >}}
+$ grep --color '' *.txt
+{{< text fg="purple" >}}1.txt:{{< /text >}} world
+{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
+{{< text fg="purple" >}}4.txt:{{< /text >}} 4
 ```
 
 -----
-
-```bash-session
-$ git init test && cd test
-$ echo "第一次提交的内容" >  1.txt && git add -A && git commit -m "first commit 1.txt"
-$ echo "第二次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
-$ echo "第三次提交的内容" >> 1.txt && git add -A && git commit -m "update 1.txt"
-$ echo "第四次提交的内容" >  2.txt && git add -A && git commit -m "first commit 2.txt"
-
-{{< text fg="yellow" >}}[重置前]{{< /text >}}
-$ cat 1.txt
-第一次提交的内容
-第二次提交的内容
-第三次提交的内容
-$ cat 2.txt
-第四次提交的内容
-$ git ls-files --stage
-100644 99cf674e063a2805a2595c910af41d0dc90bb7f5 0	1.txt
-100644 bb2df640b55c1e18a8c6af5aa36f90459a1217b5 0	2.txt
-$ git log --all --graph --oneline --decorate
-* 7e8095d (HEAD -> master) first commit 2.txt
-* a628d7d update 1.txt
-* 6330fa9 update 1.txt
-* 2c589a9 first commit 1.txt
-
-{{< text fg="yellow" >}}[修改文件]{{< /text >}}
-$ echo "重置前新增的内容" >> 1.txt
-$ echo "重置前新增的文件" >> 3.txt
-
-{{< text fg="yellow" >}}[重置后 | 暂存区改变 | 工作目录改变]{{< /text >}}
-$ git reset --merge 2257563
-$ cat 1.txt
-第一次提交的内容
-第二次提交的内容
-第三次提交的内容
-$ cat 2.txt
-cat: 2.txt: No such file or directory
-$ git ls-files --stage
-100644 7e40a79316ae0753d11ae20a0c3458c040fd0ada 0	1.txt
-$ git cat-file -p 7e40a
-第一次提交的内容
-$ git log --all --graph --oneline --decorate
-* 2257563 (HEAD -> master) first commit 1.txt
-$ git status
-On branch master
-nothing to commit, working tree clean
-```
 
 
 ### keep
