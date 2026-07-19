@@ -702,192 +702,6 @@ Untracked files:
 
 
 
-### merge
-
-**`git reset --merge <commit>`**
-
-- 移动 `HEAD` 与分支指针 → 
-- 重置暂存区 → 
-- 将 `<commit>` 与 `HEAD` 之间有差异的文件更新到工作区，保留暂存区和工作区之间存在差异的文件（未暂存的更改）。
-
-{{< notice class="yellow">}}
-如果 `<commit>` 和暂存区之间存在差异的文件有未暂存的更改，重置操作将中止。 *`工作区 ≠ 暂存区`*，则中止回退。
-{{< /notice >}}
-
-```bash-session
-$ git init test && cd test
-$ echo 1 > 1.txt && git add -A && git commit -m "add 1.txt"
-
-$ git switch -c feature-1
-$ echo "hello" > 1.txt
-$ echo 2 > 2.txt && git add -A && git commit -m "update 1.txt & add 2.txt"
-
-$ git switch master
-$ echo "world" > 1.txt
-$ echo 3 > 3.txt && echo 4 > 4.txt && git add -A && git commit -m "update 1.txt & add 3.txt & add 4.txt"
-
-$ git log --all --graph --oneline --decorate
-* d9f0f72 (HEAD -> master) update 1.txt & add 3.txt & add 4.txt
-| * 02181ef (feature-1) update 1.txt & add 2.txt
-|/
-* a9c378d add 1.txt
-
-{{< text fg="yellow" >}}[合并 feature-1 到 master，文件 1.txt 冲突]{{< /text >}}
-$ git merge feature-1 -m "merge feature-1 to master"
-Auto-merging 1.txt
-CONFLICT (content): Merge conflict in 1.txt
-Automatic merge failed; fix conflicts and then commit the result.
-
-{{< text fg="yellow" >}}[ORIG_HEAD 和 HEAD 相同]{{< /text >}}
-$ grep --color '' .git/{HEAD,refs/heads/master,ORIG_HEAD}
-{{< text fg="purple" >}}.git/HEAD:{{< /text >}} ref: refs/heads/master
-{{< text fg="purple" >}}.git/refs/heads/master:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
-{{< text fg="purple" >}}.git/ORIG_HEAD:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
-
-{{< text fg="yellow" >}}[ORIG_HEAD 中的 blob ]{{< /text >}}
-$ git ls-tree -r ORIG_HEAD
-100644 blob cc628ccd10742baea8241c5924df992b5c019f71	1.txt
-100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
-100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad	4.txt
-
-{{< text fg="yellow" >}}[暂存区（索引）]{{< /text >}}
-$ git ls-files --stage
-100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 1	1.txt
-100644 cc628ccd10742baea8241c5924df992b5c019f71 2	1.txt
-100644 ce013625030ba8dba906f756967f9e9ca394464a 3	1.txt
-100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
-100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
-
-{{< text fg="yellow" >}}[修改 3.txt 和 4.txt]{{< /text >}}
-$ echo "保留的更改" > 3.txt
-$ echo "不保留的更改" > 4.txt && git add 4.txt
-$ git status
-On branch master
-You have unmerged paths.
-  (fix conflicts and run "git commit")
-  (use "git merge --abort" to abort the merge)
-
-Changes to be committed:
-	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
-	{{< text fg="green" >}}modified:   4.txt{{< /text >}}
-
-Unmerged paths:
-  (use "git add <file>..." to mark resolution)
-	{{< text fg="red" >}}both modified:   1.txt{{< /text >}}
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
-$ grep --color '' *.txt
-{{< text fg="purple" >}}1.txt:{{< /text >}} <<<<<<< HEAD
-{{< text fg="purple" >}}1.txt:{{< /text >}} world
-{{< text fg="purple" >}}1.txt:{{< /text >}} =======
-{{< text fg="purple" >}}1.txt:{{< /text >}} hello
-{{< text fg="purple" >}}1.txt:{{< /text >}} >>>>>>> feature-1
-{{< text fg="purple" >}}1.txt:{{< /text >}} world
-{{< text fg="purple" >}}2.txt:{{< /text >}} 2
-{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
-{{< text fg="purple" >}}4.txt:{{< /text >}} 不保留的更改
-
-{{< text fg="yellow" >}}[回退合并]{{< /text >}}
-$ git reset --merge ORIG_HEAD
-$ git status
-On branch master
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
-
-{{< text fg="yellow" >}}[回退后的索引]{{< /text >}}
-$ git ls-files --stage
-100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
-100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
-
-{{< text fg="yellow" >}}[3.txt 的更改被保留，1.txt 和 4.txt 均回退，2.txt 被删除]{{< /text >}}
-$ grep --color '' *.txt
-{{< text fg="purple" >}}1.txt:{{< /text >}} world
-{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
-{{< text fg="purple" >}}4.txt:{{< /text >}} 4
-```
-
-Git 解析 `ORIG_HEAD`，遍历其树对象中的文件：
-
-```text{ nonebg=false }
-100644 blob cc628ccd10742baea8241c5924df992b5c019f71	1.txt
-100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
-100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad	4.txt
-```
-
-暂存区（索引）中的文件：
-
-```text{ nonebg=false }
-100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 1	1.txt
-100644 cc628ccd10742baea8241c5924df992b5c019f71 2	1.txt
-100644 ce013625030ba8dba906f756967f9e9ca394464a 3	1.txt
-100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
-100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
-```
-
-更新索引
-
-冲突文件 `1.txt`
-
-`ORIG_HEAD` 中存在 `blob cc628... 1.txt`，Git 会删除索引中 `1.txt` 的所有 stage 1/2/3 冲突记录，并添加 `cc628... 1.txt` stage 0 记录。
-
-```text
-100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
-100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
-100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
-```
-
------
-
-文件 `2.txt`
-
-`ORIG_HEAD` 中不存在 `2.txt` 的记录，Git 会删除索引中 `2.txt` 的记录。
-
------
-
-文件 `3.txt`
-
-`ORIG_HEAD` 中的 `blob 00750... 3.txt` 与索引中 `3.txt` 的哈希值相同，无需修改。
-
------
-
-文件 `4.txt`
-
-`ORIG_HEAD` 中的 `blob b8626... 4.txt` 与索引中 `4.txt` 的哈希值相同，无需修改。
-
------
-
-更新后的索引
-
-```text
-100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
-100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
-100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
-```
-
-更新工作区
-
-`--merge` 合并策略：
-
-工作区中 `1.txt` 与新索引存在差异，读取对应的 blob 重写工作区中的 `1.txt`
-
-`2.txt` 不存在，删除
-
-`3.txt` 与 索引有差异，不更改
-
-`4.txt` 与索引无差异，退回
-
-
-
-
 
 ### keep
 
@@ -936,6 +750,139 @@ Changes not staged for commit:
   (use "git restore <file>..." to discard changes in working directory)
 	{{< text fg="red" >}}modified:   1.txt{{< /text >}}
 ```
+
+
+
+
+
+
+
+### merge
+
+**`git reset --merge <commit>`**
+
+- 移动 `HEAD` 与分支指针 → 
+- 重置暂存区 → 
+- 将 `<commit>` 与 `HEAD` 之间有差异的文件更新到工作区，保留暂存区和工作区之间存在差异的文件（未暂存的更改）。
+
+{{< notice class="yellow">}}
+如果 `<commit>` 和暂存区之间存在差异的文件有未暂存的更改，重置操作将中止。 *`工作区 ≠ 暂存区`*，则中止回退。
+{{< /notice >}}
+
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "add 1.txt"
+
+$ git switch -c feature-1
+$ echo "hello" > 1.txt
+$ echo 2 > 2.txt && git add -A && git commit -m "update 1.txt & add 2.txt"
+
+$ git switch master
+$ echo "world" > 1.txt
+$ echo 3 > 3.txt && echo 4 > 4.txt && git add -A && git commit -m "update 1.txt & add 3.txt & add 4.txt"
+
+$ git log --all --graph --oneline --decorate
+* d9f0f72 (HEAD -> master) update 1.txt & add 3.txt & add 4.txt
+| * 02181ef (feature-1) update 1.txt & add 2.txt
+|/
+* a9c378d add 1.txt
+
+{{< text fg="yellow" >}}[合并 feature-1 到 master，文件 1.txt 冲突]{{< /text >}}
+$ git merge feature-1 -m "merge feature-1 to master"
+Auto-merging 1.txt
+CONFLICT (content): Merge conflict in 1.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+{{< text fg="yellow" >}}[修改 3.txt 和 4.txt]{{< /text >}}
+$ echo "保留的更改" > 3.txt
+$ echo "不保留的更改" > 4.txt && git add 4.txt
+$ git status
+On branch master
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
+	{{< text fg="green" >}}modified:   4.txt{{< /text >}}
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	{{< text fg="red" >}}both modified:   1.txt{{< /text >}}
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
+$ grep --color '' *.txt
+{{< text fg="purple" >}}1.txt:{{< /text >}} <<<<<<< HEAD
+{{< text fg="purple" >}}1.txt:{{< /text >}} world
+{{< text fg="purple" >}}1.txt:{{< /text >}} =======
+{{< text fg="purple" >}}1.txt:{{< /text >}} hello
+{{< text fg="purple" >}}1.txt:{{< /text >}} >>>>>>> feature-1
+{{< text fg="purple" >}}2.txt:{{< /text >}} 2
+{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
+{{< text fg="purple" >}}4.txt:{{< /text >}} 不保留的更改
+
+{{< text fg="yellow" >}}[ORIG_HEAD 和 HEAD 相同]{{< /text >}}
+$ grep --color '' .git/{HEAD,refs/heads/master,ORIG_HEAD}
+{{< text fg="purple" >}}.git/HEAD:{{< /text >}} ref: refs/heads/master
+{{< text fg="purple" >}}.git/refs/heads/master:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
+{{< text fg="purple" >}}.git/ORIG_HEAD:{{< /text >}} d9f0f72609052e686d353b09424c0003d72bfe84
+
+{{< text fg="yellow" >}}[目标树 ORIG_HEAD]{{< /text >}}
+$ git ls-tree -r ORIG_HEAD
+100644 blob cc628ccd10742baea8241c5924df992b5c019f71	1.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba	3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad	4.txt
+
+{{< text fg="yellow" >}}[暂存区 index]{{< /text >}}
+$ git ls-files --stage
+100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 1	1.txt    {{< text fg="red"     >}}index == stage 1 (冲突条目){{< /text >}}
+100644 cc628ccd10742baea8241c5924df992b5c019f71 2	1.txt    {{< text fg="red"     >}}index == stage 2 (冲突条目){{< /text >}}
+100644 ce013625030ba8dba906f756967f9e9ca394464a 3	1.txt    {{< text fg="red"     >}}index == stage 3 (冲突条目){{< /text >}}
+100644 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f 0	2.txt    {{< text fg="yellow"  >}}index != 目标树  (不在目标树中){{< /text >}}
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt    {{< text fg="green"   >}}index == 目标树  (与目标树相同){{< /text >}}
+100644 ef7afd5a2a346a3865c398549e6c94011fbc318c 0	4.txt    {{< text fg="yellow"  >}}index != 目标树  (与目标树不同){{< /text >}}
+
+{{< text fg="yellow" >}}[重置]{{< /text >}}
+$ git reset --merge ORIG_HEAD
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	{{< text fg="red" >}}modified:   3.txt{{< /text >}}
+
+{{< text fg="yellow" >}}[重置后的 index]{{< /text >}}
+$ git ls-files --stage
+100644 cc628ccd10742baea8241c5924df992b5c019f71 0	1.txt
+100644 00750edc07d6415dcc07ae0351e9397b0222b7ba 0	3.txt
+100644 b8626c4cff2849624fb67f87cd0ad72b163671ad 0	4.txt
+
+{{< text fg="yellow" >}}[重置后的工作区]{{< /text >}}
+$ grep --color '' *.txt
+{{< text fg="purple" >}}1.txt:{{< /text >}} world
+{{< text fg="purple" >}}3.txt:{{< /text >}} 保留的更改
+{{< text fg="purple" >}}4.txt:{{< /text >}} 4
+```
+
+
+
+
+
+- **index == stage 1/2/3**
+  - 行为：删除 index 中 stage 1/2/3 的条目，替换为目标树中的 stage 0 条目，重置工作区文件
+  - 结果：`1.txt` → 重置
+- **`index == 目标树`**
+  - 行为：保留 index 条目，保留工作区文件
+  - 结果：`3.txt` → 不变
+- **`index != 目标树 && 工作区 == index`**
+  - 行为：重置 index 为目标版本，重置工作区文件
+  - 结果：`2.txt` → 删除，`4.txt` → 重置
+- **`index != 目标树 && 工作区 != index`**
+  - 行为：拒绝（中止操作）
+  - 结果：本例中没有
 
 
 
