@@ -626,7 +626,7 @@ $ git ls-files --stage
 100644 3b18e512dba79e4c8300dd08aeb37f8e728b8dad 0	3.txt
 $ git status
 On branch master
-Changes to be committed:
+Changes to be committed:    {{< text fg="yellow" >}}[待提交文件：index 与 HEAD 比较 -> 2.txt 和 3.txt 是新文件]{{< /text >}}
   (use "git restore --staged <file>..." to unstage)
 	{{< text fg="green" >}}new file:   2.txt{{< /text >}}
 	{{< text fg="green" >}}new file:   3.txt{{< /text >}}
@@ -678,7 +678,7 @@ $ git ls-files --stage
 100644 d00491fd7e5bb6fa28c517a0bb32b8b506539d4d 0	1.txt
 $ git status
 On branch master
-Untracked files:
+Untracked files:    {{< text fg="yellow" >}}[未跟踪文件：工作区与 index 比较 -> 2.txt 和 3.txt 未添加跟踪]{{< /text >}}
   (use "git add <file>..." to include in what will be committed)
 	{{< text fg="red" >}}2.txt{{< /text >}}
 	{{< text fg="red" >}}3.txt{{< /text  >}}
