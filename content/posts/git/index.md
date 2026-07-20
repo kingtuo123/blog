@@ -1018,8 +1018,82 @@ $ git log --all --graph --oneline --decorate
 * 78f3621 C1: add 1.txt
 ```
 
+### 冲突
 
+```bash-session
+$ git init test && cd test
+$ echo -e "line1\nline2\nline3" > 1.txt && git add -A && git commit -m "C1: add 1.txt"
+$ sed -i "2c new line2 of C2" 1.txt && git add -A && git commit -m "C2: update 1.txt"
+$ sed -i "2c new line2 of C3" 1.txt && git add -A && git commit -m "C3: update 1.txt"
 
+$ cat 1.txt
+line1
+new line2 of C3
+line3
+
+{{< text fg="yellow" >}}[撤销 C2 提交]{{< /text >}}
+$ git revert --no-edit HEAD^
+Auto-merging 1.txt
+CONFLICT (content): Merge conflict in 1.txt
+error: could not revert c82bc28... C2: update 1.txt
+```
+
+#### 目录变化
+
+发生冲突时，`.git` 目录有以下变化：
+
+```bash-session
+$ ls -1 .git/{REVERT*,MERGE*,index}
+.git/MERGE_MSG      {{< text fg="yellow">}}-> 存放 Revert 提交消息{{< /text >}}
+.git/REVERT_HEAD    {{< text fg="yellow">}}-> 指向正在被 revert 的那个提交{{< /text >}}
+.git/index          {{< text fg="yellow">}}-> 发生冲突的文件被拆分成三个 stage 条目{{< /text >}}
+
+$ git log --all --graph --oneline --decorate
+* a79a201 (HEAD -> master) C3: update 1.txt
+* {{< text fg="red">}}c82bc28{{< /text >}} C2: update 1.txt
+* 565097b C1: add 1.txt
+
+$ cat .git/REVERT_HEAD
+{{< text fg="red">}}c82bc28{{< /text >}}c6d712256153215314f1ee5c42f65a295
+
+$ git ls-files --stage
+100644 8f0e9c9ee94e69f8f27ce526c79151cc6230824b 1	1.txt
+100644 ac133abcc43f7c3149ac0850c2dc938cbe55d614 2	1.txt
+100644 83db48f84ec878fbfb30b46d16630e944e34f205 3	1.txt
+```
+
+#### 解决冲突
+
+```{ bar="1.txt" }
+line1
+<<<<<<< HEAD
+new line2 of C3
+=======
+line2
+>>>>>>> {{< text fg="red">}}parent of{{< /text >}} c82bc28 (C2: update 1.txt)
+line3
+```
+
+- `<<<<<<<` 与 `=======` 之间的是当前分支 HEAD 的内容。
+- `=======` 与 `>>>>>>>` 之间的是 revert 试图应用的旧内容（C2 的父提交，也就是 C1 中的 line2）。
+
+编辑完冲突文件后，再执行以下命令：
+
+```bash-session
+{{< text fg="yellow" >}}[标记冲突已解决]{{< /text >}}
+$ git add 1.txt
+
+{{< text fg="yellow" >}}[继续完成 revert]{{< /text >}}
+$ git revert --continue --no-edit
+```
+
+#### 放弃 Revert
+
+如果在解决冲突过程中想中止整个 revert 操作，回到执行前的干净状态：
+
+```bash-session
+$ git revert --abort
+```
 
 
 
