@@ -1,6 +1,8 @@
 server:
 	hugo server --minify --gc --buildDrafts --renderToMemory --disableFastRender --port 1414 --bind 0.0.0.0
 
+server-fastRender:
+	hugo server --minify --gc --buildDrafts --renderToMemory --port 1414 --bind 0.0.0.0
 
 server-disableLiveReload:
 	hugo server --minify --gc --buildDrafts --renderToMemory --disableFastRender --port 1414 --bind 0.0.0.0 --disableLiveReload

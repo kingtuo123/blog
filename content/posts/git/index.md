@@ -935,9 +935,88 @@ $ grep --color '' *.txt
 
 ```bash{ nonebg=true }
 git revert [选项] <commit>
-````
+```
+
+{{< table >}}
+|选项||
+|:--|:--|
+|`-e` `--edit`|在提交前打开编辑器，手动编辑提交信息（默认行为）。|
+|`--no-edit`|不打开编辑器，直接使用默认的提交信息。|
+|`-n` `--no-commit`|不自动创建提交，只将反向更改应用到工作区和暂存区。|
+|||
+|||
+{{< /table >}}
 
 
+撤销单个提交：
+
+```bash-session
+$ git init test && cd test
+$ echo 1 > 1.txt && git add -A && git commit -m "C1: add 1.txt"
+$ echo 2 > 2.txt && git add -A && git commit -m "C2: add 2.txt"
+$ echo 3 > 3.txt && git add -A && git commit -m "C3: add 3.txt"
+
+$ git log --all --graph --oneline --decorate
+* d830b1c (HEAD -> master) C3: add 3.txt
+* 20de97e C2: add 2.txt
+* 7af304f C1: add 1.txt
+
+$ ls
+1.txt  2.txt  3.txt
+
+{{< text fg="yellow" >}}[撤销 C1 提交]{{< /text >}}
+$ git revert --no-edit HEAD^^
+
+$ git log --all --graph --oneline --decorate
+* 67984ea (HEAD -> master) Revert "C1: add 1.txt" {{< text fg="yellow" >}}-> 通过创建一个新的提交来反向撤销指定提交引入的更改，从而安全地回退历史{{< /text >}}
+* d830b1c C3: add 3.txt
+* 20de97e C2: add 2.txt
+* 7af304f C1: add 1.txt
+
+$ ls
+2.txt  3.txt
+```
+
+撤销多个提交：
+
+```bash-session
+$ git reset --hard HEAD^
+
+{{< text fg="yellow" >}}[撤销 C1、C2 提交]{{< /text >}}
+$ git revert --no-edit HEAD^^ HEAD^
+
+$ git log --all --graph --oneline --decorate
+* f55cd09 (HEAD -> master) Revert "C2: add 2.txt" {{< text fg="yellow" >}}-> 每个被撤销的提交，都会生成一个独立的 Revert 提交{{< /text >}}
+* fdcac30 Revert "C1: add 1.txt"                  {{< text fg="yellow" >}}-> 每个被撤销的提交，都会生成一个独立的 Revert 提交{{< /text >}}
+* a209994 C3: add 3.txt
+* 5d0338c C2: add 2.txt
+* 78f3621 C1: add 1.txt
+```
+
+使用 `--no-commit` 整合多个 Revert 为一条提交：
+
+```bash-session
+$ git reset --hard HEAD^^
+
+{{< text fg="yellow" >}}[撤销 C1、C2 提交]{{< /text >}}
+$ git revert --no-edit --no-commit HEAD^^ HEAD^
+$ git log --all --graph --oneline --decorate
+* a209994 (HEAD -> master) C3: add 3.txt
+* 5d0338c C2: add 2.txt
+* 78f3621 C1: add 1.txt
+$ git status
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	{{< text fg="green" >}}deleted:    1.txt{{< /text >}}
+	{{< text fg="green" >}}deleted:    2.txt{{< /text >}}
+
+$ git commit -m "Revert C1 and C2"
+$ git log --all --graph --oneline --decorate
+* 5c8bf5f (HEAD -> master) Revert C1 and C2
+* a209994 C3: add 3.txt
+* 5d0338c C2: add 2.txt
+* 78f3621 C1: add 1.txt
+```
 
 
 
