@@ -7,7 +7,14 @@ draft: true
 
 
 
-## Git 对象模型
+
+
+
+
+
+## 基础
+
+### 对象模型
 
 
 **blob**
@@ -34,12 +41,7 @@ draft: true
 
 是一种将特定提交标记为具有某种特殊意义的方式。它通常用于将某些提交标记为特定的发布版本或类似的用途。
 
-
-
-## Git 目录结构
-
-
-### objects - 对象数据库
+-----
 
 ```bash-session
 $ git init test
@@ -297,13 +299,24 @@ committer kingtuo123 <kingtuo123@foxmail.com> 1783483874 +0800
 {{< img src="tag.svg" >}}
 
 
+### 相对引用
+
+相对引用允许你从一个已知的提交（**HEAD**、**分支名** 或 **标签**）出发，找到它的父提交，而不必使用哈希值。
+
+{{< table border=true thead=false >}}
+|        |         |         |                |
+|:-------|:--------|:--------|:---------------|
+|`HEAD^` |`HEAD^1` |`HEAD~1` |表示相对 HEAD 的第一个父提交|
+|`HEAD^^`|`HEAD^2` |`HEAD~2` |表示相对 HEAD 的第二个父提交|
+|        |         |         |以此类推        |
+{{< /table >}}
 
 
 
 
 
 
-## 分支
+## 分支合并
 
 ### 快速合并
 
@@ -468,7 +481,7 @@ $ git log --all --graph --oneline --decorate
 {{< /notice >}}
 
 
-#### Git 目录变化
+#### 目录变化
 
 当发生合并冲突时，`.git` 目录有以下变化：
 
@@ -564,7 +577,7 @@ git merge --abort —— 等同于 git reset --merge ORIG_HEAD
 
 
 
-## 回退提交
+## 回滚提交
 
 
 ```bash{ nonebg=true }
@@ -938,13 +951,11 @@ git revert [选项] <commit>
 ```
 
 {{< table >}}
-|选项||
-|:--|:--|
-|`-e` `--edit`|在提交前打开编辑器，手动编辑提交信息（默认行为）。|
-|`--no-edit`|不打开编辑器，直接使用默认的提交信息。|
-|`-n` `--no-commit`|不自动创建提交，只将反向更改应用到工作区和暂存区。|
-|||
-|||
+|选项              |                                                    |
+|:-----------------|:---------------------------------------------------|
+|`-e` `--edit`     |在提交前打开编辑器，手动编辑提交信息（默认行为）。  |
+|`--no-edit`       |不打开编辑器，直接使用默认的提交信息。              |
+|`-n` `--no-commit`|不自动创建提交，只将反向更改应用到工作区和暂存区。  |
 {{< /table >}}
 
 
@@ -1100,33 +1111,174 @@ $ git revert --abort
 
 
 
+## 变基
+
+```bash-session
+$ git init test && cd test
+$ echo "V1" >> 1.txt && git add -A && git commit -m "C1: add V1"
+$ echo "V2" >> 1.txt && git add -A && git commit -m "C2: add V2"
+
+$ git switch -c feature
+$ echo "feature A" >> 1.txt && git add -A && git commit -m "F1: add feature A"
+$ echo "feature B" >> 1.txt && git add -A && git commit -m "F2: add feature B"
+
+$ git switch master
+$ echo "V3" >> 1.txt && git add -A && git commit -m "C3: add V3"
+$ echo "V4" >> 1.txt && git add -A && git commit -m "C4: add V4"
+$ cat 1.txt
+V1
+V2
+V3
+V4
+
+$ git switch feature
+$ cat 1.txt
+V1
+V2
+feature A
+feature B
+
+{{< text fg="yellow" >}}[以 master 为新基底]{{< /text >}}
+$ git rebase master
+Auto-merging 1.txt
+CONFLICT (content): Merge conflict in 1.txt
+```
+
+```text{ bar="冲突文件:1.txt" }
+V1
+V2
+<<<<<<< HEAD
+V3
+V4
+=======
+feature A
+>>>>>>> 5c611ea (F1: add feature A)
+```
+
+```text{ bar="编辑后:1.txt" }
+V1
+V2
+V3
+V4
+feature A
+```
+
+```bash-session
+$ git add 1.txt
+$ git rebase --continue
+$ cat 1.txt
+V1
+V2
+V3
+V4
+feature A
+feature B
+$ git log --all --graph --oneline --decorate
+* 22ce511 (HEAD -> feature) F2: add feature B
+* 37c218f F1: add feature A
+* 142e47d (master) C4: add V4
+* dfe9662 C3: add V3
+* 0fd4f05 C2: add V2
+* 71060d4 C1: add V1
+```
+
+{{< img src="rebase.svg" >}}
 
 
 
 
+## cherry-pick
+
+用于将指定的一个或多个已有提交的变更，应用到当前分支的头部，相当于 “摘取” 某次提交。
+
+
+```bash-session
+$ git init test && cd test
+$ echo "V1" >> 1.txt && git add -A && git commit -m "C1: add V1"
+$ echo "V2" >> 1.txt && git add -A && git commit -m "C2: add V2"
+
+$ git switch -c feature
+$ echo "feature A" >> 1.txt && git add -A && git commit -m "F1: add feature A"
+$ echo "feature B" >> 1.txt && git add -A && git commit -m "F2: add feature B"
+
+$ git switch master
+$ echo "V3" >> 1.txt && git add -A && git commit -m "C3: add V3"
+$ echo "V4" >> 1.txt && git add -A && git commit -m "C4: add V4"
+$ cat 1.txt
+V1
+V2
+V3
+V4
+
+
+{{< text fg="yellow" >}}[将 F1 提交的更改应用到当前分支]{{< /text >}}
+$ git cherry-pick feature~1
+Auto-merging 1.txt
+CONFLICT (content): Merge conflict in 1.txt
+error: could not apply 2fdfcf3... F1: add feature A
+```
+
+```text{ bar="冲突文件:1.txt" }
+V1
+V2
+<<<<<<< HEAD
+V3
+V4
+=======
+feature A
+>>>>>>> e71fd18 (F1: add feature A)
+```
+
+```text{ bar="编辑后:1.txt" }
+V1
+V2
+V3
+V4
+feature A
+```
+
+```bash-session
+$ git add 1.txt
+$ git cherry-pick --continue
+$ cat 1.txt
+V1
+V2
+V3
+V4
+feature A
+$ git log --all --graph --oneline --decorate
+* 5f8bf04 (HEAD -> master) F1: add feature A
+* 44d27c0 C4: add V4
+* 3ab6b32 C3: add V3
+| * c4740f1 (feature) F2: add feature B
+| * e71fd18 F1: add feature A
+|/  
+* 549a938 C2: add V2
+* d7b6c1d C1: add V1
+```
+
+
+{{< img src="cherry-pick.svg" >}}
 
 
 
-<!--
 
-## 仓库初始化
+## 常用命令
+
+
+### init
 
 {{< table thead=false min-width="150" border=true >}}
 |                                        |                                            |
 |:---------------------------------------|:-------------------------------------------|
 |*`git init`*                            |在当前目录初始化。                          |
-|*`git init 目录`*                       |以指定目录名初始化                          |
+|*`git init 目录`*                       |以指定目录名初始化。                        |
 {{< /table >}}
 
 
 
 
-
-
-
-## 仓库配置
-
-### 配置文件
+### config
 
 {{< table border=true thead=false min-width="150,250" >}}
 |                 |               |                                         |
@@ -1138,13 +1290,7 @@ $ git revert --abort
 
 > 优先级从高到低为：本地（local）→ 全局（global）→ 系统（system）。
 
-
-
-
-
-### 配置命令
-
-{{< table thead=false min-width="400" border=false >}}
+{{< table thead=false min-width="400" border=true >}}
 |                                           |                    |
 |:------------------------------------------|:-------------------|
 |**全局配置**                               |                    |
@@ -1168,62 +1314,49 @@ $ git revert --abort
 
 
 
-## 工作树
-
-
-worktree：可以实际编辑和查看的文件目录树。
-
+### status
 
 {{< table thead=false min-width="400" border=true >}}
 |                                           |                    |
 |:------------------------------------------|:-------------------|
-|**查看状态**                         ||
 |*`git status`*                             |显示工作区与暂存区的状态。|
 |*`git status -s`*                          |以简短格式输出状态（用字母标记状态）。|
 |*`git status -b`*                          |在简短格式中同时显示当前分支与上游分支的跟踪信息。|
-|**添加更改**||
-|*`git add 文件`*                           |添加指定文件。|
-|*`git add 路径`*                           |添加指定路径下的所有 **新增、修改、删除**。|
-|*`git add -A`*                             |添加整个仓库下的所有 **新增、修改、删除**。|
-|*`git add -u`*                             |添加整个仓库下的所有 **修改、删除**。|
-|**撤销更改**                               ||
 {{< /table >}}
 
 
 
 
+### add
+
+{{< table thead=false min-width="400" border=true >}}
+|                                           |                    |
+|:------------------------------------------|:-------------------|
+|*`git add 文件`*                           |添加指定文件。|
+|*`git add 路径`*                           |添加指定路径下的所有 **新增、修改、删除**。|
+|*`git add -A`*                             |添加整个仓库下的所有 **新增、修改、删除**。|
+|*`git add -u`*                             |添加整个仓库下的所有 **修改、删除**。|
+{{< /table >}}
 
 
-git restore --worktree 从 statge 恢复文件到工作树
 
 
+### remote
 
-## 暂存区（索引 / index）
+**远程引用（remote reference）**
+
+- 作用：**只读指针**，用来记录你上一次与远程仓库通信时，远程仓库里分支、标签等所处的状态。
+- 存放位置：在本地 `.git/refs/remotes/<远程名>/` 下，例如 `.git/refs/remotes/origin/main`。
+- 表示形式：`<远程名>/<分支名>` ，比如 `origin/main`。
+- 如何更新：当你执行 `git fetch`、`git pull` 或 `git remote update` 时，Git 会询问远程仓库，并将对方的当前分支状态写入这些引用中。
 
 
-
-```bash-session
-$ git init test && cd test
-$ echo 123 | tee 1.txt 2.txt
-$ git add -A
-$ git commit -m "first commit"
-$ tree .git/objects
-.git/objects
-├── 14
-│   └── 8922302de3ea7c41efb9597f6d64f36a30eb37
-├── {{< text fg="red" >}}19{{< /text >}}
-│   └── {{< text fg="red" >}}0a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}
-├── 8e
-│   └── c76af43da31ed0f5450c3a853a7fc95aecf139
-├── info
-└── pack
-$ git cat-file -t {{< text >}}1489{{< /text >}} && git cat-file -p {{< text >}}1489{{< /text >}}
-tree
-100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	1.txt
-100644 blob {{< text fg="red" >}}190a18037c64c43e6b11489df4bf0b9eb6d2c9bf{{< /text >}}	2.txt
-$ git cat-file -t 190a && git cat-file -p 190a
-blob
-123
-```
--->
-
+{{< table thead=false min-width="400" border=true >}}
+|                                           |                      |
+|:------------------------------------------|:---------------------|
+|`git remote -v`                            |列出所有远程仓库      |
+|`git remote show <仓库名>`                 |查看远程仓库详细信息  |
+|`git remote add <仓库名> <仓库地址>`       |添加一个远程仓库      |
+|`git remote remove <仓库名>`               |移除远程仓库          |
+|`git remote rename <旧名称> <新名称>`      |重命名远程仓库        |
+{{< /table >}}
