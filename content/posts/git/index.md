@@ -1332,8 +1332,8 @@ $ git log --all --graph --oneline --decorate
 {{< table thead=false min-width="400" border=true >}}
 |                                           |                    |
 |:------------------------------------------|:-------------------|
-|*`git add 文件`*                           |添加指定文件。|
-|*`git add 路径`*                           |添加指定路径下的所有 **新增、修改、删除**。|
+|*`git add <文件>`*                           |添加指定文件。|
+|*`git add <路径>`*                           |添加指定路径下的所有 **新增、修改、删除**。|
 |*`git add -A`*                             |添加整个仓库下的所有 **新增、修改、删除**。|
 |*`git add -u`*                             |添加整个仓库下的所有 **修改、删除**。|
 {{< /table >}}
@@ -1343,6 +1343,16 @@ $ git log --all --graph --oneline --decorate
 
 ### remote
 
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*`git remote -v`*                            |列出所有远程仓库      |
+|*`git remote show <仓库名>`*                 |查看远程仓库详细信息  |
+|*`git remote add <仓库名> <仓库地址>`*       |添加一个远程仓库      |
+|*`git remote remove <仓库名>`*               |移除远程仓库          |
+|*`git remote rename <旧名称> <新名称>`*      |重命名远程仓库        |
+{{< /table >}}
+
 **远程引用（remote reference）**
 
 - 作用：**只读指针**，用来记录你上一次与远程仓库通信时，远程仓库里分支、标签等所处的状态。
@@ -1351,12 +1361,60 @@ $ git log --all --graph --oneline --decorate
 - 如何更新：当你执行 `git fetch`、`git pull` 或 `git remote update` 时，Git 会询问远程仓库，并将对方的当前分支状态写入这些引用中。
 
 
+
+
+
+
+### checkout
+
 {{< table thead=false min-width="400" border=true >}}
-|                                           |                      |
-|:------------------------------------------|:---------------------|
-|`git remote -v`                            |列出所有远程仓库      |
-|`git remote show <仓库名>`                 |查看远程仓库详细信息  |
-|`git remote add <仓库名> <仓库地址>`       |添加一个远程仓库      |
-|`git remote remove <仓库名>`               |移除远程仓库          |
-|`git remote rename <旧名称> <新名称>`      |重命名远程仓库        |
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*`git checkout <commit>`*                    |切换到某个提交（detached HEAD 状态）    |
+|*`git checkout <tag>`*                       |切换到某个标签（detached HEAD 状态） |
 {{< /table >}}
+
+**分离头指针（detached HEAD）**
+
+- 正常指针：HEAD → 分支（如 main）→ 最新的 commit。
+- 分离头指针：HEAD → 某个 commit（没有分支名）。
+
+
+{{< notice class="yellow" >}}
+在 detached HEAD 状态下，可以查看文件、做实验、创建新的 commit 等，但这些新的 commit 不属于任何分支，
+一旦切换到别的分支就会丢失，所以在切换前需要创建一个新分支以保留这些 commit。
+{{< /notice >}}
+
+
+
+
+
+### switch
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*``*||
+|*``*||
+|*``*||
+|*``*||
+|*``*||
+|*``*||
+|||
+{{< /table >}}
+
+
+
+
+### resotre
+
+{{< table thead=false border=true >}}
+|                                                                |                        |
+|:---------------------------------------------------------------|:-----------------------|
+|*`git restore <文件名>`*                                        |从暂存区恢复文件到工作区|
+|*`git restore --worktree <文件名>`*                             |从暂存区恢复文件到工作区|
+|*`git restore --staged <文件名>`*                               |从 HEAD 恢复文件到暂存区|
+|*`git restore --source=<commit> --staged --worktree <文件名>`*  |从 commit 中恢复文件到暂存区和工作区|
+{{< /table >}}
+
+`--worktree` 可简写为 `-W`，`--staged` 可简写为 `-S`。
