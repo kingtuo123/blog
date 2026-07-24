@@ -2,7 +2,6 @@
 title: "Git"
 date: "2026-07-04"
 toc: true
-draft: true
 ---
 
 
@@ -19,27 +18,25 @@ draft: true
 
 **blob**
 
-用于存储文件数据——它通常就是一个文件。
+存储文件的内容。
 
 -----
 
 **tree**
 
-类似于一个目录，它会引用其它的 tree 或 blob。
-
+记录了 blob 对象或其它的 tree 对象的信息。
 
 -----
 
 **commit**
 
-一个 “commit” 指向单个 tree，将其标记为项目在某个特定时间点的样子。
-它包含了关于该时间点的元信息，例如时间戳、自上次提交以来的变更作者、指向上一个提交的指针等。
+记录了作者、时间戳、父提交、tree 对象等信息。
 
 -----
 
 **tag**
 
-是一种将特定提交标记为具有某种特殊意义的方式。它通常用于将某些提交标记为特定的发布版本或类似的用途。
+记录了 commit 对象、标签名、作者等信息。
 
 -----
 
@@ -569,7 +566,6 @@ $ git reset --hard ORIG_HEAD
 
 
 
-git merge --abort —— 等同于 git reset --merge ORIG_HEAD
 
 
 
@@ -1100,7 +1096,7 @@ $ git revert --continue --no-edit
 
 #### 放弃 Revert
 
-如果在解决冲突过程中想中止整个 revert 操作，回到执行前的干净状态：
+中止整个 revert 操作，回到执行前的干净状态：
 
 ```bash-session
 $ git revert --abort
@@ -1353,28 +1349,42 @@ $ git log --all --graph --oneline --decorate
 |*`git remote rename <旧名称> <新名称>`*      |重命名远程仓库        |
 {{< /table >}}
 
-**远程引用（remote reference）**
+#### 远程引用
 
-- 作用：**只读指针**，用来记录你上一次与远程仓库通信时，远程仓库里分支、标签等所处的状态。
-- 存放位置：在本地 `.git/refs/remotes/<远程名>/` 下，例如 `.git/refs/remotes/origin/main`。
-- 表示形式：`<远程名>/<分支名>` ，比如 `origin/main`。
-- 如何更新：当你执行 `git fetch`、`git pull` 或 `git remote update` 时，Git 会询问远程仓库，并将对方的当前分支状态写入这些引用中。
+远程引用（remote reference）是用来追踪远程仓库分支状态的本地引用，它们本质上是指向远程分支最新提交的指针。。
 
-
-
+- 存放位置：`.git/refs/remotes/<远程名>/<分支名>`，如 `.git/refs/remotes/origin/main`。
+- 表示形式：在命令行中可使用 `<远程名>/<分支名>` ，如 `origin/main`。
+- 更新方式：当执行 `git fetch`、`git pull` 或 `git remote update` 时，Git 会将远程仓库的当前分支状态写入远程引用中。
 
 
 
-### checkout
+
+
+
+### switch
 
 {{< table thead=false min-width="400" border=true >}}
-|                                             |                      |
-|:--------------------------------------------|:---------------------|
-|*`git checkout <commit>`*                    |切换到某个提交（detached HEAD 状态）    |
-|*`git checkout <tag>`*                       |切换到某个标签（detached HEAD 状态） |
+|                                             |                                          |
+|:--------------------------------------------|:-----------------------------------------|
+|*`git switch <分支名>`*                      |切换到目标分支                            |
+|*`git switch -c <分支名>`*                   |创建新分支并切换过去                      |
+|*`git switch -C <分支名>`*                   |强制创建新分支（若已存在则重置到起始点）  |
+|*`git switch --orphan <分支名>`*             |创建孤儿分支                              |
+|*`git switch -f <分支名>`*                   |强制丢弃本地所有修改并切回目标分支        |
+|*`git switch -m <分支名>`*                   |切回目标分支并将本地修改合并到目标分支    |
+|*`git switch -d <commit>`*                   |切换到某个提交（detached HEAD 状态）      |
 {{< /table >}}
 
-**分离头指针（detached HEAD）**
+#### 孤儿分支
+
+孤儿分支（Orphan Branch）是指一个没有任何父提交记录的分支。 常见用途：
+- 完全重写项目：不想要旧历史时，在孤儿分支上从零开始重建代码，保留仓库但抛弃所有历史。
+- 存放项目无关内容：例如在同一个仓库中放置单独的 wiki、设计素材等。
+
+#### 分离头指针
+
+分离头指针（detached HEAD）是指 HEAD 不再指向某个分支（`.git/refs/heads/<分支名>`），而是直接指向一个 commit。
 
 - 正常指针：HEAD → 分支（如 main）→ 最新的 commit。
 - 分离头指针：HEAD → 某个 commit（没有分支名）。
@@ -1387,25 +1397,6 @@ $ git log --all --graph --oneline --decorate
 
 
 
-
-
-### switch
-
-{{< table thead=false min-width="400" border=true >}}
-|                                             |                      |
-|:--------------------------------------------|:---------------------|
-|*``*||
-|*``*||
-|*``*||
-|*``*||
-|*``*||
-|*``*||
-|||
-{{< /table >}}
-
-
-
-
 ### resotre
 
 {{< table thead=false border=true >}}
@@ -1414,7 +1405,207 @@ $ git log --all --graph --oneline --decorate
 |*`git restore <文件名>`*                                        |从暂存区恢复文件到工作区|
 |*`git restore --worktree <文件名>`*                             |从暂存区恢复文件到工作区|
 |*`git restore --staged <文件名>`*                               |从 HEAD 恢复文件到暂存区|
-|*`git restore --source=<commit> --staged --worktree <文件名>`*  |从 commit 中恢复文件到暂存区和工作区|
+|*`git restore --source=<commit> --staged --worktree <文件名>`*  |从 commit（也可以是分支名和标签）中恢复文件到暂存区和工作区|
 {{< /table >}}
 
 `--worktree` 可简写为 `-W`，`--staged` 可简写为 `-S`。
+
+
+### commit
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*`git commit -m "提交说明"`*                 |指定提交说明          |
+|*`git commit -am "提交说明"`*                |自动暂存所有已跟踪文件的修改并提交（跳过 git add）|
+|*`git commit --amend -m "新的提交说明"`*     |将当前暂存区并入上一次提交，不新建提交（可重写提交说明）|
+{{< /table >}}
+
+
+### push
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                       |
+|:--------------------------------------------|:--------------------------------------|
+|*`git push`*                                 |推送当前分支到默认远程的同名分支       |
+|*`git push <远程仓库> <分支名>`*             |推送指定分支到远程同名分支             |
+|*`git push -u <远程仓库> <分支名>`*          |推送指定分支到远程同名分支，并设置上游 |
+|*`git push -f <远程仓库> <分支名>`*          |强制推送指定分支到远程同名分支         |
+|*`git push --all origin`*                    |推送所有分支                           |
+|*`git push --tags`*                          |推送所有标签                           |
+|*`git push <远程仓库> --delete <分支名>`*    |删除远程仓库中的分支                   |
+|*`git push <远程仓库> --prune`*              |清理远程仓库中本地已不存在的分支       |
+{{< /table >}}
+
+> `-u` , `--set-upstream` 选项用于将当前本地分支与指定的远程分支建立跟踪关系（即设定 “上游分支”），
+> 这样以后执行 `git push` 或 `git pull` 就不用带参数。
+
+
+
+
+### fetch
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                |
+|:--------------------------------------------|:-------------------------------|
+|*`git fetch`*                                |从默认远程仓库获取所有分支和标签|
+|*`git fetch <远程仓库>`*                     |从指定远程仓库获取              |
+|*`git fetch <远程仓库> <分支名>`*            |从指定远程仓库的指定分支获取    |
+|*`git fetch --all`*                          |获取所有远程仓库的更新          |
+|*`git fetch --prune`*                        |获取并清理远程仓库已删除的分支  |
+|*`git fetch --tags`*                         |获取所有标签                    |
+|*`git fetch --recurse-submodules`*           |递归获取子模块更新              |
+{{< /table >}}
+
+
+
+### pull
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                  |
+|:--------------------------------------------|:---------------------------------|
+|*`git pull`*                                 |从默认远程仓库拉取当前分支的更新  |
+|*`git pull <远程仓库> <分支名>`*             |从指定远程仓库拉取指定分支        |
+|*`git pull --rebase`*                        |以变基方式拉取                    |
+|*`git pull --ff-only`*                       |仅允许快速合并                    |
+|*`git pull --tags`*                          |拉取时获取所有标签                |
+|*`git pull --prune`*                         |拉取前清除远程已删除的本地分支    |
+{{< /table >}}
+
+
+
+### clone
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*`git clone <地址>`*                         |克隆远程仓库到当前目录下的同名文件夹|
+|*`git clone <地址> <目录名>`*                |克隆到指定目录名                    |
+|*`git clone --depth 1 <地址>`*               |浅克隆（仅保留最近 1 条历史）以加速下载|
+|*`git clone --recurse-submodules <地址>`*    |克隆并自动初始化子模块|
+{{< /table >}}
+
+
+
+### submodule
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                      |
+|:--------------------------------------------|:---------------------|
+|*`git submodule add <地址> <本地路径>`*      |添加子模块|
+|*`git submodule status`*                     |查看子模块状态|
+|*`git submodule update --init --recursive`*  |初始化并更新克隆后的子模块|
+|*`git submodule update --remote --merge`*    |更新所有子模块到最新远程提交|
+{{< /table >}}
+
+#### 删除子模块
+
+```bash-session
+$ git submodule deinit -f -- path/to/submodule
+$ rm -rf .git/modules/path/to/submodule
+$ git rm -f path/to/submodule
+```
+
+
+
+### branch
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                          |
+|:--------------------------------------------|:-----------------------------------------|
+|*`git branch`*                               |列出所有本地分支                          |
+|*`git branch <分支名>`*                      |创建分支                                  |
+|*`git branch -f <分支名>`*                   |强制创建分支（重置已有分支）              |
+|*`git branch <提交> <分支名>`*               |从指定提交创建分支                        |
+|*`git branch -d <分支名>`*                   |删除已完全合并的分支                      |
+|*`git branch -D <分支名>`*                   |强制删除分支（即使未合并）                |
+|*`git branch -r <分支名>`*                   |删除本地的远程跟踪分支                    |
+|*`git branch -a`*                            |列出本地和远程跟踪分支                    |
+|*`git branch --merged`*                      |列出已合并到当前分支的分支                |
+|*`git branch --no-merged <分支名>`*          |列出尚未合并到 *`<分支名>`* 的分支        |
+|*`git branch -m <新名称>`*                   |重命名当前分支                            |
+|*`git branch -M <新名称>`*                   |强制重命名，即使 *`<新名称>`* 已存在      |
+|*`git branch -c <源分支> <目标分支>`*        |拷贝分支                                  |
+|*`git branch -u <远程仓库>/<分支名>`*        |设置当前分支跟踪 *`<远程仓库>/<分支名>`*  |
+|*`git branch --unset-upstream`*              |取消当前分支的上游设置                    |
+|*`git branch -vv`*                           |示分支及上次提交信息、上游状态            |
+{{< /table >}}
+
+
+
+
+
+### log
+
+{{< table thead=false min-width="400" border=true >}}
+|                                              |                                          |
+|:-------------------------------------------- |:-----------------------------------------|
+|*`git log -5`*                                |最近 5 条提交                             |
+|*`git log --oneline`*                         |单行显示                                  |
+|*`git log --oneline --graph --decorate --all`*|显示所有分支的图形化历史                  |
+{{< /table >}}
+
+
+
+
+
+### diff
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                          |
+|:--------------------------------------------|:-----------------------------------------|
+|*`git diff`*                                 |对比工作区与暂存区                        |
+|*`git diff <文件名>`*                        |对比该文件在工作区与暂存区的内容          |
+|*`git diff HEAD`*                            |对比工作区与 HEAD                         |
+|*`git diff --staged`*                        |对比暂存区与 HEAD                         |
+|*`git diff <分支1>..<分支2>`*                |对比两个分支                              |
+|*`git diff --stat`*                          |查看差异统计摘要（文件 + 增删行数）       |
+{{< /table >}}
+
+
+
+
+### tag
+
+{{< table thead=false min-width="400" border=true >}}
+|                                             |                                          |
+|:--------------------------------------------|:-----------------------------------------|
+|*`git tag`*                                  |列出所有标签                              |
+|*`git tag v1.0.0`*                           |创建标签                                  |
+|*`git tag -a v1.0.0 -m "附注信息"`*          |创建附注标签                              |
+|*`git tag -d v1.0.0`*                        |删除本地标签                              |
+{{< /table >}}
+
+
+
+
+
+
+
+
+## 其它 - 杂七杂八
+
+
+### 首次创建 / 提交基本流程
+
+```bash-session
+$ git init                                                          {{< text fg="gray-0" >}}初始化仓库{{< /text>}}
+$ echo "Hello World" >> README.md                                   {{< text fg="gray-0" >}}添加文件到仓库{{< /text>}}
+$ git add README.md                                                 {{< text fg="gray-0" >}}添加文件到暂存区{{< /text>}}
+$ git commit -m "first commit"                                      {{< text fg="gray-0" >}}提交到本地仓库{{< /text>}}
+$ git branch -M master                                              {{< text fg="gray-0" >}}创建 master 分支{{< /text>}}
+$ git remote add origin git@github.com:kingtuo123/test-only.git     {{< text fg="gray-0" >}}添加远程仓库{{< /text>}}
+$ git push -u origin master                                         {{< text fg="gray-0" >}}推送到远程仓库{{< /text>}}
+```
+
+
+### 清空历史 commits
+
+```bash-session
+$ git switch --orphan latest_branch    {{< text fg="gray-0" >}}创建孤儿分支，并切换到该分支{{< /text >}}
+$ git add -A                           {{< text fg="gray-0" >}}暂存所有文件{{< /text >}}
+$ git commit -am "First Commit"        {{< text fg="gray-0" >}}提交所有更改{{< /text>}}
+$ git branch -D master                 {{< text fg="gray-0" >}}删除主分支 master{{< /text>}}
+$ git branch -m master                 {{< text fg="gray-0" >}}重命名当前分支为 master{{< /text>}}
+$ git push -f origin master            {{< text fg="gray-0" >}}强制推送本地分支{{< /text>}}
+```
