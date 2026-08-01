@@ -7,6 +7,8 @@ server-fastRender:
 server-disableLiveReload:
 	hugo server --minify --gc --buildDrafts --buildFuture --renderToMemory --disableFastRender --port 1414 --bind 0.0.0.0 --disableLiveReload
 
+kingtuo123.com:
+	hugo server --minify --renderToMemory --port 1414 --bind 0.0.0.0
 
 update-submodule:
 	git submodule update --remote --merge
