@@ -140,7 +140,7 @@ $ man pam_unix
 
 ### PAM 栈
 
-PAM 栈就是针对某个服务的某个管理组类型，按顺序执行的一系列模块的队列。
+PAM 栈就是配置文件中同一管理组类型的模块队列。
 
 ```bash{ bar="/etc/pam.d/system-auth" }
 auth        required    pam_env.so
@@ -157,7 +157,7 @@ session     required    pam_env.so
 session     required    pam_unix.so
 ```
 
-上述文件中，对应四个栈，其中所有 `auth` 类型的模块在一个 `auth` 栈中（以此类推），PAM 触发 `auth` 栈时栈中的模块会从上到下依次执行：
+以上配置中有四个栈，其中所有 `auth` 类型的模块在一个 `auth` 栈中（以此类推），PAM 触发 `auth` 栈时 `auth` 栈中的模块会从上到下顺序执行：
 
 ```
 auth        required    pam_env.so
@@ -166,6 +166,8 @@ auth        [success=1 new_authtok_reqd=1 ignore=ignore default=bad]    pam_unix
 auth        [default=die]   pam_faillock.so authfail
 auth        optional    pam_cap.so
 ```
+
+> 不同的栈是彼此独立、互相隔离的。
 
 ### PAM 架构
 
@@ -340,9 +342,9 @@ password     include     system-auth
 
 ```text{ nonebg=true }
  1. 检查当前用户是否为 root，是 -> 立即返回成功，否 -> 继续执行。
- 2. 执行 system-auth 中的 auth     类型模块。
- 3. 执行 system-auth 中的 account  类型模块。
- 4. 执行 system-auth 中的 password 类型模块。
+ 2. 包含 system-auth 中的 auth     类型模块。
+ 3. 包含 system-auth 中的 account  类型模块。
+ 4. 包含 system-auth 中的 password 类型模块。
 ```
 
 ```bash{ bar="/etc/pam.d/system-auth" linenos=inline }
@@ -427,7 +429,7 @@ session     optional    pam_mail.so
  12. 显示上次登录信息。
  13. 检查 /var/mail/用户名，是否有未读邮件。
  14. 在 elogind 进程中注册用户会话，设置 XDG_* 等变量。
- 15. OpenRC 会话追踪。通知 OpenRC 有一个用户会话启动，影响关机顺序（确保有用户登录时不贸然关机）。
+ 15. 触发 OpenRC 启动用户级服务（参考 /etc/rc.conf 文件中的 rc_autostart_user）。
 ```
 
 > 前缀 `-` 表示模块不存在也不报错。
