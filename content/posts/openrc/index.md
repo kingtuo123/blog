@@ -1,6 +1,6 @@
 ---
 title: "OpenRC"
-date: "2026-07-25"
+date: "2026-08-02"
 draft: true
 toc: true
 ---

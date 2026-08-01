@@ -1,7 +1,7 @@
 ---
 title: "Linux PAM"
-date: "2026-07-29"
-draft: true
+date: "2026-08-01"
+toc: true
 ---
 
 
@@ -167,11 +167,85 @@ auth        [default=die]   pam_faillock.so authfail
 auth        optional    pam_cap.so
 ```
 
-### PAM 模块
+### PAM 架构
 
-一个 PAM 模块（.so 文件）通常包含多个功能程序。PAM 会根据当前调用的管理组，去调用该模块内部对应的 API 来处理。
+```text{ nonebg=true }
+应用程序
+    ↓
+libpam API（/usr/lib64/libpam.so.0） ←  配置文件（/etc/pam.d/服务名）
+    ↓
+PAM 模块（/usr/lib64/security/pam_*.so）
+    ↓
+实际数据源（/etc/shadow、LDAP、Kerberos、硬件令牌）
+```
 
-以 `pam_unix.so` 为例，该模块包含了本地 Unix 账户全家桶服务，如下是 `pam_unix.so` 中的钩子函数：
+#### 应用程序
+
+以 `login` 为例，其调用了 `libpam` 来处理用户登陆：
+
+```bash-session
+$ ldd /usr/bin/login | grep libpam
+	libpam.so.0 => /usr/lib64/libpam.so.0 (0x00007ffbec9a3000)
+	libpam_misc.so.0 => /usr/lib64/libpam_misc.so.0 (0x00007ffbec99d000)
+```
+
+
+#### Libpam
+
+```bash-session{ height=30 }
+$ nm -D --defined-only /usr/lib64/libpam.so.0 | grep pam_ | cut -f1 -d@
+0000000000003a50 T pam_acct_mgmt
+0000000000003ac0 T pam_authenticate
+000000000000ae40 T pam_chauthtok
+000000000000afd0 T pam_close_session
+0000000000004b20 T pam_end
+0000000000004050 T pam_fail_delay
+0000000000006000 T pam_get_authtok
+0000000000006010 T pam_get_authtok_noverify
+0000000000006030 T pam_get_authtok_verify
+0000000000003d40 T pam_get_data
+0000000000005510 T pam_getenv
+0000000000005630 T pam_getenvlist
+0000000000008590 T pam_get_item
+0000000000008730 T pam_get_user
+0000000000003ab0 T pam_modutil_audit_write
+00000000000091f0 T pam_modutil_check_user_in_passwd
+000000000000a530 T pam_modutil_drop_priv
+0000000000009570 T pam_modutil_getgrgid
+00000000000097e0 T pam_modutil_getgrnam
+0000000000009960 T pam_modutil_getlogin
+0000000000009b00 T pam_modutil_getpwnam
+0000000000009d70 T pam_modutil_getpwuid
+0000000000009fe0 T pam_modutil_getspnam
+000000000000a3b0 T pam_modutil_read
+000000000000a7b0 T pam_modutil_regain_priv
+000000000000aac0 T pam_modutil_sanitize_helper_fds
+000000000000ac60 T pam_modutil_search_key
+000000000000a2f0 T pam_modutil_user_in_group_nam_gid
+000000000000a2b0 T pam_modutil_user_in_group_nam_nam
+000000000000a370 T pam_modutil_user_in_group_uid_gid
+000000000000a330 T pam_modutil_user_in_group_uid_nam
+000000000000a470 T pam_modutil_write
+000000000000af70 T pam_open_session
+000000000000bfb0 T pam_prompt
+00000000000050f0 T pam_putenv
+0000000000003b90 T pam_setcred
+0000000000003c00 T pam_set_data
+0000000000007f40 T pam_set_item
+000000000000b510 T pam_start
+000000000000b500 T pam_start_confdir
+000000000000b520 T pam_strerror
+000000000000bc70 T pam_syslog
+000000000000bd30 T pam_vprompt
+000000000000ba50 T pam_vsyslog
+```
+
+
+#### PAM 模块
+
+一个 PAM 模块通常包含多个类型的服务模块接口，PAM 会根据当前调用的管理组类型来调用模块内部对应的接口。
+
+以 `pam_unix.so` 为例，该模块包含了本地 Unix 账户全家桶服务，以下是 `pam_unix.so` 中的接口函数：
 
 ```bash-session
 $ nm -D --defined-only /usr/lib64/security/pam_unix.so
@@ -183,9 +257,11 @@ $ nm -D --defined-only /usr/lib64/security/pam_unix.so
 0000000000004660 T pam_sm_open_session     {{< text fg="yellow" >}}session  类型{{< /text >}}
 ```
 
-#### Libpam API 对应的模块钩子函数
+#### Libpam API 对应的 PAM 模块接口函数
 
-| Type | Libpam API | 模块的钩子函数 | 语义 |
+当应用程序调用 `pam_*` 函数，`libpam` 会找到配置文件中对应的模块，然后调用该模块内部对应的 `pam_sm_*` 函数（Service Module）。
+
+| 类型 | Libpam  | PAM 模块 | 说明 |
 |:--|:--|:--|:--|
 | `auth` | `pam_authenticate()` | `pam_sm_authenticate()` | 验证用户身份（核对密码） |
 | `auth` | `pam_setcred()` | `pam_sm_setcred()` | 建立/修改/删除用户凭证 |
@@ -195,6 +271,8 @@ $ nm -D --defined-only /usr/lib64/security/pam_unix.so
 | `session` | `pam_close_session()` | `pam_sm_close_session()` | 关闭用户会话 |
 
 > 用户凭证：用户身份通过验证（pam_authenticate 成功）后，系统为该用户建立的一整套权限证明和访问令牌。这些凭证决定了该进程能以什么身份、什么权限、什么网络凭据去访问系统资源。
+
+#### 配置文件
 
 以一个简单的 `/etc/pam.d/login` 配置文件为例：
  
@@ -209,32 +287,45 @@ session    required   pam_unix.so
 ```text{ nonebg=true }
 login 程序
 │
-├─▶ 验证用户身份 ─▶ libpam.so :: pam_authenticate() ─▶ 遍历 auth 栈 ─▶ pam_unix.so :: pam_sm_authenticate()
+├─ pam_start() → 读取配置文件，按顺序加载模块，建立 auth/account/password/session 栈
 │
-├─▶ 账户可用性检查 ─▶ libpam.so :: pam_acct_mgmt() ─▶ 遍历 account 栈 ─▶ pam_unix.so :: pam_sm_acct_mgmt()
+├─ 验证用户身份 → pam_authenticate() → 遍历 auth 栈 → pam_unix.so :: pam_sm_authenticate()
 │
-├─▶ 是否需要修密码 ─▶ 是 ─▶ libpam.so :: pam_chauthtok() ─▶ 遍历 password 栈
-│                 └─▶ 否 ─▶ 跳过                                    ├─▶ 检查密码强度 ─▶ pam_passwdqc.so :: pam_sm_chauthtok()
-│                                                                   └─▶ 更改密码 ─▶ pam_unix.so :: pam_sm_chauthtok()
+├─ 账户可用性检查 → pam_acct_mgmt() → 遍历 account 栈 → pam_unix.so :: pam_sm_acct_mgmt()
 │
-├─▶ 建立凭证 ─▶ libpam.so :: pam_setcred() ─▶ 遍历 session 栈 ─▶ pam_unix.so :: pam_sm_setcred()
+├─ 是否需要修密码 → pam_chauthtok() → 遍历 password 栈
+│                                              ├─ 检查密码强度 → pam_passwdqc.so :: pam_sm_chauthtok()
+│                                              └─ 更改密码 → pam_unix.so :: pam_sm_chauthtok()
 │
-├─▶ 建立会话 ─▶ libpam.so :: pam_open_session() ─▶ 遍历 session 栈 ─▶ pam_unix.so :: pam_sm_open_session()
+├─ 建立凭证 → pam_setcred() → 遍历 auth 栈 → pam_unix.so :: pam_sm_setcred()
 │
-└─▶ 关闭会话 ─▶ libpam.so :: pam_close_session() ─▶  遍历 session 栈 ─▶ pam_unix.so :: pam_sm_close_session()
+├─ 建立会话 → pam_open_session() → 遍历 session 栈 → pam_unix.so :: pam_sm_open_session()
+│
+├─ ...
+│
+├─ 关闭会话 → pam_close_session() →  遍历 session 栈 → pam_unix.so :: pam_sm_close_session()
+│
+├─ 删除凭证 → pam_setcred() → 遍历 auth 栈 → pam_unix.so :: pam_sm_setcred()
+│
+└─ pam_end()
 ```
 
-> PAM 配置文件中哪些栈会被遍历执行，取决于应用程序是否调用了 `libpam.so` 中对应的 API，
-> 比如上面的 `password` 栈中的模块，当账户可用性检查 `pam_acct_mgmt()` 返回值不等于 `PAM_NEW_AUTHTOK_REQD`，则无须修改密码，
-> 那么 login 程序就不会调用 `pam_chauthtok()`，`password` 栈中的模块也就不会被执行，参考 [login.c](https://github.com/shadow-maint/shadow/blob/855d15a04625818fa28a94e693dd4dc7acfb5af3/src/login.c#L758)。
+##### 说明
+
+PAM 配置文件中哪些栈会被遍历执行，取决于应用程序是否调用了 libpam 中对应的 API，
+比如上面的 `password` 栈中的模块，当账户可用性检查 `pam_acct_mgmt()` 返回值不等于 `PAM_NEW_AUTHTOK_REQD`，则无须修改密码，
+那么 login 程序就不会调用 `pam_chauthtok()`，`password` 栈中的模块也就不会被执行，参考 [login.c](https://github.com/shadow-maint/shadow/blob/855d15a04625818fa28a94e693dd4dc7acfb5af3/src/login.c#L758)。
+
+> 配置文件定义了 “怎么执行”，而应用程序的代码逻辑定义了 “是否执行”。
+
+
+> 同一 type 的栈内，模块按顺序执行；不同 type 之间的上下相对位置对执行流毫无影响，因为它们被完全不同的 libpam API 调用所触发。
 
 
 
 
 
-
-
-## 实例
+## Gentoo PAM 配置文件
 
 ### passwd
 
@@ -283,10 +374,6 @@ session     required    pam_unix.so
 ```
 
 
-<!--
-> 不同模块类型会调用模块中不同的函数，如上面的 `account     required    pam_unix.so` 和 `session     required    pam_unix.so`
-> 两者调用 `pam_unix.so` 中的不同函数，功能自然也不同。
--->
 
 
 ### login
@@ -347,80 +434,90 @@ session     optional    pam_mail.so
 #### 控制台 tty 登陆的大致流程
 
 ```{ nonebg=true }
-init
-  |
-  | {{<text fg="gray-0" >}}读取 /etc/inittab{{< /text >}}
+init {{<text fg="gray-0" >}}← 读取 /etc/inittab{{< /text >}}
   ↓
-启动 agetty 于 /dev/ttyN
-  |
-  | {{<text fg="gray-0" >}}输入用户名{{< /text >}}
+启动 agetty 于 /dev/ttyN {{<text fg="gray-0" >}}← 输入用户名{{< /text >}}
   ↓
-agetty 执行 /usr/bin/login <用户名>
-  |
+agetty 执行 /bin/login <用户名>
   ↓
-login 调用 PAM
-  |
-  | {{<text fg="gray-0" >}}输入密码{{< /text >}}
-  | {{<text fg="gray-0" >}}PAM 流程 ← /etc/pam.d/login{{< /text >}}
-  | {{<text fg="gray-0" >}}身份切换{{< /text >}}
-  ↓
-login 执行 exec 用户 shell
-  |
+login 调用 PAM 处理认证事务 {{<text fg="gray-0" >}}← 输入密码{{< /text >}}
   ↓
 shell
 ```
 
 
 
-## 其它
-
-是的，模块顺序的重要性严格限定在同一 type（auth/account/session/password）的栈内；不同 type 之间的上下相对位置对执行流毫无影响，因为它们被完全不同的 libpam API 调用所触发。
 
 
 
-man pam_*
+## 示例程序
 
- /sbin/agetty <-- sys-apps/util-linux
+```c{ bar="myapp.c" height=50 }
+#include <stdio.h>
+#include <stdlib.h>
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
 
-每个模块执行后，其成败状态会被记录，影响后续模块是否继续执行
+// 自定义对话函数，直接使用 libpam_misc 提供的 misc_conv
+static struct pam_conv conv = {
+    misc_conv,
+    NULL
+};
 
+int main(int argc, char *argv[])
+{
+    pam_handle_t *pamh = NULL;
+    const char *user = NULL;
+    int ret;
 
-是 Linux/Unix 系统中负责认证（Authentication）、授权（Authorization）、账户管理（Account）和会话管理（Session）的核心框架。
+    // 1. 确定用户名（可从命令行参数获取，也可在程序中让用户输入）
+    if (argc > 1) {
+        user = argv[1];
+    } else {
+        fprintf(stderr, "Usage: %s <username>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
+    // 2. 初始化 PAM 会话，"myapp" 对应 /etc/pam.d/myapp 配置文件
+    ret = pam_start("myapp", user, &conv, &pamh);
+    if (ret != PAM_SUCCESS) {
+        fprintf(stderr, "pam_start: %s\n", pam_strerror(pamh, ret));
+        exit(EXIT_FAILURE);
+    }
 
-在没有 PAM 的时代，每个需要认证的应用程序（如 login、sshd、su）都必须自己实现密码验证逻辑。如果你想把本地密码认证换成 LDAP 或 Kerberos，就必须修改并重新编译这些程序。
+    // 3. 进行认证（会调用对话函数要求输入密码）
+    ret = pam_authenticate(pamh, 0);
+    if (ret != PAM_SUCCESS) {
+        fprintf(stderr, "pam_authenticate: %s\n", pam_strerror(pamh, ret));
+    } else {
+        // 4. 认证通过后检查账户有效性
+        ret = pam_acct_mgmt(pamh, 0);
+        if (ret != PAM_SUCCESS) {
+            fprintf(stderr, "pam_acct_mgmt: %s\n", pam_strerror(pamh, ret));
+        } else {
+            printf("Authentication successful for user '%s'\n", user);
+        }
+    }
 
+    // 5. 结束 PAM 会话
+    pam_end(pamh, ret);
 
-PAM 解决了这个问题：
-
-应用程序只负责调用 PAM API（问："这个用户能登录吗？"）
-
-PAM 根据配置文件决定调用哪些模块来回答这个问题
-
-模块负责具体的认证逻辑（查 /etc/shadow 、问 LDAP 服务器、验证硬件密钥等）
-
-
+    return (ret == PAM_SUCCESS) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
 ```
-应用程序 (sshd/login/sudo)
-    ↓
-libpam (PAM API 库)
-    ↓
-/etc/pam.d/服务名 (配置文件)
-    ↓
-pam_unix.so / pam_ldap.so / pam_faillock.so ... (模块)
-    ↓
-/etc/shadow / LDAP / Kerberos / 硬件令牌 (实际数据源)
+
+```text{ bar="/etc/pam.d/myapp" }
+auth        required    pam_unix.so
+account     required    pam_unix.so
+```
+
+```bash-session
+$ gcc myapp.c -o myapp -lpam -lpam_misc
+$ ./myapp king
+Password: 
+Authentication successful for user 'king'
 ```
 
 
 
 
-## 示例
-
-使用 pam_exec 在登录后执行自定义脚本
-
-假设你想在用户登录时发送一条通知
-
-```
-session     optional     pam_exec.so /usr/local/bin/login-notify.sh
-```
