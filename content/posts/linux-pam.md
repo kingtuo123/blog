@@ -39,15 +39,15 @@ PAM（Pluggable Authentication Modules，可插拔认证模块）。
 用于控制 PAM 栈中模块的执行流程。
 
 {{< table thead=false min-width="160" >}}
-|                |                                                                                                       |
-|:---------------|:------------------------------------------------------------------------------------------------------|
-|`required`      |若成功继续执行；若失败，继续执行，但最终返回失败。                                                     |
-|`requisite`     |若成功继续执行；若失败，立即终止并返回失败。                                                           |
-|`sufficient`    |若成功且之前无 `required` 模块失败，立即终止并返回成功；若失败，继续执行。                             |
-|`optional`      |若同模块类型中有其它非 `optional` 标志的模块，那么 `optional` 模块的成败不影响最终结果，除非唯一模块。 |
-|`include`       |将被包含文件的同类型模块插入到当前位置，相当于复制粘贴。                                               |
-|`substack`      |将被包含文件的同类型模块作为一个整体，相当于函数调用。                                                 |
-|`[返回值=动作]` |高级用法，允许根据模块的返回值决定跳转或动作。                                                         |
+|                |                                                                                                        |
+|:---------------|:-------------------------------------------------------------------------------------------------------|
+|`required`      |若成功继续执行；若失败，继续执行，但最终返回失败。                                                      |
+|`requisite`     |若成功继续执行；若失败，立即终止并返回失败。                                                            |
+|`sufficient`    |若成功且之前无 `required` 模块失败，立即终止并返回成功；若失败，继续执行。                              |
+|`optional`      |若同管理组类型中有其它非 `optional` 标志的模块，那么 `optional` 模块的成败不影响最终结果，除非唯一模块。|
+|`include`       |将被包含文件的同类型模块插入到当前位置，相当于复制粘贴。                                                |
+|`substack`      |将被包含文件的同类型模块作为一个整体，相当于函数调用。                                                  |
+|`[返回值=动作]` |根据模块的返回值决定下一步的动作。                                                                      |
 {{< /table >}}
 
 {{< table thead=true min-width="160,200" >}}
@@ -420,8 +420,8 @@ session     optional    pam_mail.so
   3. 来源控制：只允许特定用户从特定终端 / IP 登录，配置文件 /etc/security/access.conf。
   4. 二次确认：再次检查 /etc/nologin，与 auth 阶段双保险。
   5. 时间控制：只允许在特定时段登录，配置文件 /etc/security/time.conf。
-  6. 账户检查：执行 system-auth 中的 account 类型模块（账户是否过期、被禁用等）。
-  7. 密码修改：执行 system-auth 中的 password 类型模块。
+  6. 账户检查：包含 system-auth 中的 account 类型模块（账户是否过期、被禁用等）。
+  7. 密码修改：包含 system-auth 中的 password 类型模块。
   8. 为当前进程设置内核 loginuid（写入 /proc/self/loginuid ）。
   9. 加载环境变量，envfile=/etc/profile.env 是 Gentoo 特有路径，由 env-update 命令生成，包含 PATH、LDPATH 等系统级变量。
  10. 通用 session 栈，执行 system-auth 中的 session 类型模块。
