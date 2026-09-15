@@ -1,15 +1,82 @@
 ---
-title: "wpa_supplicant"
+title: "Gentoo netifrc + wpa_supplicant 网络设置"
 date: "2026-09-13"
 draft: true
 ---
 
 
-参考文章：
 
-- [Gentoo wiki / wpa-supplicant](https://wiki.gentoo.org/wiki/Wpa_supplicant)
-- [Arch wiki / wpa-supplicant](https://wiki.archlinux.org/title/Wpa_supplicant)
-- [wpa\_supplicant.conf(5)](https://www.daemon-systems.org/man/wpa_supplicant.conf.5.html)
+## Netifrc
+
+Netifrc 是 Gentoo 在运行 OpenRC 的系统上配置和管理网络接口的默认框架。
+
+
+
+## Netifrc 网络接口
+
+### 服务脚本
+
+`/etc/init.d/net.lo` 是 netifrc 自带的默认服务脚本（通用模板），
+当你需要管理其它网络接口，并不需要为每个接口单独写一个脚本，只需创建一个指向 `net.lo` 的符号链接：
+
+```bash-session
+# ln -s /etc/init.d/net.lo /etc/init.d/net.<interface_name>
+```
+
+`net.<interface_name>` 运行时能从服务名称中获取接口名称：
+
+```bash{ bar="/etc/init.d/net.lo" }
+SHDIR="/lib/netifrc/sh"          # 脚本路径
+MODULESDIR="/lib/netifrc/net"    # 模块路径
+
+if [ -f "$SHDIR/functions.sh" ]; then
+    . "$SHDIR/functions.sh"      # 加载脚本
+else
+    echo "$SHDIR/functions.sh missing. Exiting"
+    exit 1
+fi
+
+start() {
+    ...
+    IFACE=$(get_interface)       # 获取接口名称
+    ...
+}
+```
+
+```bash{ bar="/lib/netifrc/sh/functions.sh" }
+get_interface() {
+    case $INIT in
+        openrc)
+        printf ${RC_SVCNAME#*.};;    # 打印接口名称
+    systemd)
+        printf ${RC_IFACE};;
+    *)
+        eerror "Init system not supported. Aborting"
+        exit 1;;
+    esac
+}
+```
+
+> `RC_SVCNAME` 就是服务的名称，应该是 OpenRC 在执行服务脚本时，自动设置的环境变量。
+
+### 配置文件
+
+```{ bar="/etc/conf.d/net" }
+modules_wlp4s0="wpa_supplicant dhcpcd"
+config_wlp4s0="dhcp"
+```
+
+> 配置文件中的变量也是在 `net.<interface_name>` 服务脚本中处理的。
+
+- `modules_<interface_name>` 表示需要加载哪些模块（脚本，加载偏好？？？），脚本路径在 `/lib/netifrc/net`，都是 `*.sh` 脚本。
+- `config_<interface_name>` 表示网络接口的地址配置，可以是 `dhcp`、`null`、`none`、`192.168.1.10/24`（静态 IP）等。
+
+查看 net 示例配置文件（包含详细说明）：
+
+```bash-session
+$ less /usr/share/doc/netifrc-*/net.example.bz2
+```
+
 
 
 ## 配置及连接
@@ -152,3 +219,28 @@ wpa_supplicant 广播事件：当你执行 disconnect 后，wpa_supplicant 检�
 wpa_cli 接收并判断：常驻的 wpa_cli 进程（通常由 OpenRC 服务在启动 wpa_supplicant 时拉起，并带有 -a 参数）收到这个事件。
 
 wpa_cli 执行脚本：wpa_cli 根据事件类型（如 CONNECTED 或 DISCONNECTED），去执行指定的脚本（即 /etc/wpa_supplicant/wpa_cli.sh），并把接口名和动作名作为参数传给脚本。
+
+
+## dns
+
+/etc/dhcpcd.conf
+
+static domain_name_servers=192.168.0.1 8.8.8.8
+
+
+
+
+
+
+
+
+
+
+
+
+## 参考链接
+
+- [Netifrc / Gentoo wiki](https://wiki.gentoo.org/wiki/Netifrc)
+- [wpa_supplicant / Gentoo wik](https://wiki.gentoo.org/wiki/Wpa_supplicant)
+- [wpa_supplicant / Arch wiki](https://wiki.archlinux.org/title/Wpa_supplicant)
+- [wpa_supplicant.conf(5)](https://www.daemon-systems.org/man/wpa_supplicant.conf.5.html)
