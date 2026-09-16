@@ -68,14 +68,60 @@ config_wlp4s0="dhcp"
 
 > 配置文件中的变量也是在 `net.<interface_name>` 服务脚本中处理的。
 
-- `modules_<interface_name>` 表示需要加载哪些模块（脚本，加载偏好？？？），脚本路径在 `/lib/netifrc/net`，都是 `*.sh` 脚本。
-- `config_<interface_name>` 表示网络接口的地址配置，可以是 `dhcp`、`null`、`none`、`192.168.1.10/24`（静态 IP）等。
+- `modules_<interface_name>` 指定优先使用的模块，模块路径在 `/lib/netifrc/net`。
+- `config_<interface_name>` 网络接口的地址配置，可以是 `dhcp`、`null`、`192.168.1.10/24`（静态 IP）等。
 
 查看 net 示例配置文件（包含详细说明）：
 
 ```bash-session
 $ less /usr/share/doc/netifrc-*/net.example.bz2
 ```
+
+
+### 模块加载顺序
+
+```bash{ bar="/lib/netifrc/net/wpa_supplicant.sh" }
+wpa_supplicant_depend()
+{
+	after macnet plug
+	before interface
+	provide wireless
+
+	# Prefer us over iwconfig
+	after iwconfig
+}
+```
+
+```bash{ bar="/lib/netifrc/net/iwconfig.sh" }
+iwconfig_depend()
+{
+	program iwconfig
+	after plug
+	before interface
+	provide wireless
+}
+```
+
+```bash{ bar="/lib/netifrc/net/ifconfig.sh" }
+ifconfig_depend()
+{
+	program ifconfig
+	provide interface
+}
+```
+
+```bash{ bar="/lib/netifrc/net/iproute2.sh" }
+iproute2_depend()
+{
+	program ip
+	provide interface
+	after ifconfig
+}
+```
+
+
+
+
 
 
 
