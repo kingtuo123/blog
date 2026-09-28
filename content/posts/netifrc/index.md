@@ -231,7 +231,7 @@ _wait_for_carrier()
     eval timeout=\$carrier_timeout_${IFVAR}
     timeout=${timeout:-${carrier_timeout:-0}}
 
-    # Incase users don't want this nice feature ...
+    # 如果用户不需要这个特性
     [ ${timeout} -le 0 ] && return 0
 
     einfon "Waiting for carrier (${timeout} seconds) "
@@ -265,28 +265,28 @@ _netmask2cidr()
         0x*)
         local hex=${1#0x*} quad=
         while [ -n "${hex}" ]; do
-            local lastbut2=${hex#??*}              # 去掉前两个十六进制字符
+            local lastbut2=${hex#??*}                    # 去掉前两个十六进制字符
             quad=${quad}${quad:+.}0x${hex%${lastbut2}*}  # 取出前两位拼成 0xNN 段
             hex=${lastbut2}
         done
         # shellcheck disable=SC2086
-        set -- ${quad}                            # 重新设置为点分形式继续处理
+        set -- ${quad}                  # 重新设置为点分形式继续处理
         ;;
     esac
 
     local i='' len=''
-    local IFS=.                                 # 按点分段
+    local IFS=.                         # 按点分段
     for i in $1; do
         case $i in
-            0x*)    i=$((i)) ;;                # 十六进制段先转十进制
+            0x*)    i=$((i)) ;;         # 十六进制段先转十进制
         esac
-        while [ ${i} -ne 0 ]; do                # 统计该字节中 1 的位数
+        while [ ${i} -ne 0 ]; do        # 统计该字节中 1 的位数
             : $(( len += i % 2 ))
             : $(( i >>= 1 ))
         done
     done
 
-    echo "${len}"
+    echo "${len}"                       # 最后 len 的值是掩码二进制中 1 的个数
 }
 
 # ====================================================================
@@ -306,7 +306,7 @@ _configure_variables()
             eval v="\"\$${var}_${t}\""
             if [ -n "${v}" ]; then
                 eval "${var}_${IFVAR}=\"\$${var}_${t}\""
-                continue 2                    # 跳到下一个 var
+                continue 2              # 跳到下一个 var
             fi
         done
     done
