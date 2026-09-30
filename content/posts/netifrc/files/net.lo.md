@@ -622,7 +622,7 @@ _load_modules()
         done
 
         eval module_${mod}_provides="${provides}"        # 记录 mod -> 能力
-        eval module_${provides}_providedby="${mod}"      # 记录 能力 -> mod（当前提供者）
+        eval module_${provides}_providedby="${mod}"      # 记录 能力 -> mod（{{< text bg="yellow" fg="background-0" >}}当前提供者{{< /text >}}）
     done
 
     # ---- 用户偏好优先 ----
@@ -638,7 +638,7 @@ _load_modules()
                 inner=$(command -v "${mod}_${f}")
                 eval "${x}_${f}() { [ '${inner}' = '${mod}_${f}' ] || return 0; ${mod}_${f} \"\$@\"; }"
             done
-            eval module_${x}_providedby="${mod}"
+            eval module_${x}_providedby="${mod}"         # {{< text bg="yellow" fg="background-0" >}}修改能力提供者{{< /text >}}
             ;;
         esac
     done

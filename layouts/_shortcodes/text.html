@@ -1,7 +1,8 @@
 {{- $class := .Get "class" -}}
 {{- $fg    := .Get "fg" -}}
+{{- $bg    := .Get "bg" -}}
 {{- $bold  := .Get "bold" -}}
 
 {{- if .Inner -}}
-<span class="{{ $class }}" style="{{- if $fg -}} color: var(--color-{{ $fg }}); {{- end -}} {{- if $bold -}} font-weight: bold;{{- end -}}">{{- .Inner | safeHTML -}}</span>
+<span class="{{ $class }}" style="{{- if $fg -}} color: var(--color-{{ $fg }}); {{- end -}} {{- if $bg -}} background-color: var(--color-{{ $bg }}); {{- end -}} {{- if $bold -}} font-weight: bold;{{- end -}}">{{- .Inner | safeHTML -}}</span>
 {{- end -}}
