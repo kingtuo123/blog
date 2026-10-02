@@ -1602,7 +1602,7 @@ $ git push -u origin master                                         {{< text fg=
 ### 清空历史 commits
 
 ```bash-session
-$ git switch --orphan latest_branch    {{< text fg="gray-0" >}}创建孤儿分支，并切换到该分支{{< /text >}}
+$ git checkout --orphan latest_branch  {{< text fg="gray-0" >}}创建孤儿分支，并切换到该分支{{< /text >}}
 $ git add -A                           {{< text fg="gray-0" >}}暂存所有文件{{< /text >}}
 $ git commit -am "First Commit"        {{< text fg="gray-0" >}}提交所有更改{{< /text>}}
 $ git branch -D master                 {{< text fg="gray-0" >}}删除主分支 master{{< /text>}}
