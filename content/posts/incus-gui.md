@@ -20,7 +20,7 @@ $ incus profile create debian13
 $ incus profile edit debian13
 ```
 
-```yaml
+```yaml{ copy=true }
 config:
   boot.autostart: "false"
 devices:
@@ -85,31 +85,33 @@ $ incus launch images:debian/13 my-debian13 -p debian13
 $ incus exec my-debian13 -- bash
 
 {{< text fg="yellow" >}}[创建用户]{{< /text >}}
-{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} useradd -m -s /usr/bin/bash -u 1000 debian{{< /text >}}
 
 {{< text fg="yellow" >}}[配置时区]{{< /text >}}
 {{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
 
 {{< text fg="yellow" >}}[环境变量]{{< /text >}}
-{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF | tee /root/.bash_profile /home/king/.bash_profile{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/profile.d/gui.sh{{< /text >}}
 export WAYLAND_DISPLAY=wayland-1
 export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
 export PULSE_SERVER=unix:/mnt/pulse-native
 if [[ -e /mnt/wayland-1 && ! -e /run/user/\$(id -u)/wayland-1 ]]; then
     ln -sf /mnt/wayland-1 /run/user/\$(id -u)/
 fi
+dbus-update-activation-environment --systemd --all
 EOF
 
 {{< text fg="yellow" >}}[配置软件源]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} rm -f /etc/apt/sources.list{{< /text >}}
 {{< text fg="red" >}}root@my-debian13:/#{{< /text >}}{{< text fg="foreground" >}} cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
 Types: deb
-URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
 Suites: trixie trixie-updates trixie-backports
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 Types: deb
-URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian-security
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 Suites: trixie-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
@@ -134,7 +136,7 @@ EOF
 ```bash-session
 $ incus restart my-debian13
 $ incus exec my-debian13 -- su - root -c firefox
-$ incus exec my-debian13 -- su - king -c firefox
+$ incus exec my-debian13 -- su - debian -c firefox
 ```
 
 
@@ -149,17 +151,17 @@ $ incus profile create debian13-cloud
 $ incus profile edit debian13-cloud
 ```
 
-```yaml
+```yaml{ copy=true }
 config:
   cloud-init.vendor-data: |
     #cloud-config
     users:
-      - name: king
+      - name: debian
         uid: 1000
         shell: /usr/bin/bash
     timezone: Asia/Shanghai
     write_files:
-      - path: /etc/profile.d/gui-init.sh
+      - path: /etc/profile.d/gui.sh
         permissions: '0755'
         content: |
           export WAYLAND_DISPLAY=wayland-1
@@ -168,19 +170,23 @@ config:
           if [[ -e /mnt/wayland-1 && ! -e /run/user/$(id -u)/wayland-1 ]]; then
               ln -sf /mnt/wayland-1 /run/user/$(id -u)/
           fi
+          dbus-update-activation-environment --systemd --all
       - path: /etc/apt/sources.list.d/debian.sources
         permissions: '0644'
         content: |
-          URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
+          Types: deb
+          URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
           Suites: trixie trixie-updates trixie-backports
           Components: main contrib non-free non-free-firmware
           Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
           Types: deb
-          URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian-security
+          URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
           Suites: trixie-security
           Components: main contrib non-free non-free-firmware
           Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
     runcmd:
+      - rm -f /etc/apt/sources.list
+      - sed -i '/^Types/s/^/\n/ ' /etc/apt/sources.list.d/debian.sources
       - apt update
       - apt install -y pciutils mesa-utils pipewire-audio fonts-dejavu fonts-wqy-microhei firefox-esr foot
 ```
@@ -194,7 +200,7 @@ $ incus launch images:debian/13/cloud my-debian13-cloud -p debian13 -p debian13-
 查看 cloud-init 日志：
 
 ```bash-session
-$ incus exec my-debian13-cloud -- tail -f /var/log/cloud-init-output.log
+$ incus exec my-debian13-cloud -- tail -fn +1 /var/log/cloud-init-output.log
 ```
 
 查看 cloud-init 运行状态：
@@ -215,5 +221,5 @@ recoverable_errors: {}
 ```bash-session
 $ incus restart my-debian13-cloud
 $ incus exec my-debian13-cloud -- su - root -c firefox
-$ incus exec my-debian13-cloud -- su - king -c firefox
+$ incus exec my-debian13-cloud -- su - debian -c firefox
 ```
