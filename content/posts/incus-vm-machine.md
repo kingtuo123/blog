@@ -17,11 +17,11 @@ $ incus profile create debian13vm
 $ incus profile edit debian13vm
 ```
 
-```yaml
+```yaml{ copy=true }
 config:
-    boot.autostart: "false"
     limits.cpu: "4"
     limits.memory: 2GiB
+    boot.autostart: "false"
     security.secureboot: "false"
 devices:
     root:
@@ -31,7 +31,6 @@ devices:
         size: 50GiB
     eth0:
         name: eth0
-        host_name: veth-debian13vm
         network: incusbr-1000
         type: nic
 ```
@@ -49,25 +48,26 @@ $ incus launch images:debian/13 my-debian13vm --vm -p debian13vm
 $ incus exec my-debian13vm -- bash
 
 {{< text fg="yellow" >}}[创建用户]{{< /text >}}
-{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}useradd -m -s /usr/bin/bash -u 1000 king{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}useradd -m -s /usr/bin/bash -u 1000 debian{{< /text >}}
 
 {{< text fg="yellow" >}}[配置密码]{{< /text >}}
 {{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}passwd root{{< /text >}}
-{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}passwd king{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}passwd debian{{< /text >}}
 
 {{< text fg="yellow" >}}[配置时区]{{< /text >}}
 {{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime{{< /text >}}
 
 {{< text fg="yellow" >}}[配置软件源]{{< /text >}}
+{{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}rm -f /etc/apt/sources.list{{< /text >}}
 {{< text fg="red" >}}root@my-debian13vm:~#{{< /text >}} {{< text fg="foreground" >}}cat << EOF > /etc/apt/sources.list.d/debian.sources{{< /text >}}
 Types: deb
-URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian
 Suites: trixie trixie-updates trixie-backports
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 Types: deb
-URIs: http://mirrors4.tuna.tsinghua.edu.cn/debian-security
+URIs: https://mirrors.tuna.tsinghua.edu.cn/debian-security
 Suites: trixie-security
 Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
@@ -138,9 +138,9 @@ $ incus profile edit win10
 
 ```yaml
 config:
-    boot.autostart: "false"
     limits.cpu: "4"
     limits.memory: 4GiB
+    boot.autostart: "false"
     security.secureboot: "false"
 devices:
     root:
