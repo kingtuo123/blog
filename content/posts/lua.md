@@ -409,3 +409,103 @@ end
 处理数组/列表，且需要保证顺序 → 用 ipairs
 
 数组中有 nil 空洞 → 用 pairs（ipairs 会提前中断）
+
+
+
+安全访问：skip
+
+
+
+表标准库
+
+table.move（a,f,e,t），调用
+该函数可以将表a中从索引f到e的元素（包含索引f和索引e对应的元素本⾝）移动到位
+置t上。例如，如下代码可以在列表a的开头插入一个元素：
+
+```lua
+table.move(a, 1, #a, 2)
+a[1] = newElement
+```
+
+如下的代码可以删除第一个元素：
+
+```lua
+table.move(a, 2, #a, 1)
+a[#a] = nil
+```
+
+移动（move）实际上是将一个值从一个地⽅拷贝
+（copy）到另一个地方。因此，像上面的例子一样，我们必须在移动后显式地把最后一个元素删除。
+
+
+```text
+table.concat(list [, sep [, i [, j]]])	将 list 中从 i 到 j 的元素连接成字符串，用 sep 分隔。默认 i=1，j=#list，sep=""。	table.concat({"a","b","c"}, "-") → "a-b-c"
+table.insert(list, [pos,] value)	在 list 的位置 pos 插入 value，并后移后续元素。省略 pos 时追加到末尾。	local t={1,2}; table.insert(t, 3) → t={1,2,3}
+table.insert(t, 1, 0) → t={0,1,2,3}
+table.move(a1, f, e, t [, a2])	将 a1[f..e] 的元素复制到 a2[t..]（a2 默认与 a1 相同）。自动处理重叠区域，返回目标表 a2。	local a={1,2,3}; table.move(a, 1, 3, 2, {}) → 返回 {1,2,3}
+table.pack(...)	将所有参数打包成一个新表，并在字段 n 中记录参数个数。	local t = table.pack(1, "a", true)
+t.n == 3，t[1]==1，t[2]=="a"
+table.remove(list [, pos])	删除 list 中位置 pos 的元素，并前移后续元素。返回被删除的元素。省略 pos 时删除最后一个元素。	local t={1,2,3}; local v=table.remove(t, 2) → v=2，t={1,3}
+table.sort(list [, comp])	就地对 list 排序。可选参数 comp 为比较函数，comp(a,b) 返回 true 表示 a 应排在 b 前。	local t={3,1,2}; table.sort(t) → t={1,2,3}
+table.unpack(list [, i [, j]])	返回 list[i..j] 的多个值。默认 i=1，j=#list。	table.unpack({10,20,30}) → 10, 20, 30
+```
+
+
+
+
+
+## 函数
+
+
+```lua
+function add(a, b)
+    return a + b
+end
+```
+
+多返回值：
+
+使用多重赋值
+
+```lua
+function square(a, b)
+    return a*a, b*b
+end
+s, e = square(2, 3)
+print(s, e)    --> 4    9
+```
+
+可变长参数函数：
+
+参数列表中的三个点（...）表示该函数的参数是可变长的。
+
+当函数要访问这些参数时仍需用到三个点，但不同的是此时这三个点是作为一个表达式来使用的
+
+```lua
+function add(...)
+    local s = 0
+    for _, v in ipairs({...}) do    -- ipairs 的参数类型必须是 table，所以要用 { }
+        s = s + v
+    end
+    return s
+end
+
+print(add(1, 2, 3, 4, 5))    --> 15
+```
+
+```lua
+function add(...)
+    print({...})             --> table: 0x55af8ccc5e60
+    print(...)               --> 1	2	3	4	5
+    print(type(...))         --> number
+    a, b, c = ...
+    print(a, b, c)           --> 1	2	3
+end
+
+print(add(1, 2, 3, 4, 5))
+```
+
+
+
+
+## 输⼊输出
