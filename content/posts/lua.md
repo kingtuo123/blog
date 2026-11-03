@@ -509,3 +509,29 @@ print(add(1, 2, 3, 4, 5))
 
 
 ## 输⼊输出
+
+函数 io.input 和函数 io.output 可以用于改变当前的输入输出流。
+
+作为原则，应该只在“用后即弃”的代码或调试代码中使用函数 print；当需要完全控制输出时，应该使用 io.write。
+
+io.write 可以使用多个参数，因此应该避免使用 io.write(a .. b .. c)，
+应该调用 io.write(a, b, c)，
+后者可以用更少的资源达到同样的效果，并且可以避免更多的连接动作。
+
+```bash-session
+> io.write("hello ", "world\n")
+hello world
+file (0x7f452c97d5c0)
+```
+
+file (0x7f452c97d5c0) 表示：io.write 的返回值是它写入的那个文件对象（即默认输出文件 io.stdout，标准输出文件句柄）。
+
+函数 io.read 可以从当前输入流中读取字符串，其参数决定了要读取的数据：
+
+```text
+a    读取整个文件
+l    读取下一行（丢弃换行符）
+L    读取下一行（保留换行符）
+n    读取一个数值
+num  以字符串读取 num 个字符
+```
