@@ -1,29 +1,71 @@
 ---
-title: "Incus 运行 DSH"
-date: "2026-11-03"
-toc: true
-draft: true
+title: "Incus 运行 DeepSeek Harness"
+date: "2026-11-05"
 ---
 
 
 
-## 检查
 
+
+## 准备
+
+工程配置：
+
+```bash-session{ height=25 }
+$ incus project show user-1000
+config:
+  features.images: "true"
+  features.networks: "false"
+  features.networks.zones: "true"
+  features.profiles: "true"
+  features.storage.buckets: "true"
+  features.storage.volumes: "true"
+  restricted: "true"
+  restricted.containers.nesting: allow
+  restricted.devices.disk: allow
+  restricted.devices.disk.paths: /home/king,/run/user/1000
+  restricted.devices.gpu: allow
+  restricted.devices.proxy: allow
+  restricted.devices.usb: allow
+  restricted.idmap.gid: "1000"
+  restricted.idmap.uid: "1000"
+  restricted.networks.access: incusbr-1000
+  restricted.snapshots: allow
+```
+
+idmap 配置，参考 [映射本地路径](/posts/incus/#%e6%98%a0%e5%b0%84%e6%9c%ac%e5%9c%b0%e8%b7%af%e5%be%84)：
 
 ```bash-session
-$ mkdir -p ~/Incus/dsh
+$ cat /etc/subuid
+king:100000:65536
+root:1000000:1000000000
+root:1000:1
+$ cat /etc/subgid
+king:100000:65536
+root:1000000:1000000000
+root:1000:1
+```
+
+需要的目录：
+
+```bash-session
+$ mkdir -p ~/Incus/dsh/Default
+$ mkdir -p ~/.fonts
 ```
 
 
 
-## Profile
+
+
+
+## 创建 profile
 
 ```bash-session
 $ incus profile create dsh
 $ incus profile edit dsh
 ```
 
-```yaml{ copy=true }
+```yaml{ copy=true height=60 }
 config:
   boot.autostart: "true"
   boot.autorestart: "false"
@@ -48,41 +90,47 @@ config:
         permissions: '0755'
         content: |
           #!/bin/bash
+          ulimit -c 0
           if [[ "$(pgrep dsh-web | wc -l)" -gt 2 ]]; then
               echo "dsh-web is already running"
               exit 0
           fi
           pid=$(ss -tlnp | grep 3080 | grep -Po '(?<=pid=)[0-9]+')
           if [[ -n "${pid}" ]]; then
-              kill -9 ${pid}
+              kill -INT ${pid}
           fi
           coproc dsh {
               dsh web --no-open
           }
-          read line <&"${dsh[0]}"
-          url=$(echo "${line}" | grep -o 'http://.*token=.*')
-          if [[ -z "${url}" ]];then
-              echo "failed to get url"
-              exit 1
-          fi
-          echo ${url}
+          while read line <&"${dsh[0]}"; do
+              echo "${line}"
+              url=$(echo "${line}" | grep -o 'http://.*token=.*')
+              if [[ -n "${url}" ]];then
+                  break
+              fi
+          done
           chromium --enable-features=UseOzonePlatform --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb --app="${url}"
-          kill -9 ${dsh_PID} &> /dev/null
+          kill -INT ${dsh_PID} &> /dev/null
           pid=$(ss -tlnp | grep 3080 | grep -Po '(?<=pid=)[0-9]+')
           if [[ -n "${pid}" ]]; then
-              kill -9 ${pid}
+              kill -INT ${pid}
           fi
     runcmd:
-      - ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-      - echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-      - echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen
-      - locale-gen
-      - echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
-      - sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
-      - touch /etc/systemd/do-not-udevadm-trigger-on-update
-      - pacman -Syu --noconfirm base-devel pciutils mesa-utils pipewire-audio ttf-dejavu wqy-microhei noto-fonts-cjk foot bash-completion
-      - pacman -Scc --noconfirm
       - loginctl enable-linger arch
+      - ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+      - echo -e "en_US.UTF-8 UTF-8\nzh_CN.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
+      - touch /etc/systemd/do-not-udevadm-trigger-on-update
+      - echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+      - pacman -Syu --noconfirm
+      - pacman -S --noconfirm --needed base-devel pciutils mesa-utils pipewire-audio bash-completion
+      - pacman -S --noconfirm --needed git jq unzip zip poppler imagemagick wget ripgrep fd tree bat
+      - pacman -S --noconfirm --needed ttf-dejavu wqy-microhei
+      - pacman -S --noconfirm --needed nodejs npm pnpm
+      - pacman -S --noconfirm --needed chromium foot lxappearance gnome-themes-extra
+      - pacman -Scc --noconfirm
+      - npm config set registry https://registry.npmmirror.com
+      - npm config set allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs --location=user
+      - npm install -g @deepseek-ai/dsh
 devices:
   root:
     path: /
@@ -135,8 +183,21 @@ devices:
     security.uid: "1000"
 ```
 
+{{< notice >}}
 
-创建容器：
+说明：
+
+*`loginctl enable-linger arch`* → 确保用户级 systemd 服务在无登录时存活。
+
+*`touch /etc/systemd/do-not-udevadm-trigger-on-update`* → 禁止 systemd 软件包在更新时自动触发 udevadm trigger（会报错）。
+
+{{< /notice >}}
+
+
+
+
+
+## 创建容器
 
 ```bash-session
 $ incus launch images:archlinux/cloud dsh -p dsh
@@ -155,152 +216,54 @@ $ incus exec dsh -- tail -fn +1 /var/log/cloud-init.log
 $ incus exec dsh -- cloud-init status --long
 ```
 
-### 测试
+重启容器：
 
 ```bash-session
-$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c '/home/arch/dsh-web'
+$ incus restart dsh
 ```
 
-### 说明
 
-`sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf`
 
-> 全局禁用 Pacman 在下载文件时使用的沙盒机制。沙盒功能需要内核 `CONFIG_SECURITY_LANDLOCK` 支持
 
-`loginctl enable-linger arch`：
 
-`machinectl shell arch@`
+## 配置
 
-> enable-linger 确保用户级 systemd 服务在无登录时存活，machinectl shell 则帮你获得一个正确的用户登录会话
+设置字体和主题：
 
-`touch /etc/systemd/do-not-udevadm-trigger-on-update`
+```bash-session
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'lxappearance'
+```
 
-> 禁止 systemd 软件包在更新时自动触发 udevadm trigger
+启用鼠标中键粘贴（Chromium 浏览器）：
+
+```bash-session
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true'
+```
+
+
+
 
 ## DSH
 
-
-```
-pacman -S --noconfirm nodejs npm git
-pacman -S --noconfirm firefox lxappearance gnome-themes-extra
-pacman -S --noconfirm pnpm
-npm config set registry https://registry.npmmirror.com
-npm config set allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs --location=user
-npm install -g @deepseek-ai/dsh
-dsh plugin --profile web add dsh-network-mode
-dsh web --no-open
-
-```
-
+安装 `dsh-market` 插件：
 
 ```bash-session
-$ machinectl shell arch@.host
-$ machinectl shell arch@.host /usr/bin/whoami
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh plugin --profile web add dshmarket'
 ```
 
-
-## nginx
-
-```
-pacman -S --noconfirm nginx
-systemctl enable nginx
-systemctl start nginx
-```
-
+浏览器打开 `dsh web`：
 
 ```bash-session
-$ vim /etc/nginx/nginx.conf
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh-web'
 ```
 
-```nginx
-worker_processes auto;
-pid /run/nginx.pid;
-error_log /var/log/nginx/error.log;
-events {
-    worker_connections 1024;
-}
-http {
-    server {
-        listen 8080;
-        location / {
-	   proxy_pass http://127.0.0.1:3080;
-	   proxy_set_header Host 127.0.0.1:3080;
-	   proxy_set_header Origin http://127.0.0.1:3080;
-	   proxy_set_header X-Real-IP $remote_addr;
-	   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	   proxy_http_version 1.1;
-	   proxy_set_header Upgrade $http_upgrade;
-	   proxy_set_header Connection "upgrade";
-        }
-    }
-}
-```
 
+
+
+
+## 更新
 
 ```bash-session
-$ mkdir -p /etc/nginx/ssl
-$ openssl req -x509 -nodes -days 825 -newkey rsa:2048 \
-  -keyout /etc/nginx/ssl/dsh.key \
-  -out /etc/nginx/ssl/dsh.crt \
-  -subj "/CN=192.168.20.130" \
-  -addext "subjectAltName=IP:192.168.20.130"
-$ chmod 600 /etc/nginx/ssl/dsh.key
-```
-
-
-
-## chromium
-
-
-```
-chromium --enable-features=UseOzonePlatform --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb --app="https://你的目标网址.com"
-```
-
-
-## openssh
-
-```
-sudo pacman -S openssh
-systemctl enable sshd
-ssh-keygen -N "" -t ed25519 -f ~/.ssh/dsh_ed25519
-```
-
-
-## 定期更新系统
-
-/etc/systemd/system/auto-sysupgrade.service
-
-```
-[Unit]
-Description=Automatic system upgrade
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/pacman -Syu --noconfirm
-ExecStart=/usr/bin/sync
-IOSchedulingClass=idle
-```
-
-/etc/systemd/system/auto-sysupgrade.timer
-
-```
-[Unit]
-Description=Run automatic system upgrade 10min after boot, at most once per day
-[Timer]
-OnBootSec=10min
-OnUnitActiveSec=24h
-[Install]
-WantedBy=timers.target
-```
-
-
-
-```
-systemctl enable auto-sysupgrade.timer
-```
-
-更新：
-
-```
-pacman -Syu --noconfirm
-npm install -g @deepseek-ai/dsh
+$ incus exec dsh -- pacman -Syu --noconfirm
+$ incus exec dsh -- npm install -g @deepseek-ai/dsh
 ```
