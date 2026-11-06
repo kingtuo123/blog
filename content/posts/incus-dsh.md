@@ -74,12 +74,21 @@ config:
     #cloud-config
     ssh_genkeytypes: []
     write_files:
+      - path: /etc/systemd/system.conf
+        permissions: '0644'
+        content: |
+          [Manager]
+          DefaultEnvironment="LANG=en_US.UTF-8"
+          DefaultEnvironment="LC_ALL=en_US.UTF-8"
+          DefaultEnvironment="WAYLAND_DISPLAY=/mnt/wayland-1"
+          DefaultEnvironment="PIPEWIRE_REMOTE=unix:/mnt/pipewire-0"
+          DefaultEnvironment="PULSE_SERVER=unix:/mnt/pulse-native"
       - path: /etc/systemd/system/dsh-web.service
         permissions: '0644'
         content: |
           [Unit]
           Description=DSH Web Service
-          After=network-online.target
+          After=network-online.target systemd-user-sessions.service
           Wants=network-online.target
           [Service]
           Type=simple
@@ -88,39 +97,34 @@ config:
           ExecStart=/usr/bin/dsh web --no-open
           Restart=always
           RestartSec=1s
+          Environment="HOME=/home/arch"
+          Environment="XDG_RUNTIME_DIR=/run/user/1000"
+          Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus"
+          Environment="PATH=/home/arch/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin"
           [Install]
           WantedBy=multi-user.target
-      - path: /etc/profile.d/gui.sh
-        permissions: '0755'
-        content: |
-          export LANG=en_US.UTF-8
-          export LC_ALL=en_US.UTF-8
-          export WAYLAND_DISPLAY=wayland-1
-          export PIPEWIRE_REMOTE=unix:/mnt/pipewire-0
-          export PULSE_SERVER=unix:/mnt/pulse-native
-          if [[ -e /mnt/wayland-1 && ! -e /run/user/$(id -u)/wayland-1 ]]; then
-              ln -sf /mnt/wayland-1 /run/user/$(id -u)/wayland-1
-          fi
-          dbus-update-activation-environment --systemd --all
       - path: /usr/local/bin/dsh-web
         permissions: '0755'
         content: |
           #!/bin/bash
-          url=$(systemctl status dsh-web.service | grep -o 'http://.*token=.*')
+          time=$(systemctl show --property=ActiveEnterTimestamp --value dsh-web.service)
+          url=$(journalctl -u dsh-web.service --since "${time}" | grep -o 'http://.*token=.*' | tail -n1)
+          if [[ "$1" == "url" ]];then
+              echo "${url}"
+              exit 0
+          fi
           if [[ -n "${url}" ]];then
               app="--app=${url}"
           fi
           chromium --enable-features=UseOzonePlatform --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb ${app}
     runcmd:
-      - systemctl enable dsh-web.service
-      - loginctl enable-linger arch
       - ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
       - echo -e "en_US.UTF-8 UTF-8\nzh_CN.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
       - touch /etc/systemd/do-not-udevadm-trigger-on-update
       - echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
       - pacman -Syu --noconfirm
       - pacman -S --noconfirm --needed base-devel pciutils mesa-utils pipewire-audio bash-completion
-      - pacman -S --noconfirm --needed git jq unzip zip poppler imagemagick wget ripgrep fd tree bat
+      - pacman -S --noconfirm --needed openssh git jq uv 7zip unzip zip poppler imagemagick wget ripgrep fd tree bat
       - pacman -S --noconfirm --needed ttf-dejavu wqy-microhei
       - pacman -S --noconfirm --needed nodejs npm pnpm
       - pacman -S --noconfirm --needed chromium foot lxappearance gnome-themes-extra
@@ -128,6 +132,9 @@ config:
       - npm config set registry https://registry.npmmirror.com
       - npm config set allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs --location=user
       - npm install -g @deepseek-ai/dsh
+      - loginctl enable-linger arch
+      - systemctl enable dsh-web.service
+      - systemctl enable sshd.service
 devices:
   root:
     path: /
@@ -223,7 +230,7 @@ $ incus restart dsh
 
 
 
-## 配置
+## 配置（可选）
 
 设置字体和主题：
 
@@ -237,35 +244,118 @@ $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'lxappearance'
 $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true'
 ```
 
-
-
-
-
-## DSH
-
-安装 `dsh-market` 插件：
+安装 `dsh-market` 插件市场：
 
 ```bash-session
 $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh plugin --profile web add dshmarket'
 ```
 
-浏览器打开 `dsh web`：
+
+
+## 打开 DSH
+
+### 方法一：从容器内浏览器打开
 
 ```bash-session
 $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh-web'
 ```
 
-其它插件可在插件市场中安装：
+### 方法二：从宿主机浏览器打开
 
-```{ nonebg=true }
-billion-context
-dsh-cost-meter
-dsh-everforest
-dsh-archive-manager
-dsh-net-proxy
+需要配置 ssh 转发，创建以下脚本：
+
+```bash-session
+$ touch dsh-ssh-forwarding.sh && chmod +x dsh-ssh-forwarding.sh && vim dsh-ssh-forwarding.sh
 ```
 
+```bash{ bar="dsh-ssh-forwarding.sh" copy=true height=50 }
+#!/bin/bash
 
+dsh_home="${HOME}/Incus/dsh"
+ssh_key="${HOME}/.ssh/dsh/dsh_ed25519"
+
+function close() {
+    ssh_pid=$(ss -nltp | grep '127.0.0.1:3080' | grep -Po '(?<=pid=)[0-9]+')
+    if [[ -n "${ssh_pid}" ]]; then
+        echo "关闭 ssh 转发..."
+        kill -9 ${ssh_pid}
+    fi
+    echo "退出..."
+    exit 0
+}
+
+trap close SIGINT
+trap close SIGTERM
+
+function get_ip() {
+    dsh_ip=$(incus list dsh -c 4 -f csv,noheader | grep -Po '([0-9]{1,3}\.){3}[0-9]{1,3}' | tail -n1)
+    if [[ -n "${dsh_ip}" ]];then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function get_url() {
+    url=$(incus exec dsh -- dsh-web url)
+    if [[ -n "${url}" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function key_check() {
+    local ret=0
+    if [[ ! -e "${ssh_key}" || ! -e "${ssh_key}.pub" ]]; then
+        echo "创建密钥..."
+        rm -f ${ssh_key} ${ssh_key}.pub
+        mkdir -p $(dirname ${ssh_key})
+        ssh-keygen -N "" -t ed25519 -f ${ssh_key}
+        ret=1
+    fi
+    if ! grep -q -o -F "$(<${ssh_key}.pub)" ${dsh_home}/.ssh/authorized_keys; then
+        echo "容器授权..."
+        mkdir -p ${dsh_home}/.ssh
+        cat ${ssh_key}.pub >> ${dsh_home}/.ssh/authorized_keys
+        ret=1
+    fi
+    return ${ret}
+}
+
+while true; do
+    until get_ip; do
+        echo "等待容器启动..."
+        sleep 5
+    done
+    until get_url; do
+        echo "等待获取地址..."
+        sleep 5
+    done
+    until key_check; do
+        echo "等待检查密钥..."
+        sleep 0
+    done
+    echo "开启 ssh 转发..."
+    echo "${url}"
+    ssh -N -o StrictHostKeyChecking=accept-new -i ${ssh_key} -L 127.0.0.1:3080:127.0.0.1:3080 arch@${dsh_ip}
+    sleep 5
+done
+```
+
+运行脚本，然后在浏览器中打开链接即可：
+
+```bash-session
+$ ./dsh-ssh-forwarding.sh
+开启 ssh 转发...
+http://127.0.0.1:3080/?token=D1pv-zN_fA99WCbAOzgRs_M5HjKco814c_7RPsHQO9w
+```
+
+要获取 url，也可执行：
+
+```bash-session
+$ incus exec dsh -- dsh-web url
+```
 
 
 
@@ -275,4 +365,45 @@ dsh-net-proxy
 $ incus exec dsh -- pacman -Syu --noconfirm
 $ incus exec dsh -- npm install -g @deepseek-ai/dsh
 $ incus exec dsh -- pnpm self-update
+```
+
+
+
+## 代理
+
+容器内修改：
+
+```bash-session
+$ incus exec dsh -- vim /etc/systemd/system.conf
+```
+
+```{ bar="/etc/systemd/system.conf" }
+DefaultEnvironment="http_proxy=http://192.168.20.120:7890"
+DefaultEnvironment="https_proxy=http://192.168.20.120:7890"
+DefaultEnvironment="no_proxy=localhost,127.0.0.1"
+```
+
+重启或执行以下命令：
+
+```bash-session
+$ incus exec dsh -- systemctl daemon-reexec
+```
+
+测试：
+
+```bash-session
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'curl www.google.com'
+```
+
+
+
+
+## 常用插件
+
+```
+billion-context
+dsh-cost-meter
+dsh-everforest
+dsh-archive-manager
+dsh-net-proxy
 ```
