@@ -1,5 +1,5 @@
 ---
-title: "Incus 运行 DeepSeek Harness"
+title: "Incus 运行 DSH"
 date: "2026-11-05"
 ---
 
@@ -11,7 +11,7 @@ date: "2026-11-05"
 
 工程配置：
 
-```bash-session{ height=25 }
+```bash-session
 $ incus project show user-1000
 config:
   features.images: "true"
@@ -74,6 +74,22 @@ config:
     #cloud-config
     ssh_genkeytypes: []
     write_files:
+      - path: /etc/systemd/system/dsh-web.service
+        permissions: '0644'
+        content: |
+          [Unit]
+          Description=DSH Web Service
+          After=network-online.target
+          Wants=network-online.target
+          [Service]
+          Type=simple
+          User=arch
+          Group=arch
+          ExecStart=/usr/bin/dsh web --no-open
+          Restart=always
+          RestartSec=1s
+          [Install]
+          WantedBy=multi-user.target
       - path: /etc/profile.d/gui.sh
         permissions: '0755'
         content: |
@@ -90,32 +106,13 @@ config:
         permissions: '0755'
         content: |
           #!/bin/bash
-          ulimit -c 0
-          if [[ "$(pgrep dsh-web | wc -l)" -gt 2 ]]; then
-              echo "dsh-web is already running"
-              exit 0
+          url=$(systemctl status dsh-web.service | grep -o 'http://.*token=.*')
+          if [[ -n "${url}" ]];then
+              app="--app=${url}"
           fi
-          pid=$(ss -tlnp | grep 3080 | grep -Po '(?<=pid=)[0-9]+')
-          if [[ -n "${pid}" ]]; then
-              kill -INT ${pid}
-          fi
-          coproc dsh {
-              dsh web --no-open
-          }
-          while read line <&"${dsh[0]}"; do
-              echo "${line}"
-              url=$(echo "${line}" | grep -o 'http://.*token=.*')
-              if [[ -n "${url}" ]];then
-                  break
-              fi
-          done
-          chromium --enable-features=UseOzonePlatform --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb --app="${url}"
-          kill -INT ${dsh_PID} &> /dev/null
-          pid=$(ss -tlnp | grep 3080 | grep -Po '(?<=pid=)[0-9]+')
-          if [[ -n "${pid}" ]]; then
-              kill -INT ${pid}
-          fi
+          chromium --enable-features=UseOzonePlatform --ozone-platform=wayland --disable-features=WaylandWpColorManagerV1 --force-color-profile=srgb ${app}
     runcmd:
+      - systemctl enable dsh-web.service
       - loginctl enable-linger arch
       - ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
       - echo -e "en_US.UTF-8 UTF-8\nzh_CN.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
@@ -243,6 +240,7 @@ $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'gsettings set o
 
 
 
+
 ## DSH
 
 安装 `dsh-market` 插件：
@@ -257,6 +255,16 @@ $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh plugin --pr
 $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh-web'
 ```
 
+其它插件可在插件市场中安装：
+
+```{ nonebg=true }
+billion-context
+dsh-cost-meter
+dsh-everforest
+dsh-archive-manager
+dsh-net-proxy
+```
+
 
 
 
@@ -266,4 +274,5 @@ $ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'dsh-web'
 ```bash-session
 $ incus exec dsh -- pacman -Syu --noconfirm
 $ incus exec dsh -- npm install -g @deepseek-ai/dsh
+$ incus exec dsh -- pnpm self-update
 ```
