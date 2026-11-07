@@ -69,6 +69,7 @@ $ incus profile edit dsh
 config:
   boot.autostart: "true"
   boot.autorestart: "false"
+  security.nesting: "true"
   raw.idmap: both 1000 1000
   cloud-init.vendor-data: |
     #cloud-config
