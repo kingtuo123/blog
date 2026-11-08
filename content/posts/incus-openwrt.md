@@ -21,6 +21,7 @@ config:
 devices:
   eth0:
     name: eth0
+    host_name: openwrt
     network: incusbr-1000
     type: nic
   root:
@@ -32,23 +33,29 @@ devices:
 
 ### 配置
 
+查看可用版本：
+
+```bash-session
+$ incus image list images: openwrt
+```
+
 初始化容器：
 
 ```bash-session
-$ incus init images:openwrt/25.12 my-openwrt -p openwrt
+$ incus init images:openwrt/25.12 openwrt -p openwrt
 ```
 
 静态 IP：
 
 ```bash-session
-$ incus config device override my-openwrt eth0 ipv4.address=192.168.20.120
+$ incus config device override openwrt eth0 ipv4.address=192.168.20.120
 ```
 
 OpenWrt 配置（单 lan 口）：
 
 ```bash-session
-$ incus start my-openwrt
-$ incus exec my-openwrt -- ash
+$ incus start openwrt
+$ incus exec openwrt -- ash
 
 {{< text fg="yellow" >}}[先修改密码]{{< /text >}}
 # passwd root
@@ -66,7 +73,7 @@ network.wan=interface
 network.wan.device='eth0'
 network.wan.proto='dhcp'
 
-{{< text fg="yellow" >}}[查看：wan 区域的入站流量是被拒绝的，此时无法打开网页后台]{{< /text >}}
+{{< text fg="yellow" >}}[查看：wan 区域的入站请求是被拒绝的，此时无法打开网页后台]{{< /text >}}
 # uci show firewall | grep -e 'zone' | grep -E '\.name|\.input'
 firewall.@zone[0].name='lan'
 firewall.@zone[0].input='ACCEPT'
@@ -104,8 +111,8 @@ firewall.@zone[1].input='REJECT'
 OpenClash 插件：[https://github.com/vernesong/OpenClash/releases/latest](https://github.com/vernesong/OpenClash/releases/latest)
 
 ```bash-session
-$ incus file push luci-app-openclash-0.47.156.apk my-openwrt/root
-$ incus exec my-openwrt -- ash
+$ incus file push luci-app-openclash-0.47.156.apk openwrt/root
+$ incus exec openwrt -- ash
 # apk add --allow-untrusted ./luci-app-openclash-0.47.156.apk
 # reboot
 ```
@@ -123,8 +130,8 @@ $ grep -m1 'flags' /proc/cpuinfo | grep -o 'avx2\|sse4_2'
 如果输出包含 `avx2`，说明可以用 `v3`；如果只有 `sse4_2`，可以用 `v2`；如果都没有，请使用 `v1`。
 
 ```bash-session
-$ incus file push mihomo-linux-amd64-v3-v1.19.32.gz my-openwrt/root
-$ incus exec my-openwrt -- ash
+$ incus file push mihomo-linux-amd64-v3-v1.19.32.gz openwrt/root
+$ incus exec openwrt -- ash
 # gzip -d mihomo-linux-amd64-v3-v1.19.32.gz
 # mv mihomo-linux-amd64-v3-v1.19.32 /etc/openclash/core/clash_meta
 # chmod +x /etc/openclash/core/clash_meta
@@ -179,14 +186,15 @@ config:
   security.secureboot: "false"
 devices:
   root:
-      path: /
-      pool: default
-      type: disk
-      size: 10GiB
+    path: /
+    pool: default
+    type: disk
+    size: 10GiB
   eth0:
-      name: eth0
-      network: incusbr-1000
-      type: nic
+    name: eth0
+    host_name: openwrtvm
+    network: incusbr-1000
+    type: nic
 ```
 
 其余设置和容器一样。

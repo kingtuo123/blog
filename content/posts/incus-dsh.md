@@ -128,7 +128,7 @@ config:
       - pacman -S --noconfirm --needed openssh git jq uv 7zip unzip zip poppler imagemagick wget ripgrep fd tree bat
       - pacman -S --noconfirm --needed ttf-dejavu wqy-microhei
       - pacman -S --noconfirm --needed nodejs npm pnpm
-      - pacman -S --noconfirm --needed chromium foot lxappearance gnome-themes-extra
+      - pacman -S --noconfirm --needed chromium foot nwg-look gnome-themes-extra
       - pacman -Scc --noconfirm
       - npm config set registry https://registry.npmmirror.com
       - npm config set allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs --location=user
@@ -152,6 +152,7 @@ devices:
     type: disk
   eth0:
     name: eth0
+    host_name: dsh
     network: incusbr-1000
     type: nic
   gpu:
@@ -236,7 +237,7 @@ $ incus restart dsh
 设置字体和主题：
 
 ```bash-session
-$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'lxappearance'
+$ incus exec dsh -- machinectl shell arch@.host /bin/bash -l -c 'nwg-look'
 ```
 
 启用鼠标中键粘贴（Chromium 浏览器）：
